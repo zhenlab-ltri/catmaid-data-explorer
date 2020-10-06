@@ -1,0 +1,14 @@
+#network {
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+#dataset-toggle {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+}
