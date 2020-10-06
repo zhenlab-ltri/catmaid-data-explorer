@@ -87,67 +87,64 @@ window.data = data;
 //   };
 // };
 
-let createNetwork = () => {
-  let nodeSet = new Set();
-  Object.entries(data).forEach(([dataset, synapses]) => {
-    synapses.forEach((s) => {
-      nodeSet.add(s.classes[0]);
-      nodeSet.add(s.classes[1]);
-    });
+let nodeSet = new Set();
+Object.entries(data).forEach(([dataset, synapses]) => {
+  synapses.forEach((s) => {
+    nodeSet.add(s.classes[0]);
+    nodeSet.add(s.classes[1]);
   });
+});
 
-  let edges = [];
-  let synapsesWeightMap = {};
+let edges = [];
+let synapsesWeightMap = {};
 
-  Object.entries(data).forEach(([dataset, synapses]) => {
-    synapses.forEach((s) => {
-      let key = `${s.classes[0]}-${s.classes[1]}`;
-      if (synapsesWeightMap[key] == null) {
-        synapsesWeightMap[key] = {
-          daf2: 0,
-          stigloher2: 0,
-          stigloher3: 0,
-        };
-        synapsesWeightMap[key][dataset] = 1;
-      } else {
-        synapsesWeightMap[key][dataset] = synapsesWeightMap[key][dataset] + 1;
-      }
-    });
+Object.entries(data).forEach(([dataset, synapses]) => {
+  synapses.forEach((s) => {
+    let key = `${s.classes[0]}-${s.classes[1]}`;
+    if (synapsesWeightMap[key] == null) {
+      synapsesWeightMap[key] = {
+        daf2: 0,
+        stigloher2: 0,
+        stigloher3: 0,
+      };
+      synapsesWeightMap[key][dataset] = 1;
+    } else {
+      synapsesWeightMap[key][dataset] = synapsesWeightMap[key][dataset] + 1;
+    }
   });
+});
 
-  Object.entries(synapsesWeightMap).forEach(([pairKey, weights]) => {
-    edges.push({
-      data: {
-        id: pairKey,
-        source: pairKey.split('-')[0],
-        target: pairKey.split('-')[1],
-        intersection: Object.values(weights)
-          .map((w) => w > 0)
-          .reduce((a, b) => a && b, true),
-        daf2:
-          weights['daf2'] > 0 &&
-          weights['stigloher2'] == 0 &&
-          weights['stigloher3'] == 0,
-        stigloher2:
-          weights['daf2'] == 0 &&
-          weights['stigloher2'] > 0 &&
-          weights['stigloher3'] == 0,
-        stigloher3:
-          weights['daf2'] == 0 &&
-          weights['stigloher2'] == 0 &&
-          weights['stigloher3'] > 0,
-        weights,
-      },
-    });
+Object.entries(synapsesWeightMap).forEach(([pairKey, weights]) => {
+  edges.push({
+    data: {
+      id: pairKey,
+      source: pairKey.split('-')[0],
+      target: pairKey.split('-')[1],
+      intersection: Object.values(weights)
+        .map((w) => w > 0)
+        .reduce((a, b) => a && b, true),
+      daf2:
+        weights['daf2'] > 0 &&
+        weights['stigloher2'] == 0 &&
+        weights['stigloher3'] == 0,
+      stigloher2:
+        weights['daf2'] == 0 &&
+        weights['stigloher2'] > 0 &&
+        weights['stigloher3'] == 0,
+      stigloher3:
+        weights['daf2'] == 0 &&
+        weights['stigloher2'] == 0 &&
+        weights['stigloher3'] > 0,
+      weights,
+    },
   });
+});
 
-  let network = {
-    nodes: Array.from(nodeSet).map((node) => ({ data: { id: node } })),
-    edges,
-  };
-  window.network = network;
-  return network;
+let network = {
+  nodes: Array.from(nodeSet).map((node) => ({ data: { id: node } })),
+  edges,
 };
+window.network = network;
 
 class App extends React.Component {
   constructor(props) {
@@ -164,34 +161,48 @@ class App extends React.Component {
           {
             selector: 'node',
             style: {
+              color: '#fff',
               width: 30,
               height: 30,
               'text-halign': 'center',
               'text-valign': 'center',
               'background-color': '#666',
               label: 'data(id)',
+              'background-color': '#555',
+              'text-outline-color': '#555',
+              'text-outline-width': 4,
             },
           },
 
           {
             selector: 'edge',
             style: {
-              width: 1,
+              'haystack-radius': 0.25,
+              opacity: 0.6,
+              width: (e) => {
+                return Math.max(
+                  3,
+                  Math.log(
+                    Object.values(e.data('weights')).reduce((a, b) => a + b, 0)
+                  )
+                );
+              },
               'line-color': (e) => {
                 if (e.data('intersection')) {
-                  return '#ff0000';
+                  return '#949494';
                 }
 
                 if (e.data('daf2')) {
-                  return '#000cff';
+                  return '#8bd8dd';
                 }
 
                 if (e.data('stigloher2')) {
-                  return '#0cff00';
+                  return '#f4a2a3';
                 }
 
                 if (e.data('stigloher3')) {
-                  return '#ffe500';
+                  return '#ffc28b';
+                  949494;
                 }
 
                 return '#ccc';
@@ -210,23 +221,55 @@ class App extends React.Component {
     this.state.cy.mount(document.getElementById('network'));
 
     window.cy = this.state.cy;
-    this.state.cy.add(createNetwork());
-    this.state.cy
-      .layout({
-        name: 'cose-bilkent',
-        quality: 'proof',
-        uniformNodeDimensions: true,
-        nodeSeperation: 1000,
-        nodeRepulsion: 7000000,
-        packComponents: false,
-        animate: false,
-        nodeDimensionsIncludeLabels: false,
-      })
-      .run();
-    this.state.cy.fit();
+    this.updateNetwork();
   }
 
-  updateNetwork() {}
+  updateNetwork() {
+    let newNetwork = {
+      nodes: network.nodes,
+      edges: network.edges.filter(
+        (e) =>
+          (e.data.intersection && this.state.intersection) ||
+          (e.data.daf2 && this.state.daf2) ||
+          (e.data.stigloher2 && this.state.stigloher2) ||
+          (e.data.stigloher3 && this.state.stigloher3)
+      ),
+    };
+
+    this.state.cy.remove('*');
+    this.state.cy.add(newNetwork);
+    this.state.cy
+      .nodes()
+      .filter((n) => n.connectedEdges().size() === 0)
+      .remove();
+    this.state.cy
+      .layout({
+        name: 'grid',
+        sort: (a, b) => {
+          if (a.data('id') > b.data('id')) {
+            return 1;
+          }
+
+          if (a.data('id') === b.data('id')) {
+            return 0;
+          }
+
+          if (a.data('id') < b.data('id')) {
+            return -1;
+          }
+        },
+        // name: 'cose-bilkent',
+        // quality: 'proof',
+        // uniformNodeDimensions: true,
+        // nodeSeperation: 1000,
+        // nodeRepulsion: 7000000,
+        // packComponents: false,
+        // animate: false,
+        // nodeDimensionsIncludeLabels: false,
+      })
+      .run();
+    // this.state.cy.fit();
+  }
 
   render() {
     return (
@@ -258,7 +301,7 @@ class App extends React.Component {
                 )
               }
             />
-            <label> Daf-2</label>
+            <label> Daf-2 unique</label>
           </div>
           <div className="row">
             <input
@@ -271,7 +314,7 @@ class App extends React.Component {
                 )
               }
             />
-            <label> Stigloher2</label>
+            <label> Stigloher2 unique</label>
           </div>
           <div className="row">
             <input
@@ -284,7 +327,7 @@ class App extends React.Component {
                 )
               }
             />
-            <label> Stigloher3</label>
+            <label> Stigloher3 unique</label>
           </div>
         </div>
       </div>
