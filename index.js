@@ -261,6 +261,11 @@ class App extends React.Component {
           {
             selector: 'edge.expressed',
             style: {
+              label: (e) => {
+                return Object.entries(e.data('datasetData'))
+                  .map(([datasetName, data]) => data.total)
+                  .join(', ');
+              },
               opacity: 1,
               width: 8,
             },
