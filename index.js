@@ -77,12 +77,6 @@ let network = {
 window.network = network;
 window.datasetGroupedByConnection = datasetGroupedByConnection;
 
-class HeatmapCell extends React.Component {
-  render() {
-    return <div>cell</div>;
-  }
-}
-
 class Heatmap extends React.Component {
   render() {
     let sortedNodes = network.nodes.map((n) => n.data.id).sort();
