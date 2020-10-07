@@ -108,15 +108,16 @@ class Heatmap extends React.Component {
                         ? 'empty-cell'
                         : ''
                     }`}
-                    onClick={(e) => console.log(e)}
                   >
-                    {datasetGroupedByConnection[`${n1}|${n0}`] != null
-                      ? Object.entries(
-                          datasetGroupedByConnection[`${n1}|${n0}`]
-                        )
-                          .map(([k, v]) => v.total)
-                          .join(', ')
-                      : 0}
+                    <div onClick={(e) => console.log(e.target)}>
+                      {datasetGroupedByConnection[`${n1}|${n0}`] != null
+                        ? Object.entries(
+                            datasetGroupedByConnection[`${n1}|${n0}`]
+                          )
+                            .map(([k, v]) => v.total)
+                            .join(', ')
+                        : 0}
+                    </div>
                   </td>
                 );
               })}
