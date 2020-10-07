@@ -19,18 +19,18 @@ window.data = data;
 //   });
 
 //   let edges = [];
-//   let synapsesWeightMap = {};
+//   let datasetGroupedByConnection = {};
 
 //   data['daf2'].forEach((s) => {
 //     let key = `${s.classes[0]}-${s.classes[1]}`;
-//     if (synapsesWeightMap[key] == null) {
-//       synapsesWeightMap[key] = 1;
+//     if (datasetGroupedByConnection[key] == null) {
+//       datasetGroupedByConnection[key] = 1;
 //     } else {
-//       synapsesWeightMap[key] = synapsesWeightMap[key] + 1;
+//       datasetGroupedByConnection[key] = datasetGroupedByConnection[key] + 1;
 //     }
 //   });
 
-//   Object.entries(synapsesWeightMap).forEach(([pairKey, weight]) => {
+//   Object.entries(datasetGroupedByConnection).forEach(([pairKey, weight]) => {
 //     edges.push({
 //       data: {
 //         id: pairKey,
@@ -58,18 +58,18 @@ window.data = data;
 
 //   let edges = [];
 //   Object.entries(data).forEach(([dataset, synapses]) => {
-//     let synapsesWeightMap = {};
+//     let datasetGroupedByConnection = {};
 
 //     synapses.forEach((s) => {
 //       let key = `${s.classes[0]}-${s.classes[1]}`;
-//       if (synapsesWeightMap[key] == null) {
-//         synapsesWeightMap[key] = 1;
+//       if (datasetGroupedByConnection[key] == null) {
+//         datasetGroupedByConnection[key] = 1;
 //       } else {
-//         synapsesWeightMap[key] = synapsesWeightMap[key] + 1;
+//         datasetGroupedByConnection[key] = datasetGroupedByConnection[key] + 1;
 //       }
 //     });
 
-//     Object.entries(synapsesWeightMap).forEach(([pairKey, weight]) => {
+//     Object.entries(datasetGroupedByConnection).forEach(([pairKey, weight]) => {
 //       edges.push({
 //         data: {
 //           id: pairKey,
@@ -97,46 +97,59 @@ Object.entries(data).forEach(([dataset, synapses]) => {
 });
 
 let edges = [];
-let synapsesWeightMap = {};
+let datasetGroupedByConnection = {};
 
 Object.entries(data).forEach(([dataset, synapses]) => {
   synapses.forEach((s) => {
     let key = `${s.classes[0]}-${s.classes[1]}`;
-    if (synapsesWeightMap[key] == null) {
-      synapsesWeightMap[key] = {
-        daf2: 0,
-        stigloher2: 0,
-        stigloher3: 0,
+    if (datasetGroupedByConnection[key] == null) {
+      datasetGroupedByConnection[key] = {
+        daf2: {
+          total: 0,
+          data: [],
+        },
+        stigloher2: {
+          total: 0,
+          data: [],
+        },
+        stigloher3: {
+          total: 0,
+          data: [],
+        },
       };
-      synapsesWeightMap[key][dataset] = 1;
+      datasetGroupedByConnection[key][dataset]['total'] = 1;
+      datasetGroupedByConnection[key][dataset]['data'].push(s);
     } else {
-      synapsesWeightMap[key][dataset] = synapsesWeightMap[key][dataset] + 1;
+      datasetGroupedByConnection[key][dataset]['total'] =
+        datasetGroupedByConnection[key][dataset]['total'] + 1;
+      datasetGroupedByConnection[key][dataset]['data'].push(s);
     }
   });
 });
 
-Object.entries(synapsesWeightMap).forEach(([pairKey, weights]) => {
+Object.entries(datasetGroupedByConnection).forEach(([pairKey, datasetData]) => {
   edges.push({
     data: {
       id: pairKey,
       source: pairKey.split('-')[0],
       target: pairKey.split('-')[1],
-      intersection: Object.values(weights)
-        .map((w) => w > 0)
+      intersection: Object.values(datasetData)
+        .map((dataset) => dataset.total)
+        .map((weight) => weight > 0)
         .reduce((a, b) => a && b, true),
       daf2:
-        weights['daf2'] > 0 &&
-        weights['stigloher2'] == 0 &&
-        weights['stigloher3'] == 0,
+        datasetData['daf2'].total > 0 &&
+        datasetData['stigloher2'].total == 0 &&
+        datasetData['stigloher3'].total == 0,
       stigloher2:
-        weights['daf2'] == 0 &&
-        weights['stigloher2'] > 0 &&
-        weights['stigloher3'] == 0,
+        datasetData['daf2'].total == 0 &&
+        datasetData['stigloher2'].total > 0 &&
+        datasetData['stigloher3'].total == 0,
       stigloher3:
-        weights['daf2'] == 0 &&
-        weights['stigloher2'] == 0 &&
-        weights['stigloher3'] > 0,
-      weights,
+        datasetData['daf2'].total == 0 &&
+        datasetData['stigloher2'].total == 0 &&
+        datasetData['stigloher3'].total > 0,
+      datasetData,
     },
   });
 });
@@ -151,6 +164,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      connectionData: null,
       intersection: true,
       daf2: false,
       stigloher2: false,
@@ -185,14 +199,7 @@ class App extends React.Component {
             selector: 'edge',
             style: {
               opacity: 0.6,
-              width: (e) => {
-                return Math.max(
-                  3,
-                  Math.log(
-                    Object.values(e.data('weights')).reduce((a, b) => a + b, 0)
-                  )
-                );
-              },
+              width: 3,
               'line-color': (e) => {
                 if (e.data('intersection')) {
                   return '#949494';
@@ -247,7 +254,7 @@ class App extends React.Component {
           {
             selector: '.unexpressed',
             style: {
-              opacity: 0.05,
+              opacity: 0.5,
               'z-index': 0,
             },
           },
@@ -255,14 +262,15 @@ class App extends React.Component {
             selector: 'edge.expressed',
             style: {
               opacity: 1,
-              width: 5,
+              width: 8,
             },
           },
           {
             selector: 'edge.unexpressed',
             style: {
-              width: 1,
-              opacity: 0.05,
+              width: 0.2,
+              // opacity: 0.05,
+              // visibility: 'hidden',
               'z-index': 0,
             },
           },
@@ -276,7 +284,7 @@ class App extends React.Component {
           {
             selector: '.unhighlighted',
             style: {
-              opacity: 0.05,
+              opacity: 0.5,
               'z-index': 0,
             },
           },
@@ -284,14 +292,15 @@ class App extends React.Component {
             selector: 'edge.highlighted',
             style: {
               opacity: 1,
-              width: 5,
+              width: 8,
             },
           },
           {
             selector: 'edge.unhighlighted',
             style: {
-              width: 1,
-              opacity: 0.05,
+              width: 0.2,
+              // opacity: 0.05,
+              visibility: 'hidden',
               'z-index': 0,
             },
           },
@@ -329,9 +338,10 @@ class App extends React.Component {
         .layout({
           animate: true,
           name: 'concentric',
-          fit: true,
+          fit: false,
+          padding: 80,
           minNodeSpacing: 20,
-          spacingFactor: 1.5,
+          spacingFactor: 2,
           concentric: (ele) => {
             if (ele.same(tgt)) {
               return 2;
@@ -354,6 +364,12 @@ class App extends React.Component {
           levelWidth: () => 1,
         })
         .run();
+    });
+
+    cy.on('tap', 'edge', (e) => {
+      this.setState({
+        connectionData: e.target.data(),
+      });
     });
 
     cy.on('mouseover', 'node', nodeHoverMouseOver);
@@ -400,25 +416,46 @@ class App extends React.Component {
             return -1;
           }
         },
-        // name: 'cose-bilkent',
-        // quality: 'proof',
-        // uniformNodeDimensions: true,
-        // nodeSeperation: 1000,
-        // nodeRepulsion: 7000000,
-        // packComponents: false,
-        // animate: false,
-        // nodeDimensionsIncludeLabels: false,
       })
       .run();
-    // this.state.cy.fit();
   }
 
   render() {
+    let synapsesList = [];
+
+    if (this.state.connectionData != null) {
+      synapsesList = Object.values(this.state.connectionData.datasetData)
+        .map((d) => d.data)
+        .reduce((a, b) => a.concat(b), []);
+    }
+
+    console.log(synapsesList);
     return (
       <div>
         <div id="network"></div>
+        <div id="connection-info">
+          <div>
+            Connection Data -{' '}
+            {this.state.connectionData != null
+              ? this.state.connectionData.id
+              : ''}
+          </div>
+
+          {synapsesList.map((d) => {
+            return (
+              <div class="connection-item">
+                <div>pre: {d.partners[0]}</div>
+                <div>post: {d.partners[1]}</div>
+                <div>dataset: {d.dataset}</div>
+                <a href={d.catmaid_link} target="_blank">
+                  Catmaid link
+                </a>
+              </div>
+            );
+          })}
+        </div>
         <div id="dataset-toggle">
-          <div className="row">
+          <div className="row" id="intersection">
             <input
               type="checkbox"
               id="intersection"
@@ -432,7 +469,7 @@ class App extends React.Component {
             />
             <label> Intersection</label>
           </div>
-          <div className="row">
+          <div className="row" id="daf2">
             <input
               type="checkbox"
               id="daf2"
@@ -445,7 +482,7 @@ class App extends React.Component {
             />
             <label> Daf-2 unique</label>
           </div>
-          <div className="row">
+          <div className="row" id="stigloher2">
             <input
               type="checkbox"
               id="stigloher2"
@@ -458,7 +495,7 @@ class App extends React.Component {
             />
             <label> Stigloher2 unique </label>
           </div>
-          <div className="row">
+          <div className="row" id="stigloher3">
             <input
               type="checkbox"
               id="stigloher3"
