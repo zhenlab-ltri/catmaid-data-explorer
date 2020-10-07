@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import fcose from 'cytoscape-fcose';
 import cose from 'cytoscape-cose-bilkent';
+import debounce from 'lodash.debounce';
 
 cytoscape.use(fcose);
 cytoscape.use(cose);
@@ -173,11 +174,16 @@ class App extends React.Component {
               'text-outline-width': 4,
             },
           },
-
+          {
+            selector: 'node:selected',
+            style: {
+              'background-color': '#0169d9',
+              'text-outline-color': '#0169d9',
+            },
+          },
           {
             selector: 'edge',
             style: {
-              'haystack-radius': 0.25,
               opacity: 0.6,
               width: (e) => {
                 return Math.max(
@@ -207,9 +213,86 @@ class App extends React.Component {
 
                 return '#ccc';
               },
-              'target-arrow-color': '#ccc',
+              'target-arrow-color': (e) => {
+                if (e.data('intersection')) {
+                  return '#949494';
+                }
+
+                if (e.data('daf2')) {
+                  return '#8bd8dd';
+                }
+
+                if (e.data('stigloher2')) {
+                  return '#f4a2a3';
+                }
+
+                if (e.data('stigloher3')) {
+                  return '#ffc28b';
+                  949494;
+                }
+
+                return '#ccc';
+              },
               'target-arrow-shape': 'triangle',
-              'curve-style': 'haystack',
+              'curve-style': 'bezier',
+            },
+          },
+          {
+            selector: '.expressed',
+            style: {
+              opacity: 1,
+              'z-index': 1,
+            },
+          },
+          {
+            selector: '.unexpressed',
+            style: {
+              opacity: 0.05,
+              'z-index': 0,
+            },
+          },
+          {
+            selector: 'edge.expressed',
+            style: {
+              opacity: 1,
+              width: 5,
+            },
+          },
+          {
+            selector: 'edge.unexpressed',
+            style: {
+              width: 1,
+              opacity: 0.05,
+              'z-index': 0,
+            },
+          },
+          {
+            selector: '.highlighted',
+            style: {
+              opacity: 1,
+              'z-index': 1,
+            },
+          },
+          {
+            selector: '.unhighlighted',
+            style: {
+              opacity: 0.05,
+              'z-index': 0,
+            },
+          },
+          {
+            selector: 'edge.highlighted',
+            style: {
+              opacity: 1,
+              width: 5,
+            },
+          },
+          {
+            selector: 'edge.unhighlighted',
+            style: {
+              width: 1,
+              opacity: 0.05,
+              'z-index': 0,
             },
           },
         ],
@@ -218,9 +301,68 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.state.cy.mount(document.getElementById('network'));
+    let cy = this.state.cy;
+    cy.mount(document.getElementById('network'));
 
-    window.cy = this.state.cy;
+    let nodeHoverMouseOver = debounce((evt) => {
+      let node = evt.target;
+      let elesToHighlight = node.closedNeighborhood();
+
+      //Add highlighted class to node & its neighbourhood, unhighlighted to everything else
+      cy.elements().addClass('unhighlighted');
+      elesToHighlight.forEach((ele) => {
+        ele.removeClass('unhighlighted');
+        ele.addClass('highlighted');
+      });
+    }, 200);
+
+    cy.on('tap', 'node', (evt) => {
+      const tgt = evt.target;
+
+      cy.elements().removeClass('expressed unexpressed');
+      tgt.closedNeighborhood().addClass('expressed');
+      cy.elements()
+        .difference(tgt.closedNeighborhood())
+        .addClass('unexpressed');
+      tgt
+        .closedNeighborhood()
+        .layout({
+          animate: true,
+          name: 'concentric',
+          fit: true,
+          minNodeSpacing: 20,
+          spacingFactor: 1.5,
+          concentric: (ele) => {
+            if (ele.same(tgt)) {
+              return 2;
+            } else {
+              return 1;
+            }
+          },
+          levelWidth: () => {
+            return 1;
+          },
+        })
+        .run();
+
+      cy.elements()
+        .difference(tgt.closedNeighborhood())
+        .layout({
+          fit: false,
+          name: 'concentric',
+          concentric: (ele) => 1,
+          levelWidth: () => 1,
+        })
+        .run();
+    });
+
+    cy.on('mouseover', 'node', nodeHoverMouseOver);
+    cy.on('mouseout', 'node', () => {
+      nodeHoverMouseOver.cancel();
+      cy.elements().removeClass('highlighted unhighlighted');
+    });
+
+    window.cy = cy;
     this.updateNetwork();
   }
 
@@ -314,7 +456,7 @@ class App extends React.Component {
                 )
               }
             />
-            <label> Stigloher2 unique</label>
+            <label> Stigloher2 unique </label>
           </div>
           <div className="row">
             <input
@@ -329,6 +471,7 @@ class App extends React.Component {
             />
             <label> Stigloher3 unique</label>
           </div>
+          <button onClick={() => this.updateNetwork()}>Reset</button>
         </div>
       </div>
     );
