@@ -1,50 +1,34 @@
-#network {
-  width: 99vw;
-  height: 95vh;
-  z-index: 0;
+#heatmap {
+  width: 100vw;
+  height: 100vh;
 }
 
-#dataset-toggle {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  z-index: 1;
-
-  border: 1px solid black;
+.empty-cell {
+  background-color: gray;
+  opacity: 0.3;
 }
 
-#intersection {
-  background-color: #949494;
+.heatmap {
+  border-collapse: collapse;
 }
 
-#daf2 {
-  background-color: #8bd8dd;
-}
-
-#stigloher2 {
-  background-color: #f4a2a3;
-}
-
-#stigloher3 {
-  background-color: #ffc28b;
-}
-
-#connection-info {
-  position: absolute;
-  top: 200px;
-  left: 30px;
-  max-width: 200px;
-  z-index: 1;
-  border: 1px solid black;
-  background-color: white;
-  opacity: 1;
-  max-height: 500px;
-  overflow-y: scroll;
-}
-
-.connection-item {
+table,
+th,
+td {
   border: 1px solid black;
   padding: 10px;
+  table-layout: fixed;
+  width: 100px;
+  margin-left: 50px;
+  margin-top: 50px;
+}
+
+td {
+  border: 2px solid black;
+}
+
+.pre-label {
+  position: absolute;
+  top: 50px;
+  left: 180px;
 }
