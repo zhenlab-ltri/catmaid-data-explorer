@@ -4,7 +4,7 @@
 }
 
 .empty-cell {
-  background-color: gray;
+  background-color: #949494;
   opacity: 0.3;
 }
 
@@ -16,19 +16,44 @@ table,
 th,
 td {
   border: 1px solid black;
-  padding: 10px;
   table-layout: fixed;
   width: 100px;
   margin-left: 50px;
   margin-top: 50px;
 }
-
 td {
   border: 2px solid black;
 }
 
+.sticky-x-header-cell {
+  top: 0;
+  z-index: 10;
+  position: sticky;
+  background-color: white;
+  opacity: 1;
+  border: 1px solid black;
+  box-shadow: 2px 2px 2px 2px #949494;
+}
+
+.sticky-y-header-cell {
+  left: 0;
+  z-index: 11;
+  position: sticky;
+  background-color: white;
+  opacity: 1;
+  border: 1px solid black;
+  box-shadow: 2px 2px 2px 2px #949494;
+}
+
 .pre-label {
   position: absolute;
-  top: 50px;
+  top: 150px;
+  left: -30px;
+  transform: rotate(-90deg);
+}
+
+.post-label {
+  position: absolute;
+  top: 20px;
   left: 180px;
 }

@@ -92,26 +92,27 @@ class Heatmap extends React.Component {
           <tr>
             <th>.</th>
             {sortedNodes.map((n) => (
-              <th>{n}</th>
+              <th className="sticky-x-header-cell">{n}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {sortedNodes.map((n0) => (
             <tr>
-              <th>{n0}</th>
+              <th className="sticky-y-header-cell">{n0}</th>
               {sortedNodes.map((n1) => {
                 return (
                   <td
                     className={`cell ${
-                      datasetGroupedByConnection[`${n0}|${n1}`] == null
+                      datasetGroupedByConnection[`${n1}|${n0}`] == null
                         ? 'empty-cell'
                         : ''
                     }`}
+                    onClick={(e) => console.log(e)}
                   >
-                    {datasetGroupedByConnection[`${n0}|${n1}`] != null
+                    {datasetGroupedByConnection[`${n1}|${n0}`] != null
                       ? Object.entries(
-                          datasetGroupedByConnection[`${n0}|${n1}`]
+                          datasetGroupedByConnection[`${n1}|${n0}`]
                         )
                           .map(([k, v]) => v.total)
                           .join(', ')
