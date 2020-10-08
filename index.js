@@ -1,7 +1,7 @@
 import data from './data';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactHover, { Hover, Trigger } from 'react-hover';
+import Modal from 'react-modal';
 import debounce from 'lodash.debounce';
 
 window.data = data;
@@ -85,67 +85,139 @@ class Heatmap extends React.Component {
 
     this.state = {
       hoveredCellData: '',
+      modalOpen: false,
+      modalX: 0,
+      modalY: 0,
     };
   }
+
+  closeModal() {
+    this.setState({ modalOpen: false });
+  }
+
+  changeHoveredCellData(n0, n1, e) {
+    console.log(e, e.clientX, e.clientY);
+    let data = datasetGroupedByConnection[`${n0}|${n1}`];
+    if (data == null) {
+      return;
+    }
+
+    let dataGroupedBySynapseKey = {};
+    let synapses = Object.values(data)
+      .map((v) => v.data)
+      .reduce((a, b) => a.concat(b), [])
+      .forEach((synapse) => {
+        let key = synapse.partners.join('$');
+
+        if (dataGroupedBySynapseKey[key] == null) {
+          dataGroupedBySynapseKey[key] = {
+            'daf2-dauer': [],
+            stigloher2: [],
+            stigloher3: [],
+          };
+          dataGroupedBySynapseKey[key][synapse.dataset].push(
+            synapse.catmaid_link
+          );
+        } else {
+          dataGroupedBySynapseKey[key][synapse.dataset].push(
+            synapse.catmaid_link
+          );
+        }
+      });
+
+    this.setState({
+      hoveredCellData: dataGroupedBySynapseKey,
+      modalOpen: true,
+      modalX: e.clientX,
+      modalY: e.clientY,
+    });
+  }
+
   render() {
     let sortedNodes = network.nodes.map((n) => n.data.id).sort();
     return (
-      <ReactHover options={{ followCursor: true }}>
-        <Trigger type="trigger">
-          <table className="heatmap">
-            <thead>
-              <tr>
-                <th>.</th>
-                {sortedNodes.map((n) => (
-                  <th className="sticky-x-header-cell">{n}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sortedNodes.map((n0) => (
-                <tr>
-                  <th className="sticky-y-header-cell">{n0}</th>
-                  {sortedNodes.map((n1) => {
-                    return (
-                      <td
-                        className={`cell ${
-                          datasetGroupedByConnection[`${n1}|${n0}`] == null
-                            ? 'empty-cell'
-                            : ''
-                        }`}
-                      >
-                        <div
-                          className="cell-data"
-                          onMouseEnter={debounce(
-                            () =>
-                              this.setState({
-                                connectionData: `${n1} - ${n0}`,
-                              }),
-                            300
-                          )}
-                        >
-                          {datasetGroupedByConnection[`${n1}|${n0}`] != null
-                            ? Object.entries(
-                                datasetGroupedByConnection[`${n1}|${n0}`]
-                              )
-                                .map(([k, v]) => v.total)
-                                .join(', ')
-                            : 0}
+      <div>
+        <div
+          className={
+            this.modalOpen ? 'connection-info' : 'connection-info-open'
+          }
+          style={{
+            left: this.state.clientX,
+            top: this.state.clientY,
+          }}
+        >
+          <button onClick={(e) => this.closeModal()}> close </button>
+
+          {Object.entries(this.state.hoveredCellData).map(
+            ([synapseKey, datasetData]) => {
+              return (
+                <div className="synapse-entry">
+                  <div>{synapseKey.split('$').join(' - ')}</div>
+                  {Object.entries(datasetData).map(
+                    ([dataset, datasetEntries]) => {
+                      return (
+                        <div className="dataset-synapses-entry">
+                          <div>
+                            {dataset} Total: {datasetEntries.length}
+                          </div>
+                          {datasetEntries.map((e) => {
+                            return (
+                              <a href={e} target="_blank">
+                                link
+                              </a>
+                            );
+                          })}
                         </div>
-                      </td>
-                    );
-                  })}
-                </tr>
+                      );
+                    }
+                  )}
+                </div>
+              );
+            }
+          )}
+        </div>
+        <table className="heatmap">
+          <thead>
+            <tr>
+              <th>.</th>
+              {sortedNodes.map((n) => (
+                <th className="sticky-x-header-cell">{n}</th>
               ))}
-            </tbody>
-          </table>
-        </Trigger>
-        <Hover type="hover">
-          <div className="connection-info">
-            <h1> {this.state.connectionData} </h1>
-          </div>
-        </Hover>
-      </ReactHover>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedNodes.map((n0) => (
+              <tr>
+                <th className="sticky-y-header-cell">{n0}</th>
+                {sortedNodes.map((n1) => {
+                  return (
+                    <td
+                      className={`cell ${
+                        datasetGroupedByConnection[`${n1}|${n0}`] == null
+                          ? 'empty-cell'
+                          : ''
+                      }`}
+                    >
+                      <div
+                        className="cell-data"
+                        onClick={(e) => this.changeHoveredCellData(n1, n0, e)}
+                      >
+                        {datasetGroupedByConnection[`${n1}|${n0}`] != null
+                          ? Object.entries(
+                              datasetGroupedByConnection[`${n1}|${n0}`]
+                            ).map(([k, v]) => (
+                              <div className="dataset-cell">{v.total}</div>
+                            ))
+                          : '-'}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   }
 }
