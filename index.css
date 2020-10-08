@@ -3,6 +3,11 @@
   height: 100vh;
 }
 
+.cell-data {
+  width: 100%;
+  height: 100%;
+}
+
 .empty-cell {
   background-color: #949494;
   opacity: 0.3;
@@ -17,7 +22,8 @@ th,
 td {
   border: 1px solid black;
   table-layout: fixed;
-  width: 100px;
+  width: 75px;
+  height: 75px;
   margin-left: 50px;
   margin-top: 50px;
 }
@@ -56,4 +62,10 @@ td {
   position: absolute;
   top: 20px;
   left: 180px;
+}
+
+.connection-info {
+  background-color: white;
+  border: 1px solid black;
+  width: 300px;
 }

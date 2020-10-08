@@ -17,10 +17,9 @@
   },
   "dependencies": {
     "cytoscape": "^3.16.1",
-    "cytoscape-cose-bilkent": "^4.1.0",
-    "cytoscape-fcose": "^1.2.3",
     "lodash.debounce": "^4.0.8",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-hover": "^2.0.0"
   }
 }

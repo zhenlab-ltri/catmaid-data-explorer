@@ -1,6 +1,8 @@
 import data from './data';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactHover, { Hover, Trigger } from 'react-hover';
+import debounce from 'lodash.debounce';
 
 window.data = data;
 
@@ -78,47 +80,72 @@ window.network = network;
 window.datasetGroupedByConnection = datasetGroupedByConnection;
 
 class Heatmap extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      hoveredCellData: '',
+    };
+  }
   render() {
     let sortedNodes = network.nodes.map((n) => n.data.id).sort();
     return (
-      <table className="heatmap">
-        <thead>
-          <tr>
-            <th>.</th>
-            {sortedNodes.map((n) => (
-              <th className="sticky-x-header-cell">{n}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sortedNodes.map((n0) => (
-            <tr>
-              <th className="sticky-y-header-cell">{n0}</th>
-              {sortedNodes.map((n1) => {
-                return (
-                  <td
-                    className={`cell ${
-                      datasetGroupedByConnection[`${n1}|${n0}`] == null
-                        ? 'empty-cell'
-                        : ''
-                    }`}
-                  >
-                    <div onClick={(e) => console.log(e.target)}>
-                      {datasetGroupedByConnection[`${n1}|${n0}`] != null
-                        ? Object.entries(
-                            datasetGroupedByConnection[`${n1}|${n0}`]
-                          )
-                            .map(([k, v]) => v.total)
-                            .join(', ')
-                        : 0}
-                    </div>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ReactHover options={{ followCursor: true }}>
+        <Trigger type="trigger">
+          <table className="heatmap">
+            <thead>
+              <tr>
+                <th>.</th>
+                {sortedNodes.map((n) => (
+                  <th className="sticky-x-header-cell">{n}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sortedNodes.map((n0) => (
+                <tr>
+                  <th className="sticky-y-header-cell">{n0}</th>
+                  {sortedNodes.map((n1) => {
+                    return (
+                      <td
+                        className={`cell ${
+                          datasetGroupedByConnection[`${n1}|${n0}`] == null
+                            ? 'empty-cell'
+                            : ''
+                        }`}
+                      >
+                        <div
+                          className="cell-data"
+                          onMouseEnter={debounce(
+                            () =>
+                              this.setState({
+                                connectionData: `${n1} - ${n0}`,
+                              }),
+                            300
+                          )}
+                        >
+                          {datasetGroupedByConnection[`${n1}|${n0}`] != null
+                            ? Object.entries(
+                                datasetGroupedByConnection[`${n1}|${n0}`]
+                              )
+                                .map(([k, v]) => v.total)
+                                .join(', ')
+                            : 0}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Trigger>
+        <Hover type="hover">
+          <div className="connection-info">
+            <h1> {this.state.connectionData} </h1>
+          </div>
+        </Hover>
+      </ReactHover>
     );
   }
 }
