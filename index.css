@@ -108,3 +108,11 @@ td {
   padding: 10px;
   border: 1px solid black;
 }
+
+.dataset-synapses-entry {
+  padding: 10px;
+}
+
+.catmaid-link {
+  padding-right: 10px;
+}

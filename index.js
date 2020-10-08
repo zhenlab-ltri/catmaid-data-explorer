@@ -86,8 +86,6 @@ class Heatmap extends React.Component {
     this.state = {
       hoveredCellData: '',
       modalOpen: false,
-      modalX: 0,
-      modalY: 0,
     };
   }
 
@@ -96,7 +94,6 @@ class Heatmap extends React.Component {
   }
 
   changeHoveredCellData(n0, n1, e) {
-    console.log(e, e.clientX, e.clientY);
     let data = datasetGroupedByConnection[`${n0}|${n1}`];
     if (data == null) {
       return;
@@ -128,8 +125,6 @@ class Heatmap extends React.Component {
     this.setState({
       hoveredCellData: dataGroupedBySynapseKey,
       modalOpen: true,
-      modalX: e.clientX,
-      modalY: e.clientY,
     });
   }
 
@@ -141,10 +136,6 @@ class Heatmap extends React.Component {
           className={
             this.modalOpen ? 'connection-info' : 'connection-info-open'
           }
-          style={{
-            left: this.state.clientX,
-            top: this.state.clientY,
-          }}
         >
           <button onClick={(e) => this.closeModal()}> close </button>
 
@@ -158,11 +149,15 @@ class Heatmap extends React.Component {
                       return (
                         <div className="dataset-synapses-entry">
                           <div>
-                            {dataset} Total: {datasetEntries.length}
+                            {dataset}: {datasetEntries.length}
                           </div>
                           {datasetEntries.map((e) => {
                             return (
-                              <a href={e} target="_blank">
+                              <a
+                                className="catmaid-link"
+                                href={e}
+                                target="_blank"
+                              >
                                 link
                               </a>
                             );
@@ -186,10 +181,10 @@ class Heatmap extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {sortedNodes.map((n0) => (
+            {sortedNodes.map((n1) => (
               <tr>
-                <th className="sticky-y-header-cell">{n0}</th>
-                {sortedNodes.map((n1) => {
+                <th className="sticky-y-header-cell">{n1}</th>
+                {sortedNodes.map((n0) => {
                   return (
                     <td
                       className={`cell ${
