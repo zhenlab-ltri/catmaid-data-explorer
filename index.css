@@ -21,6 +21,7 @@
   height: 35px;
   border: 1px solid #949494;
   text-align: center;
+  cursor: pointer;
 }
 
 .empty-cell {
@@ -30,6 +31,11 @@
 
 .heatmap {
   border-collapse: collapse;
+}
+
+.heatmap-birds-eye-view {
+  border-collapse: collapse;
+  transform: scale(0.1);
 }
 
 table,

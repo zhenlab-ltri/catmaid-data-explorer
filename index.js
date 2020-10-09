@@ -102,6 +102,7 @@ class Heatmap extends React.Component {
     this.state = {
       hoveredCellData: '',
       color: COLOR_BY.INDIVIDUAL,
+      birdsEyeView: false,
     };
   }
 
@@ -206,14 +207,21 @@ class Heatmap extends React.Component {
     return (
       <div>
         <div className={'connection-info'}>
-          <button onClick={() => this.setState({ color: COLOR_BY.INDIVIDUAL })}>
-            Individual
-          </button>
           <button onClick={() => this.setState({ color: COLOR_BY.UNIQUE })}>
             Unique
           </button>
+          <button onClick={() => this.setState({ color: COLOR_BY.INDIVIDUAL })}>
+            Heatmap - Individual
+          </button>
           <button onClick={() => this.setState({ color: COLOR_BY.HEATMAP })}>
             Heatmap
+          </button>
+          <button
+            onClick={() =>
+              this.setState({ birdsEyeView: !this.state.birdsEyeView })
+            }
+          >
+            Bird's eye view
           </button>
 
           {Object.entries(this.state.hoveredCellData).map(
@@ -248,7 +256,11 @@ class Heatmap extends React.Component {
             }
           )}
         </div>
-        <table className="heatmap">
+        <table
+          className={
+            this.state.birdsEyeView ? 'heatmap-birds-eye-view' : 'heatmap'
+          }
+        >
           <thead>
             <tr>
               <th>.</th>
