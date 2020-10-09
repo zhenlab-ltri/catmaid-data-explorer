@@ -11,83 +11,6 @@ cytoscape.use(cose);
 
 window.data = data;
 
-// let createNetwork = () => {
-//   let nodeSet = new Set();
-//   data['daf2'].forEach((s) => {
-//     nodeSet.add(s.classes[0]);
-//     nodeSet.add(s.classes[1]);
-//   });
-
-//   let edges = [];
-//   let datasetGroupedByConnection = {};
-
-//   data['daf2'].forEach((s) => {
-//     let key = `${s.classes[0]}-${s.classes[1]}`;
-//     if (datasetGroupedByConnection[key] == null) {
-//       datasetGroupedByConnection[key] = 1;
-//     } else {
-//       datasetGroupedByConnection[key] = datasetGroupedByConnection[key] + 1;
-//     }
-//   });
-
-//   Object.entries(datasetGroupedByConnection).forEach(([pairKey, weight]) => {
-//     edges.push({
-//       data: {
-//         id: pairKey,
-//         source: pairKey.split('-')[0],
-//         target: pairKey.split('-')[1],
-//         dataset: 'daf2',
-//         weight,
-//       },
-//     });
-//   });
-
-//   return {
-//     nodes: Array.from(nodeSet).map((node) => ({ data: { id: node } })),
-//     edges,
-//   };
-// };
-// let createNetwork = () => {
-//   let nodeSet = new Set();
-//   Object.entries(data).forEach(([dataset, synapses]) => {
-//     synapses.forEach((s) => {
-//       nodeSet.add(s.classes[0]);
-//       nodeSet.add(s.classes[1]);
-//     });
-//   });
-
-//   let edges = [];
-//   Object.entries(data).forEach(([dataset, synapses]) => {
-//     let datasetGroupedByConnection = {};
-
-//     synapses.forEach((s) => {
-//       let key = `${s.classes[0]}-${s.classes[1]}`;
-//       if (datasetGroupedByConnection[key] == null) {
-//         datasetGroupedByConnection[key] = 1;
-//       } else {
-//         datasetGroupedByConnection[key] = datasetGroupedByConnection[key] + 1;
-//       }
-//     });
-
-//     Object.entries(datasetGroupedByConnection).forEach(([pairKey, weight]) => {
-//       edges.push({
-//         data: {
-//           id: pairKey,
-//           source: pairKey.split('-')[0],
-//           target: pairKey.split('-')[1],
-//           dataset,
-//           weight,
-//         },
-//       });
-//     });
-//   });
-
-//   return {
-//     nodes: Array.from(nodeSet).map((node) => ({ data: { id: node } })),
-//     edges,
-//   };
-// };
-
 let nodeSet = new Set();
 Object.entries(data).forEach(([dataset, synapses]) => {
   synapses.forEach((s) => {
@@ -363,15 +286,27 @@ class App extends React.Component {
       cy.elements()
         .difference(tgt.closedNeighborhood())
         .layout({
-          fit: false,
-          name: 'concentric',
-          concentric: (ele) => 1,
-          levelWidth: () => 1,
+          fit: true,
+          name: 'circle',
+          sort: (a, b) => {
+            if (a.data('id') > b.data('id')) {
+              return 1;
+            }
+
+            if (a.data('id') === b.data('id')) {
+              return 0;
+            }
+
+            if (a.data('id') < b.data('id')) {
+              return -1;
+            }
+          },
         })
         .run();
     });
 
     cy.on('tap', 'edge', (e) => {
+      console.log(e);
       this.setState({
         connectionData: e.target.data(),
       });
