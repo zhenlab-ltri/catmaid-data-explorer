@@ -81,17 +81,6 @@ td {
 
 .connection-info {
   position: fixed;
-  right: 0;
-  background-color: white;
-  opacity: 0;
-  z-index: -1;
-  border: 1px solid black;
-  width: 300px;
-  box-shadow: 2px 2px 2px 2px #949494;
-}
-
-.connection-info-open {
-  position: fixed;
   right: 100px;
   bottom: 50px;
   background-color: white;

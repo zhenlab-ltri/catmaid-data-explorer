@@ -1,10 +1,7 @@
 import data from './data';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Modal from 'react-modal';
-import debounce from 'lodash.debounce';
-
-window.data = data;
+import chroma from 'chroma-js';
 
 let nodeSet = new Set();
 Object.entries(data).forEach(([dataset, synapses]) => {
@@ -76,8 +73,27 @@ let network = {
   nodes: Array.from(nodeSet).map((node) => ({ data: { id: node } })),
   edges,
 };
+window.data = data;
 window.network = network;
 window.datasetGroupedByConnection = datasetGroupedByConnection;
+
+let minSynapses = 0;
+let maxSynapses = Math.max(
+  ...Object.values(datasetGroupedByConnection)
+    .map((o) => Object.values(o).map((d) => d.total))
+    .reduce((a, b) => a.concat(b), [])
+);
+
+let individualScale = chroma.scale(['white', 'red']).domain([minSynapses, 25]);
+let heatmapScale = chroma.scale(['white', 'red']).domain([0, 50]);
+
+console.log(minSynapses, maxSynapses);
+
+const COLOR_BY = {
+  UNIQUE: 0,
+  HEATMAP: 1,
+  INDIVIDUAL: 2,
+};
 
 class Heatmap extends React.Component {
   constructor(props) {
@@ -85,16 +101,73 @@ class Heatmap extends React.Component {
 
     this.state = {
       hoveredCellData: '',
-      modalOpen: false,
+      color: COLOR_BY.INDIVIDUAL,
     };
   }
 
-  closeModal() {
-    this.setState({ modalOpen: false });
+  generateCellColor(pre, post) {
+    if (this.state.color === COLOR_BY.UNIQUE) {
+      return this.getUniqueColor(pre, post);
+    }
+
+    if (this.state.color === COLOR_BY.HEATMAP) {
+      return this.getHeatmapColor(pre, post);
+    }
+
+    return {};
   }
 
-  changeHoveredCellData(n0, n1, e) {
-    let data = datasetGroupedByConnection[`${n0}|${n1}`];
+  getHeatmapColor(pre, post) {
+    let data = datasetGroupedByConnection[`${pre}|${post}`];
+    if (data != null) {
+      let daf2Weight = data['daf2'].total;
+      let stig2Weight = data['stigloher2'].total;
+      let stig3Weight = data['stigloher3'].total;
+      return {
+        backgroundColor: heatmapScale(daf2Weight + stig3Weight, stig2Weight),
+      };
+    }
+    return {};
+  }
+
+  getIndividualColor(val) {
+    if (this.state.color === COLOR_BY.INDIVIDUAL) {
+      return {
+        backgroundColor: individualScale(val),
+      };
+    }
+    return {};
+  }
+
+  getUniqueColor(pre, post) {
+    let data = datasetGroupedByConnection[`${pre}|${post}`];
+    if (data != null) {
+      let daf2Weight = data['daf2'].total;
+      let stig2Weight = data['stigloher2'].total;
+      let stig3Weight = data['stigloher3'].total;
+      let isUnique = (a, b, c) => a > 0 && b === 0 && c === 0;
+      if (isUnique(daf2Weight, stig2Weight, stig3Weight)) {
+        return {
+          backgroundColor: '#8bd8dd',
+        };
+      }
+      if (isUnique(stig2Weight, daf2Weight, stig3Weight)) {
+        return {
+          backgroundColor: '#f4a2a3',
+        };
+      }
+
+      if (isUnique(stig3Weight, daf2Weight, stig2Weight)) {
+        return {
+          backgroundColor: '#ffc28b',
+        };
+      }
+    }
+    return {};
+  }
+
+  changeClickedCellData(pre, post) {
+    let data = datasetGroupedByConnection[`${pre}|${post}`];
     if (data == null) {
       return;
     }
@@ -132,12 +205,16 @@ class Heatmap extends React.Component {
     let sortedNodes = network.nodes.map((n) => n.data.id).sort();
     return (
       <div>
-        <div
-          className={
-            this.modalOpen ? 'connection-info' : 'connection-info-open'
-          }
-        >
-          <button onClick={(e) => this.closeModal()}> close </button>
+        <div className={'connection-info'}>
+          <button onClick={() => this.setState({ color: COLOR_BY.INDIVIDUAL })}>
+            Individual
+          </button>
+          <button onClick={() => this.setState({ color: COLOR_BY.UNIQUE })}>
+            Unique
+          </button>
+          <button onClick={() => this.setState({ color: COLOR_BY.HEATMAP })}>
+            Heatmap
+          </button>
 
           {Object.entries(this.state.hoveredCellData).map(
             ([synapseKey, datasetData]) => {
@@ -187,6 +264,7 @@ class Heatmap extends React.Component {
                 {sortedNodes.map((n0) => {
                   return (
                     <td
+                      style={this.generateCellColor(n1, n0)}
                       className={`cell ${
                         datasetGroupedByConnection[`${n1}|${n0}`] == null
                           ? 'empty-cell'
@@ -195,13 +273,18 @@ class Heatmap extends React.Component {
                     >
                       <div
                         className="cell-data"
-                        onClick={(e) => this.changeHoveredCellData(n1, n0, e)}
+                        onClick={() => this.changeClickedCellData(n1, n0)}
                       >
                         {datasetGroupedByConnection[`${n1}|${n0}`] != null
                           ? Object.entries(
                               datasetGroupedByConnection[`${n1}|${n0}`]
                             ).map(([k, v]) => (
-                              <div className="dataset-cell">{v.total}</div>
+                              <div
+                                style={this.getIndividualColor(v.total)}
+                                className="dataset-cell"
+                              >
+                                {v.total}
+                              </div>
                             ))
                           : '-'}
                       </div>
@@ -226,14 +309,6 @@ class App extends React.Component {
   }
 
   render() {
-    let synapsesList = [];
-
-    // if (this.state.connectionData != null) {
-    //   synapsesList = Object.values(this.state.connectionData.datasetData)
-    //     .map((d) => d.data)
-    //     .reduce((a, b) => a.concat(b), []);
-    // }
-
     return (
       <div>
         <div className="pre-label">Presynaptic Neuron</div>

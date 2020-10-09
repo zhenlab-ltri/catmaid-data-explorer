@@ -16,6 +16,7 @@
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
+    "chroma-js": "^2.1.0",
     "cytoscape": "^3.16.1",
     "lodash.debounce": "^4.0.8",
     "react": "^16.13.1",
