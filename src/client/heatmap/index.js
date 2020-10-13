@@ -1,4 +1,4 @@
-import data from './data';
+import data from '../data';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import chroma from 'chroma-js';
