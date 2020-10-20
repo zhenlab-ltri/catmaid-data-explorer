@@ -7,8 +7,8 @@
     "watch-client": "parcel watch ./client/index.html",
     "watch-server": "nodemon server/index.js",
     "dev": "concurrently --kill-others \"npm run watch-server\" \"npm run watch-client\"",
-    "build-prod": "parcel build ./client/index.html",
-    "start": "npm run build && node/server.index.js"
+    "build": "parcel build ./client/index.html",
+    "start": "npm run build && node ./server/index.js"
   },
   "author": "",
   "license": "ISC",
