@@ -1,6 +1,6 @@
 const express = require('express');
 const fetch = require('node-fetch');
-const { CATMAID_URL, CATMAID_TOKEN } = require('./config.json');
+const { CATMAID_URL, CATMAID_TOKEN } = require('../config.json');
 
 const CATMAID_GAP_JUNCTION_RELATION = 'gapjunction_with'
 const CATMAID_PRE_SYNAPTIC_RELATION = 'presynaptic_to'
@@ -75,29 +75,10 @@ app.get('/api/chemical-synapses', async (req, res) => {
   const { projectId } = req.query;
   const r = await fetch(`${CATMAID_URL}/${projectId}/connectors/`, {
     method: 'post',
-    body: {
+    body: JSON.stringify({
       'with_partners': true,
       'relation_type': [CATMAID_PRE_SYNAPTIC_RELATION, CATMAID_POST_SYNAPTIC_RELATION]
-    },
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Authorization': `Token ${CATMAID_TOKEN}`
-    }
-  });
-
-  const json = await r.json();
-
-  return res.json(json);
-});
-
-app.get('/api/chemical-synapses', async (req, res) => {
-  const { projectId } = req.query;
-  const r = await fetch(`${CATMAID_URL}/${projectId}/connectors/`, {
-    method: 'post',
-    body: {
-      'with_partners': true,
-      'relation_type': [CATMAID_PRE_SYNAPTIC_RELATION, CATMAID_POST_SYNAPTIC_RELATION]
-    },
+    }),
     headers: {
       'Content-Type': 'application/json',
       'X-Authorization': `Token ${CATMAID_TOKEN}`
@@ -111,14 +92,15 @@ app.get('/api/chemical-synapses', async (req, res) => {
 
 app.get('/api/gap-junctions', async (req, res) => {
   const { projectId } = req.query;
+  const formParams = new URLSearchParams();
+  formParams.append('with_partners', 'true');
+  formParams.append('relation_type', 'gapjunction_with');
   const r = await fetch(`${CATMAID_URL}/${projectId}/connectors/`, {
     method: 'post',
-    body: {
-      'with_partners': true,
-      'relation_type': CATMAID_GAP_JUNCTION_RELATION
-    },
+    body: formParams,
     headers: {
-      'Content-Type': 'application/json',
+      'accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
       'X-Authorization': `Token ${CATMAID_TOKEN}`
     }
   });
