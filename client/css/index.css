@@ -1,3 +1,4 @@
+@import './sticky-grid.css';
 #heatmap {
   width: 100vw;
   height: 100vh;
@@ -15,12 +16,12 @@
 
 .dataset-cell {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
   width: 35px;
   height: 35px;
   border: 1px solid #949494;
-  text-align: center;
+  /* text-align: center; */
   cursor: pointer;
 }
 
@@ -43,8 +44,8 @@ th,
 td {
   border: 1px solid black;
   table-layout: fixed;
-  width: 75px;
-  height: 75px;
+  width: 80px;
+  height: 80px;
   margin-left: 50px;
   margin-top: 50px;
 }
@@ -53,9 +54,9 @@ td {
 }
 
 .sticky-x-header-cell {
-  top: 0;
-  z-index: 10;
-  position: sticky;
+  /* top: 0; */
+  z-index: 10 !important;
+  position: sticky !important;
   background-color: white;
   opacity: 1;
   border: 1px solid black;
@@ -63,9 +64,9 @@ td {
 }
 
 .sticky-y-header-cell {
-  left: 0;
-  z-index: 11;
-  position: sticky;
+  /* left: 0; */
+  z-index: 11 !important;
+  position: sticky !important;
   background-color: white;
   opacity: 1;
   border: 1px solid black;

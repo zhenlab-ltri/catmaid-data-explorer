@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {Heatmap} from './components/mona-catmaid-heatmap';
-
+// import {Heatmap} from './components/mona-catmaid-heatmap';
+import { Heatmap } from './components/contact-matrices-heatmap';
 
 class App extends React.Component {
   constructor(props) {
@@ -15,8 +15,6 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <div className="pre-label">Presynaptic Neuron</div>
-        <div className="post-label">Postsynaptic Neuron</div>
         <Heatmap></Heatmap>
       </div>
     );

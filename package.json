@@ -6,7 +6,7 @@
     "watch-client": "parcel watch ./client/index.html",
     "watch-server": "nodemon server/index.js",
     "dev": "concurrently --kill-others \"npm run watch-client\" \"npm run watch-server\"",
-    "build": "parcel build ./client/index.html",
+    "build": "parcel build ./client/index.html --no-source-maps --no-cache",
     "start": "npm run build && node ./server/index.js"
   },
   "author": "",
@@ -27,6 +27,9 @@
     "lodash.debounce": "^4.0.8",
     "node-fetch": "^2.6.1",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-hyperscript": "^3.2.0",
+    "react-virtualized-auto-sizer": "^1.0.2",
+    "react-window": "^1.8.6"
   }
 }
