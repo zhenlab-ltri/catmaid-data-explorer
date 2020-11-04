@@ -1,6 +1,4 @@
-import contactMatrix from '../data/contact-matrices.json';
 import React from 'react';
-import { FixedSizeGrid as Grid } from 'react-window';
 import h from 'react-hyperscript';
 
 import { StickyGrid, GridColumn } from './StickyGrid';
@@ -233,56 +231,13 @@ const neuronsOrdered = [
   'excgl',
 ];
 
-const Cell = ({ columnIndex, rowIndex, style }) => {
-  let className = '';
-  let content = '.';
-  if (columnIndex === 0 && rowIndex > 0) {
-    content = neuronsOrdered[rowIndex - 1];
-    // className = 'sticky-y-header-cell';
-  }
-
-  if (columnIndex > 0 && rowIndex === 0) {
-    content = neuronsOrdered[columnIndex - 1];
-    // className = 'sticky-x-header-cell';
-  }
-
-  return h(
-    `div`,
-    {
-      className: className,
-      style: style,
-      key: `${columnIndex}-${rowIndex}`,
-    },
-    content
-  );
-};
-
-// const Cell = ({ columnIndex, rowIndex, style }) => (
-//   <div style={style}>
-//     Item {rowIndex},{columnIndex}
-//   </div>
-// );
-
-// const Example = () => (
-//   <Grid
-//     columnCount={1000}
-//     columnWidth={100}
-//     height={150}
-//     rowCount={1000}
-//     rowHeight={35}
-//     width={300}
-//   >
-//     {Cell}
-//   </Grid>
-// );
-
 export class Heatmap extends React.Component {
   render() {
     return h(
       StickyGrid,
       {
-        width: 1000,
-        height: 500,
+        width: 1400,
+        height: 800,
         columnCount: neuronsOrdered.length + 1,
         rowCount: neuronsOrdered.length + 1,
         rowHeight: (index) => 60,
@@ -294,62 +249,4 @@ export class Heatmap extends React.Component {
       GridColumn
     );
   }
-
-  // render() {
-  //   return h(
-  //     Grid,
-  //     {
-  //       columnCount: neuronsOrdered.length + 1,
-  //       columnWidth: 100,
-  //       height: 500,
-  //       rowCount: neuronsOrdered.length + 1,
-  //       rowHeight: 35,
-  //       width: 1000,
-  //     },
-  //     Cell
-  //   );
-  // }
-
-  getContactMatrixData(neuron1: string, neuron2: string) {
-    const key = `${neuron1}$${neuron2}`;
-    const data = contactMatrix[key];
-    // const data = null;
-
-    if (data != null) {
-      return Object.entries(data);
-    } else {
-      return [];
-    }
-  }
-
-  // render() {
-  //   return h('div', [
-  //     h('table.heatmap', [
-  //       h('thead', [
-  //         h('tr', [
-  //           h('th', '.'),
-  //           ...neuronsOrdered.map((n) => h('th.sticky-x-header-cell', n)),
-  //         ]),
-  //       ]),
-  //       h(
-  //         'tbody',
-  //         neuronsOrdered.map((n1) =>
-  //           h('tr', [
-  //             h('th.sticky-y-header-cell', n1),
-  //             ...neuronsOrdered.map((n0) =>
-  //               h('td.cell', { style: {} }, [
-  //                 h(
-  //                   'div.cell-data',
-  //                   this.getContactMatrixData(n1, n0).map(([k, v]) =>
-  //                     h('div.dataset-cell', v)
-  //                   )
-  //                 ),
-  //               ])
-  //             ),
-  //           ])
-  //         )
-  //       ),
-  //     ]),
-  //   ]);
-  // }
 }

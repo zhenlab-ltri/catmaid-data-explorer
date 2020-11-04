@@ -1,4 +1,6 @@
 import React from 'react';
+import chroma from 'chroma-js';
+import h from 'react-hyperscript';
 import { VariableSizeGrid as Grid } from 'react-window';
 
 import contactMatrix from '../data/contact-matrices.json';
@@ -6,6 +8,19 @@ import contactMatrix from '../data/contact-matrices.json';
 // import './styles.css';
 
 var focusField;
+const datasetsOrdered = [
+  'SEM_L1_3',
+  'TEM_L1_5',
+  'SEM_L1_4',
+  'SEM_L1_2',
+  'SEM_L2_2',
+  'TEM_L3',
+  'SEM_adult',
+];
+
+const maxContactArea = 17386560.0;
+
+const areaScale = chroma.scale(['white', 'red']).domain([0.0, maxContactArea]);
 
 const neuronsOrdered = [
   'ADFL',
@@ -236,46 +251,37 @@ const neuronsOrdered = [
 ];
 
 class CellInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      changed: false,
-    };
-  }
-
-  // The cell value has changed
-  onChange(event) {
-    this.setState({
-      changed: true,
-    });
-  }
-
-  // Blur the input field if the 'Enter' key is pressed
-  onKeyPress(event) {
-    if (event.which === 13) {
-      event.target.blur();
-    }
-    return false;
-  }
-
-  // The cell has gained focus
-  onFocus(event) {
-    focusField = event.target.id;
-  }
-
-  // The cell lost focus; i.e. was blurred
-  onBlur(event) {
-    if (this.state.changed) {
-      if (this.props.cellChange === undefined)
-        event.target.value = this.props.defaultValue;
-      else this.props.cellChange(this.props, event.target.value);
-      this.setState({
-        changed: false,
-      });
-    }
-  }
-
   render() {
+    const datasetContacts =
+      this.props.data != null
+        ? datasetsOrdered.map((d) =>
+            h('div', {
+              style: {
+                width: 30,
+                height: 30,
+                border: '1px solid gray',
+                backgroundColor: areaScale(parseFloat(this.props.data[d])),
+              },
+            })
+          )
+        : [];
+    const noContacts =
+      this.props.data != null &&
+      datasetsOrdered
+        .map((d) => this.props.data[d] === '0.0')
+        .reduce((a, b) => a && b, true);
+    return h(
+      'div',
+      {
+        id: this.props.id,
+        className: this.props.className,
+        style: this.props.style,
+        type: this.props.type,
+        data: this.props.data,
+      },
+      noContacts ? '-' : datasetContacts
+    );
+
     return React.createElement('input', {
       id: this.props.id,
       className: this.props.className,
@@ -371,10 +377,12 @@ export const GridColumn = ({ rowIndex, columnIndex, style }) => {
   let colCellNeuron = neuronsOrdered[columnIndex];
   let key = `${rowCellNeuron}$${colCellNeuron}`;
 
-  let data = contactMatrix[key];
+  let contactMatrixData = contactMatrix[key];
   let value = '.';
-  if (data != null) {
-    value = Object.values(data).join(', ');
+  if (contactMatrixData != null) {
+    value = datasetsOrdered
+      .map((dataset) => contactMatrixData[dataset])
+      .join(', ');
   }
 
   return React.createElement(CellInput, {
@@ -382,6 +390,7 @@ export const GridColumn = ({ rowIndex, columnIndex, style }) => {
     className: 'sticky-grid__data__column',
     style: style,
     type: 'text',
+    data: contactMatrixData,
     defaultValue: value,
     cellChange: () => {},
   });
