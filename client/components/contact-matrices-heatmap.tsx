@@ -1,10 +1,9 @@
-import contactMatrix from '../data/contact-matrices';
+import contactMatrix from '../data/contact-matrices.json';
 import React from 'react';
 import { FixedSizeGrid as Grid } from 'react-window';
-import chroma from 'chroma-js';
 import h from 'react-hyperscript';
 
-// import { StickyGrid, GridColumn } from './StickyGrid';
+import { StickyGrid, GridColumn } from './StickyGrid';
 
 const neuronsOrdered = [
   'ADFL',
@@ -234,22 +233,17 @@ const neuronsOrdered = [
   'excgl',
 ];
 
-window.contactMatrix = contactMatrix;
-
-let individualScale = chroma.scale(['white', 'red']).domain([0, 25]);
-let heatmapScale = chroma.scale(['white', 'red']).domain([0, 50]);
-
 const Cell = ({ columnIndex, rowIndex, style }) => {
   let className = '';
   let content = '.';
   if (columnIndex === 0 && rowIndex > 0) {
     content = neuronsOrdered[rowIndex - 1];
-    className = 'sticky-y-header-cell';
+    // className = 'sticky-y-header-cell';
   }
 
   if (columnIndex > 0 && rowIndex === 0) {
     content = neuronsOrdered[columnIndex - 1];
-    className = 'sticky-x-header-cell';
+    // className = 'sticky-x-header-cell';
   }
 
   return h(
@@ -283,40 +277,43 @@ const Cell = ({ columnIndex, rowIndex, style }) => {
 // );
 
 export class Heatmap extends React.Component {
-  // render() {
-  //   return h(
-  //     StickyGrid,
-  //     {
-  //       columnCount: neuronsOrdered.length + 1,
-  //       rowCount: neuronsOrdered.length + 1,
-  //       rowHeight: (index) => 60,
-  //       columnWidth: (index) => 240,
-  //       stickyHeight: 40,
-  //       stickyWidth: 120,
-  //       handleScroll: () => {},
-  //     },
-  //     GridColumn
-  //   );
-  // }
-
   render() {
     return h(
-      Grid,
+      StickyGrid,
       {
-        columnCount: neuronsOrdered.length + 1,
-        columnWidth: 100,
-        height: 500,
-        rowCount: neuronsOrdered.length + 1,
-        rowHeight: 35,
         width: 1000,
+        height: 500,
+        columnCount: neuronsOrdered.length + 1,
+        rowCount: neuronsOrdered.length + 1,
+        rowHeight: (index) => 60,
+        columnWidth: (index) => 240,
+        stickyHeight: 40,
+        stickyWidth: 120,
+        handleScroll: () => {},
       },
-      Cell
+      GridColumn
     );
   }
+
+  // render() {
+  //   return h(
+  //     Grid,
+  //     {
+  //       columnCount: neuronsOrdered.length + 1,
+  //       columnWidth: 100,
+  //       height: 500,
+  //       rowCount: neuronsOrdered.length + 1,
+  //       rowHeight: 35,
+  //       width: 1000,
+  //     },
+  //     Cell
+  //   );
+  // }
 
   getContactMatrixData(neuron1: string, neuron2: string) {
     const key = `${neuron1}$${neuron2}`;
     const data = contactMatrix[key];
+    // const data = null;
 
     if (data != null) {
       return Object.entries(data);
