@@ -281,18 +281,6 @@ class CellInput extends React.Component {
       },
       noContacts ? '-' : datasetContacts
     );
-
-    return React.createElement('input', {
-      id: this.props.id,
-      className: this.props.className,
-      style: this.props.style,
-      type: this.props.type,
-      defaultValue: this.props.defaultValue,
-      onChange: this.onChange.bind(this),
-      onKeyPress: this.onKeyPress.bind(this),
-      onFocus: this.onFocus.bind(this),
-      onBlur: this.onBlur.bind(this),
-    });
   }
 }
 
