@@ -3,24 +3,10 @@ import chroma from 'chroma-js';
 import h from 'react-hyperscript';
 import { VariableSizeGrid as Grid } from 'react-window';
 
-import contactMatrix from '../data/contact-matrices.json';
-
-// import './styles.css';
-
-var focusField;
-const datasetsOrdered = [
-  'SEM_L1_3',
-  'TEM_L1_5',
-  'SEM_L1_4',
-  'SEM_L1_2',
-  'SEM_L2_2',
-  'TEM_L3',
-  'SEM_adult',
-];
-
-const maxContactArea = 17386560.0;
-
-const areaScale = chroma.scale(['white', 'red']).domain([0.0, maxContactArea]);
+import contactMatrix from '../data/combined-contact-matrices.json';
+const areaScale = chroma
+  .scale(['white', 'red'])
+  .domain([0.0, contactMatrix.stats.max_area]);
 
 const neuronsOrdered = [
   'ADFL',
@@ -252,24 +238,25 @@ const neuronsOrdered = [
 
 class CellInput extends React.Component {
   render() {
-    const datasetContacts =
-      this.props.data != null
-        ? datasetsOrdered.map((d) =>
-            h('div', {
-              style: {
-                width: 30,
-                height: 30,
-                border: '1px solid gray',
-                backgroundColor: areaScale(parseFloat(this.props.data[d])),
-              },
-            })
-          )
-        : [];
-    const noContacts =
-      this.props.data != null &&
-      datasetsOrdered
-        .map((d) => this.props.data[d] === '0.0')
-        .reduce((a, b) => a && b, true);
+    const rowCellNeuron = neuronsOrdered[this.props.rowIndex];
+    const colCellNeuron = neuronsOrdered[this.props.columnIndex];
+    const key = `${rowCellNeuron}$${colCellNeuron}`;
+    const contactMatrixData = contactMatrix.contact_area[key];
+    const matrixDataExists = contactMatrixData != null;
+
+    const datasetContacts = matrixDataExists
+      ? contactMatrixData.map((area) =>
+          h('div', {
+            style: {
+              width: 30,
+              height: 30,
+              border: '1px solid gray',
+              backgroundColor: areaScale(area),
+            },
+          })
+        )
+      : [];
+
     return h(
       'div',
       {
@@ -277,9 +264,8 @@ class CellInput extends React.Component {
         className: this.props.className,
         style: this.props.style,
         type: this.props.type,
-        data: this.props.data,
       },
-      noContacts ? '-' : datasetContacts
+      matrixDataExists ? datasetContacts : '-'
     );
   }
 }
@@ -361,25 +347,14 @@ const columnsBuilder = (minRow, maxRow, rowHeight, stickyWidth) => {
 };
 
 export const GridColumn = ({ rowIndex, columnIndex, style }) => {
-  let rowCellNeuron = neuronsOrdered[rowIndex];
-  let colCellNeuron = neuronsOrdered[columnIndex];
-  let key = `${rowCellNeuron}$${colCellNeuron}`;
-
-  let contactMatrixData = contactMatrix[key];
-  let value = '.';
-  if (contactMatrixData != null) {
-    value = datasetsOrdered
-      .map((dataset) => contactMatrixData[dataset])
-      .join(', ');
-  }
-
   return React.createElement(CellInput, {
     id: rowIndex + 1 + ',' + (columnIndex + 1),
     className: 'sticky-grid__data__column',
+    rowIndex,
+    columnIndex,
     style: style,
     type: 'text',
-    data: contactMatrixData,
-    defaultValue: value,
+    defaultValue: '',
     cellChange: () => {},
   });
 };

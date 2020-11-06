@@ -1,6 +1,5 @@
 import React from 'react';
 import h from 'react-hyperscript';
-
 import { StickyGrid, GridColumn } from './StickyGrid';
 
 const neuronsOrdered = [
@@ -231,7 +230,7 @@ const neuronsOrdered = [
   'excgl',
 ];
 
-export class Heatmap extends React.Component {
+export default class Heatmap extends React.Component {
   render() {
     return h(
       StickyGrid,
