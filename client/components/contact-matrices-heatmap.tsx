@@ -1,6 +1,14 @@
 import React from 'react';
 import h from 'react-hyperscript';
+import chroma from 'chroma-js';
 import { StickyGrid, GridColumn } from './StickyGrid';
+
+import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
+
+import contactMatrix from '../data/combined-contact-matrices.json';
+const areaScale = chroma
+  .scale(['white', 'red'])
+  .domain([0.0, contactMatrix.stats.max_area]);
 
 const neuronsOrdered = [
   'ADFL',
@@ -230,22 +238,124 @@ const neuronsOrdered = [
   'excgl',
 ];
 
+const monotonicIncreasing = (arr) =>
+  arr.every((ele, index, arr) => (index > 0 ? ele > arr[index - 1] : true));
+const monotonicDecreasing = (arr) =>
+  arr.every((ele, index, arr) => (index > 0 ? ele < arr[index - 1] : true));
+
 export default class Heatmap extends React.Component {
-  render() {
-    return h(
-      StickyGrid,
-      {
-        width: 1400,
-        height: 800,
-        columnCount: neuronsOrdered.length + 1,
-        rowCount: neuronsOrdered.length + 1,
-        rowHeight: (index) => 60,
-        columnWidth: (index) => 240,
-        stickyHeight: 40,
-        stickyWidth: 120,
-        handleScroll: () => {},
+  constructor(props) {
+    super(props);
+    this.state = {
+      fixedColumnCount: 1,
+      fixedRowCount: 1,
+      scrollToColumn: 0,
+      scrollToRow: 0,
+    };
+  }
+
+  cellRenderer({ columnIndex, rowIndex, key, style }) {
+    const rowNeuron = neuronsOrdered[rowIndex];
+    const colNeuron = neuronsOrdered[columnIndex];
+    const neuronKey = `${rowNeuron}$${colNeuron}`;
+    const contactMatrixData = contactMatrix.contact_area[neuronKey];
+    let backgroundColor = 'white';
+
+    if (contactMatrixData == null) {
+      backgroundColor = 'gray';
+    } else {
+      if (monotonicIncreasing(contactMatrixData)) {
+        backgroundColor = 'red';
+      }
+
+      if (monotonicDecreasing(contactMatrixData)) {
+        backgroundColor = 'blue';
+      }
+    }
+
+    if (columnIndex === 0 && rowIndex === 0) {
+      return h('div.contact-matrix-cell', { key, style });
+    }
+    if (columnIndex === 0 && rowIndex > 0) {
+      return h(
+        'div.contact-matrix-cell',
+        {
+          key,
+          style: {
+            ...style,
+            fontSize: '0.7em',
+          },
+        },
+        rowNeuron
+      );
+    }
+    if (rowIndex === 0 && columnIndex > 0) {
+      return h(
+        'div.contact-matrix-cell',
+        {
+          key,
+          style: {
+            ...style,
+            fontSize: '0.7em',
+          },
+        },
+        colNeuron
+      );
+    }
+
+    return h('div.contact-matrix-cell', {
+      key,
+      style: {
+        ...style,
+        border: '1px solid black',
+        opacity: contactMatrixData == null ? 0.2 : 1,
+        backgroundColor,
       },
-      GridColumn
-    );
+    });
+  }
+
+  render() {
+    return h('div.contact-matrix', [
+      h('div.contact-matrix-controls', [
+        h('div.contact-matrix-input', [
+          h('label', 'Find row neuron'),
+          h('input', { onChange: (e) => console.log(e) }),
+        ]),
+        h('div.contact-matrix-input', [
+          h('label', 'Find column neuron'),
+          h('input', { onChange: (e) => console.log(e) }),
+        ]),
+      ]),
+      h(MultiGrid, {
+        ...this.state,
+        cellRenderer: (props) => this.cellRenderer(props),
+        rowHeight: 50,
+        rowWidth: 50,
+        columnWidth: 50,
+        columnHeight: 50,
+        enableFixedColumnScroll: true,
+        enableFixedRowScroll: true,
+        height: 750,
+        width: 1300,
+        rowCount: neuronsOrdered.length + 1,
+        columnCount: neuronsOrdered.length + 1,
+        style: { border: '1px solid #ddd' },
+        styleBottomLeftGrid: {
+          borderRight: '2px solid #aaa',
+          backgroundColor: '#f7f7f7',
+        },
+        styleTopLeftGrid: {
+          borderBottom: '2px solid #aaa',
+          borderRight: '2px solid #aaa',
+          backgroundColor: '#f7f7f7',
+        },
+        styleTopRightGrid: {
+          borderBottom: '2px solid #aaa',
+          backgroundColor: '#f7f7f7',
+        },
+        hideTopRightGridScrollbar: true,
+        hideBottomLeftGridScrollbar: true,
+      }),
+    ]);
   }
 }
