@@ -1,10 +1,8 @@
 import React from 'react';
 import h from 'react-hyperscript';
 import chroma from 'chroma-js';
-import { StickyGrid, GridColumn } from './StickyGrid';
-
 import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
-
+import debounce from 'lodash.debounce';
 import contactMatrix from '../data/combined-contact-matrices.json';
 const areaScale = chroma
   .scale(['white', 'red'])
@@ -238,6 +236,11 @@ const neuronsOrdered = [
   'excgl',
 ];
 
+const neuronsIndexMap = {};
+neuronsOrdered.forEach((neuron, index) => {
+  neuronsIndexMap[neuron] = index;
+});
+
 const monotonicIncreasing = (arr) =>
   arr.every((ele, index, arr) => (index > 0 ? ele > arr[index - 1] : true));
 const monotonicDecreasing = (arr) =>
@@ -247,11 +250,53 @@ export default class Heatmap extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      hoveredRowIndex: -1,
+      hoveredColumnIndex: -1,
       fixedColumnCount: 1,
       fixedRowCount: 1,
       scrollToColumn: 0,
       scrollToRow: 0,
+      rowInput: '',
+      colInput: '',
     };
+  }
+
+  handleRowInputChange(newVal: string) {
+    this.setState(
+      {
+        rowInput: newVal,
+      },
+      () => {
+        if (neuronsIndexMap[newVal] != null) {
+          this.setState({
+            scrollToRow: Math.min(
+              neuronsIndexMap[newVal] + 6,
+              neuronsOrdered.length
+            ),
+            hoveredRowIndex: neuronsIndexMap[newVal],
+          });
+        }
+      }
+    );
+  }
+
+  handleColInputChange(newVal: string) {
+    this.setState(
+      {
+        colInput: newVal,
+      },
+      () => {
+        if (neuronsIndexMap[newVal] != null) {
+          this.setState({
+            scrollToColumn: Math.min(
+              neuronsIndexMap[newVal] + 13,
+              neuronsOrdered.length
+            ),
+            hoveredColumnIndex: neuronsIndexMap[newVal],
+          });
+        }
+      }
+    );
   }
 
   cellRenderer({ columnIndex, rowIndex, key, style }) {
@@ -284,6 +329,11 @@ export default class Heatmap extends React.Component {
           style: {
             ...style,
             fontSize: '0.7em',
+            opacity:
+              columnIndex !== this.state.hoveredColumnIndex &&
+              rowIndex !== this.state.hoveredRowIndex
+                ? 0.2
+                : 1,
           },
         },
         rowNeuron
@@ -297,6 +347,11 @@ export default class Heatmap extends React.Component {
           style: {
             ...style,
             fontSize: '0.7em',
+            opacity:
+              columnIndex !== this.state.hoveredColumnIndex &&
+              rowIndex !== this.state.hoveredRowIndex
+                ? 0.2
+                : 1,
           },
         },
         colNeuron
@@ -305,10 +360,21 @@ export default class Heatmap extends React.Component {
 
     return h('div.contact-matrix-cell', {
       key,
+      onMouseOver: debounce((e) => {
+        this.setState({
+          hoveredColumnIndex: columnIndex,
+          hoveredRowIndex: rowIndex,
+        });
+      }, 350),
       style: {
         ...style,
         border: '1px solid black',
-        opacity: contactMatrixData == null ? 0.2 : 1,
+        opacity:
+          (columnIndex !== this.state.hoveredColumnIndex &&
+            rowIndex !== this.state.hoveredRowIndex) ||
+          contactMatrixData == null
+            ? 0.2
+            : 1,
         backgroundColor,
       },
     });
@@ -319,11 +385,15 @@ export default class Heatmap extends React.Component {
       h('div.contact-matrix-controls', [
         h('div.contact-matrix-input', [
           h('label', 'Find row neuron'),
-          h('input', { onChange: (e) => console.log(e) }),
+          h('input', {
+            onChange: (e) => this.handleRowInputChange(e.target.value),
+          }),
         ]),
         h('div.contact-matrix-input', [
           h('label', 'Find column neuron'),
-          h('input', { onChange: (e) => console.log(e) }),
+          h('input', {
+            onChange: (e) => this.handleColInputChange(e.target.value),
+          }),
         ]),
       ]),
       h(MultiGrid, {
