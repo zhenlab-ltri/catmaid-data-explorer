@@ -309,6 +309,7 @@ class ContactMatrixCell extends React.Component {
           border: '1px solid black',
           opacity: contactMatrixData == null ? 0.2 : 1,
           backgroundColor,
+          cursor: contactMatrixData == null ? 'default' : 'pointer',
         },
       },
       contactMatrixData == null
