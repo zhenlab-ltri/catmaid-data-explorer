@@ -2,11 +2,13 @@ import React from 'react';
 import h from 'react-hyperscript';
 import chroma from 'chroma-js';
 import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
+import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
 import contactMatrix from '../data/combined-contact-matrices.json';
 const areaScale = chroma
   .scale(['white', 'red'])
-  .domain([0.0, contactMatrix.stats.max_area]);
+  .domain([0.0, contactMatrix.stats.max_area])
+  .gamma(0.6);
 
 const neuronsOrdered = [
   'ADFL',
@@ -277,8 +279,7 @@ class ContactMatrixCell extends React.Component {
           key: `${rowNeuron}-0`,
           style: {
             ...style,
-            fontSize: highlighted ? '1em' : '0.7em',
-            opacity: highlighted ? 1 : 0.2,
+            fontSize: highlighted ? '1.25em' : '0.7em',
           },
         },
         rowNeuron
@@ -291,24 +292,37 @@ class ContactMatrixCell extends React.Component {
           key: `0-${colNeuron}`,
           style: {
             ...style,
-            fontSize: highlighted ? '1em' : '0.7em',
-            opacity: highlighted ? 1 : 0.2,
+            fontSize: highlighted ? '1.25em' : '0.7em',
           },
         },
         colNeuron
       );
     }
 
-    return h('div.contact-matrix-cell', {
-      key: `${rowNeuron}-${colNeuron}`,
-      onMouseOver: (e) => onHover(e),
-      style: {
-        ...style,
-        border: '1px solid black',
-        opacity: contactMatrixData == null || !highlighted ? 0.2 : 1,
-        backgroundColor,
+    return h(
+      'div.contact-matrix-cell',
+      {
+        key: `${rowNeuron}-${colNeuron}`,
+        onMouseOver: (e) => onHover(e),
+        style: {
+          ...style,
+          border: '1px solid black',
+          opacity: contactMatrixData == null ? 0.2 : 1,
+          backgroundColor,
+        },
       },
-    });
+      contactMatrixData == null
+        ? []
+        : contactMatrixData.map((areaValue) =>
+            h('div', {
+              style: {
+                height: style.height - 4,
+                width: (style.width - 8) / contactMatrixData.length,
+                backgroundColor: areaScale(areaValue),
+              },
+            })
+          )
+    );
   }
 }
 
@@ -381,51 +395,60 @@ export default class ContactMatrix extends React.Component {
           }),
         ]),
       ]),
-      h(MultiGrid, {
-        ...this.state,
-        cellRenderer: ({ columnIndex, rowIndex, style }) =>
-          h(ContactMatrixCell, {
-            columnIndex,
-            rowIndex,
-            key: `${rowIndex}-${columnIndex}`,
-            style,
-            highlighted:
-              columnIndex === this.state.hoveredColumnIndex ||
-              rowIndex === this.state.hoveredRowIndex,
-            onHover: debounce((e) => {
-              this.setState({
-                hoveredColumnIndex: columnIndex,
-                hoveredRowIndex: rowIndex,
-              });
-            }, 350),
-          }),
-        rowHeight: 50,
-        rowWidth: 50,
-        columnWidth: 50,
-        columnHeight: 50,
-        enableFixedColumnScroll: true,
-        enableFixedRowScroll: true,
-        height: 750,
-        width: 1300,
-        rowCount: neuronsOrdered.length + 1,
-        columnCount: neuronsOrdered.length + 1,
-        style: { border: '1px solid #ddd' },
-        styleBottomLeftGrid: {
-          borderRight: '2px solid #aaa',
-          backgroundColor: '#f7f7f7',
+      h(
+        AutoSizer,
+        {
+          disableHeight: true,
         },
-        styleTopLeftGrid: {
-          borderBottom: '2px solid #aaa',
-          borderRight: '2px solid #aaa',
-          backgroundColor: '#f7f7f7',
-        },
-        styleTopRightGrid: {
-          borderBottom: '2px solid #aaa',
-          backgroundColor: '#f7f7f7',
-        },
-        hideTopRightGridScrollbar: true,
-        hideBottomLeftGridScrollbar: true,
-      }),
+        [
+          ({ width }) =>
+            h(MultiGrid, {
+              ...this.state,
+              cellRenderer: ({ columnIndex, rowIndex, style }) =>
+                h(ContactMatrixCell, {
+                  columnIndex,
+                  rowIndex,
+                  key: `${rowIndex}-${columnIndex}`,
+                  style,
+                  highlighted:
+                    columnIndex === this.state.hoveredColumnIndex ||
+                    rowIndex === this.state.hoveredRowIndex,
+                  onHover: debounce((e) => {
+                    this.setState({
+                      hoveredColumnIndex: columnIndex,
+                      hoveredRowIndex: rowIndex,
+                    });
+                  }, 350),
+                }),
+              rowHeight: 40,
+              rowWidth: 80,
+              columnWidth: 80,
+              columnHeight: 40,
+              enableFixedColumnScroll: true,
+              enableFixedRowScroll: true,
+              height: 750,
+              width,
+              rowCount: neuronsOrdered.length,
+              columnCount: neuronsOrdered.length,
+              style: { border: '1px solid #ddd' },
+              styleBottomLeftGrid: {
+                borderRight: '2px solid #aaa',
+                backgroundColor: '#f7f7f7',
+              },
+              styleTopLeftGrid: {
+                borderBottom: '2px solid #aaa',
+                borderRight: '2px solid #aaa',
+                backgroundColor: '#f7f7f7',
+              },
+              styleTopRightGrid: {
+                borderBottom: '2px solid #aaa',
+                backgroundColor: '#f7f7f7',
+              },
+              hideTopRightGridScrollbar: true,
+              hideBottomLeftGridScrollbar: true,
+            }),
+        ]
+      ),
     ]);
   }
 }
