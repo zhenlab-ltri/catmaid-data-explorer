@@ -4,12 +4,17 @@ import chroma from 'chroma-js';
 import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
+import Modal from 'react-modal';
+import { Line } from 'react-chartjs-2';
+
 import contactMatrix from '../data/combined-contact-matrices.json';
 
 const areaScale = chroma
   .scale(['white', 'red'])
   .domain([0.0, contactMatrix.stats.max_area])
   .gamma(0.6);
+
+const datasetsOrdered = contactMatrix.dataset_index_order;
 
 const neuronsOrdered = [
   'ADFL',
@@ -264,7 +269,14 @@ const generateColorScaleBar = () => {
 
 class ContactMatrixCell extends React.Component {
   render() {
-    const { highlighted, columnIndex, rowIndex, style, onHover } = this.props;
+    const {
+      highlighted,
+      columnIndex,
+      rowIndex,
+      style,
+      onHover,
+      onClick,
+    } = this.props;
     const rowNeuron = neuronsOrdered[rowIndex];
     const colNeuron = neuronsOrdered[columnIndex];
     const neuronKey = `${rowNeuron}$${colNeuron}`;
@@ -292,7 +304,7 @@ class ContactMatrixCell extends React.Component {
       return h(
         'div.contact-matrix-cell',
         {
-          key: `${rowNeuron}-0`,
+          key: `${rowNeuron}$0`,
           style: {
             ...style,
             fontSize: highlighted ? '1.25em' : '0.7em',
@@ -307,7 +319,7 @@ class ContactMatrixCell extends React.Component {
       return h(
         'div.contact-matrix-cell',
         {
-          key: `0-${colNeuron}`,
+          key: `0$${colNeuron}`,
           style: {
             ...style,
             fontSize: highlighted ? '1.25em' : '0.7em',
@@ -321,7 +333,7 @@ class ContactMatrixCell extends React.Component {
     // only render half the matrix
     if (rowIndex <= columnIndex) {
       return h('div.contact-matrix-cell', {
-        key: `${rowNeuron}-${colNeuron}`,
+        key: `${rowNeuron}$${colNeuron}`,
         style: {
           ...style,
           border: '1px solid black',
@@ -334,8 +346,10 @@ class ContactMatrixCell extends React.Component {
     return h(
       'div.contact-matrix-cell',
       {
-        key: `${rowNeuron}-${colNeuron}`,
+        key: `${rowNeuron}$${colNeuron}`,
         onMouseOver: (e) => onHover(e),
+        onClick: (e) =>
+          onClick(e, `${rowNeuron}$${colNeuron}`, rowIndex, columnIndex),
         style: {
           ...style,
           border: '1px solid black',
@@ -376,7 +390,16 @@ export default class ContactMatrix extends React.Component {
       scrollToRow: 0,
       rowInput: '',
       colInput: '',
+      showCellDetail: false,
+      cellDetailKey: '',
     };
+  }
+
+  handleCellClick(e, neuronKey, rowIndex, columnIndex) {
+    this.setState({
+      showCellDetail: true,
+      cellDetailKey: neuronKey,
+    });
   }
 
   handleRowInputChange(newVal: string) {
@@ -483,6 +506,50 @@ export default class ContactMatrix extends React.Component {
         ]),
       ]),
       h(
+        Modal,
+        {
+          style: {
+            overlay: {
+              zIndex: 1,
+            },
+          },
+          isOpen: this.state.showCellDetail,
+          className: 'contact-matrix-cell-detail-modal',
+        },
+        [
+          h(
+            'button',
+            { onClick: (e) => this.setState({ showCellDetail: false }) },
+            'close'
+          ),
+          h(Line, {
+            data: {
+              labels: datasetsOrdered,
+              datasets: [
+                {
+                  label: `Contact area (${String.fromCharCode(181)}m^2)`,
+                  data: contactMatrix.contact_area[this.state.cellDetailKey],
+                  fill: false,
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgba(255, 99, 132, 0.2)',
+                },
+              ],
+            },
+            options: {
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
+                    },
+                  },
+                ],
+              },
+            },
+          }),
+        ]
+      ),
+      h(
         AutoSizer,
         {
           disableHeight: true,
@@ -506,6 +573,8 @@ export default class ContactMatrix extends React.Component {
                       hoveredRowIndex: rowIndex,
                     });
                   }, 350),
+                  onClick: (e, neuronKey, rowIndex, columnIndex) =>
+                    this.handleCellClick(e, neuronKey, rowIndex, columnIndex),
                 }),
               rowHeight: 40,
               rowWidth: 80,
