@@ -527,7 +527,10 @@ export default class ContactMatrix extends React.Component {
               labels: datasetsOrdered,
               datasets: [
                 {
-                  label: `Contact area (${String.fromCharCode(181)}m^2)`,
+                  label: `Contact area between ${this.state.cellDetailKey.replace(
+                    '$',
+                    ' and '
+                  )} (${String.fromCharCode(181)}m^2)`,
                   data: contactMatrix.contact_area[this.state.cellDetailKey],
                   fill: false,
                   backgroundColor: 'rgb(255, 99, 132)',
