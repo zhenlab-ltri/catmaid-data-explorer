@@ -246,7 +246,73 @@ const monotonicIncreasing = (arr) =>
 const monotonicDecreasing = (arr) =>
   arr.every((ele, index, arr) => (index > 0 ? ele < arr[index - 1] : true));
 
-export default class Heatmap extends React.Component {
+class ContactMatrixCell extends React.Component {
+  render() {
+    const { highlighted, columnIndex, rowIndex, style, onHover } = this.props;
+    const rowNeuron = neuronsOrdered[rowIndex];
+    const colNeuron = neuronsOrdered[columnIndex];
+    const neuronKey = `${rowNeuron}$${colNeuron}`;
+    const contactMatrixData = contactMatrix.contact_area[neuronKey];
+    let backgroundColor = 'white';
+
+    if (contactMatrixData == null) {
+      backgroundColor = 'gray';
+    } else {
+      if (monotonicIncreasing(contactMatrixData)) {
+        backgroundColor = 'red';
+      }
+
+      if (monotonicDecreasing(contactMatrixData)) {
+        backgroundColor = 'blue';
+      }
+    }
+
+    if (columnIndex === 0 && rowIndex === 0) {
+      return h('div.contact-matrix-cell', { key: '0-0', style });
+    }
+    if (columnIndex === 0 && rowIndex > 0) {
+      return h(
+        'div.contact-matrix-cell',
+        {
+          key: `${rowNeuron}-0`,
+          style: {
+            ...style,
+            fontSize: highlighted ? '1em' : '0.7em',
+            opacity: highlighted ? 1 : 0.2,
+          },
+        },
+        rowNeuron
+      );
+    }
+    if (rowIndex === 0 && columnIndex > 0) {
+      return h(
+        'div.contact-matrix-cell',
+        {
+          key: `0-${colNeuron}`,
+          style: {
+            ...style,
+            fontSize: highlighted ? '1em' : '0.7em',
+            opacity: highlighted ? 1 : 0.2,
+          },
+        },
+        colNeuron
+      );
+    }
+
+    return h('div.contact-matrix-cell', {
+      key: `${rowNeuron}-${colNeuron}`,
+      onMouseOver: (e) => onHover(e),
+      style: {
+        ...style,
+        border: '1px solid black',
+        opacity: contactMatrixData == null || !highlighted ? 0.2 : 1,
+        backgroundColor,
+      },
+    });
+  }
+}
+
+export default class ContactMatrix extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -299,87 +365,6 @@ export default class Heatmap extends React.Component {
     );
   }
 
-  cellRenderer({ columnIndex, rowIndex, key, style }) {
-    const rowNeuron = neuronsOrdered[rowIndex];
-    const colNeuron = neuronsOrdered[columnIndex];
-    const neuronKey = `${rowNeuron}$${colNeuron}`;
-    const contactMatrixData = contactMatrix.contact_area[neuronKey];
-    let backgroundColor = 'white';
-
-    if (contactMatrixData == null) {
-      backgroundColor = 'gray';
-    } else {
-      if (monotonicIncreasing(contactMatrixData)) {
-        backgroundColor = 'red';
-      }
-
-      if (monotonicDecreasing(contactMatrixData)) {
-        backgroundColor = 'blue';
-      }
-    }
-
-    if (columnIndex === 0 && rowIndex === 0) {
-      return h('div.contact-matrix-cell', { key, style });
-    }
-    if (columnIndex === 0 && rowIndex > 0) {
-      return h(
-        'div.contact-matrix-cell',
-        {
-          key,
-          style: {
-            ...style,
-            fontSize: '0.7em',
-            opacity:
-              columnIndex !== this.state.hoveredColumnIndex &&
-              rowIndex !== this.state.hoveredRowIndex
-                ? 0.2
-                : 1,
-          },
-        },
-        rowNeuron
-      );
-    }
-    if (rowIndex === 0 && columnIndex > 0) {
-      return h(
-        'div.contact-matrix-cell',
-        {
-          key,
-          style: {
-            ...style,
-            fontSize: '0.7em',
-            opacity:
-              columnIndex !== this.state.hoveredColumnIndex &&
-              rowIndex !== this.state.hoveredRowIndex
-                ? 0.2
-                : 1,
-          },
-        },
-        colNeuron
-      );
-    }
-
-    return h('div.contact-matrix-cell', {
-      key,
-      onMouseOver: debounce((e) => {
-        this.setState({
-          hoveredColumnIndex: columnIndex,
-          hoveredRowIndex: rowIndex,
-        });
-      }, 350),
-      style: {
-        ...style,
-        border: '1px solid black',
-        opacity:
-          (columnIndex !== this.state.hoveredColumnIndex &&
-            rowIndex !== this.state.hoveredRowIndex) ||
-          contactMatrixData == null
-            ? 0.2
-            : 1,
-        backgroundColor,
-      },
-    });
-  }
-
   render() {
     return h('div.contact-matrix', [
       h('div.contact-matrix-controls', [
@@ -398,7 +383,22 @@ export default class Heatmap extends React.Component {
       ]),
       h(MultiGrid, {
         ...this.state,
-        cellRenderer: (props) => this.cellRenderer(props),
+        cellRenderer: ({ columnIndex, rowIndex, style }) =>
+          h(ContactMatrixCell, {
+            columnIndex,
+            rowIndex,
+            key: `${rowIndex}-${columnIndex}`,
+            style,
+            highlighted:
+              columnIndex === this.state.hoveredColumnIndex ||
+              rowIndex === this.state.hoveredRowIndex,
+            onHover: debounce((e) => {
+              this.setState({
+                hoveredColumnIndex: columnIndex,
+                hoveredRowIndex: rowIndex,
+              });
+            }, 350),
+          }),
         rowHeight: 50,
         rowWidth: 50,
         columnWidth: 50,
