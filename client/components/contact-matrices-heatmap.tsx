@@ -5,6 +5,7 @@ import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
 import contactMatrix from '../data/combined-contact-matrices.json';
+
 const areaScale = chroma
   .scale(['white', 'red'])
   .domain([0.0, contactMatrix.stats.max_area])
@@ -248,6 +249,19 @@ const monotonicIncreasing = (arr) =>
 const monotonicDecreasing = (arr) =>
   arr.every((ele, index, arr) => (index > 0 ? ele < arr[index - 1] : true));
 
+const generateColorScaleBar = () => {
+  const NUM_STEPS = 60;
+  const STEP_SIZE = contactMatrix.stats.max_area / NUM_STEPS;
+
+  const scaleBar = [...Array(NUM_STEPS).keys()].map((el, index) => {
+    return h('div.contact-matrix-scalebar-item', {
+      style: { backgroundColor: areaScale(index * STEP_SIZE) },
+    });
+  });
+
+  return scaleBar;
+};
+
 class ContactMatrixCell extends React.Component {
   render() {
     const { highlighted, columnIndex, rowIndex, style, onHover } = this.props;
@@ -261,7 +275,7 @@ class ContactMatrixCell extends React.Component {
       backgroundColor = 'gray';
     } else {
       if (monotonicIncreasing(contactMatrixData)) {
-        backgroundColor = 'red';
+        backgroundColor = 'black';
       }
 
       if (monotonicDecreasing(contactMatrixData)) {
@@ -272,6 +286,8 @@ class ContactMatrixCell extends React.Component {
     if (columnIndex === 0 && rowIndex === 0) {
       return h('div.contact-matrix-cell', { key: '0-0', style });
     }
+
+    // cell is in the row header
     if (columnIndex === 0 && rowIndex > 0) {
       return h(
         'div.contact-matrix-cell',
@@ -285,6 +301,8 @@ class ContactMatrixCell extends React.Component {
         rowNeuron
       );
     }
+
+    // cell is in the column header
     if (rowIndex === 0 && columnIndex > 0) {
       return h(
         'div.contact-matrix-cell',
@@ -297,6 +315,20 @@ class ContactMatrixCell extends React.Component {
         },
         colNeuron
       );
+    }
+
+    // contact matrix data is symmetric
+    // only render half the matrix
+    if (rowIndex <= columnIndex) {
+      return h('div.contact-matrix-cell', {
+        key: `${rowNeuron}-${colNeuron}`,
+        style: {
+          ...style,
+          border: '1px solid black',
+          // opacity: 0.2,
+          backgroundColor: '#514d4d',
+        },
+      });
     }
 
     return h(
@@ -317,8 +349,13 @@ class ContactMatrixCell extends React.Component {
         : contactMatrixData.map((areaValue) =>
             h('div', {
               style: {
-                height: style.height - 4,
-                width: (style.width - 8) / contactMatrixData.length,
+                height: monotonicIncreasing(contactMatrixData)
+                  ? style.height - 8
+                  : style.height,
+                width:
+                  (monotonicIncreasing(contactMatrixData)
+                    ? style.width - 8
+                    : style.width) / contactMatrixData.length,
                 backgroundColor: areaScale(areaValue),
               },
             })
@@ -382,18 +419,67 @@ export default class ContactMatrix extends React.Component {
 
   render() {
     return h('div.contact-matrix', [
-      h('div.contact-matrix-controls', [
-        h('div.contact-matrix-input', [
-          h('label', 'Find row neuron'),
-          h('input', {
-            onChange: (e) => this.handleRowInputChange(e.target.value),
-          }),
+      h('div.contact-matrix-header', [
+        h('h3.contact-matrix-title', 'Contact Matrix'),
+        h('div.contact-matrix-controls', [
+          h('div', [
+            h('label', 'Find row neuron'),
+            h('input.contact-matrix-input', {
+              onChange: (e) => this.handleRowInputChange(e.target.value),
+            }),
+          ]),
+          h('div', [
+            h('label', 'Find column neuron'),
+            h('input.contact-matrix-input', {
+              onChange: (e) => this.handleColInputChange(e.target.value),
+            }),
+          ]),
         ]),
-        h('div.contact-matrix-input', [
-          h('label', 'Find column neuron'),
-          h('input', {
-            onChange: (e) => this.handleColInputChange(e.target.value),
+        h('div.contact-matrix-scale', [
+          h(
+            'div.contact-matrix-scale-min-val',
+            `0 ${String.fromCharCode(181)}m^2`
+          ),
+          h('div.contact-matrix-color-scale', generateColorScaleBar()),
+          h(
+            'div.contact-matrix-scale-max-val',
+            `${contactMatrix.stats.max_area} ${String.fromCharCode(181)}m^2`
+          ),
+        ]),
+      ]),
+      h('div.contact-matrix-legend', [
+        h('div.contact-matrix-legend-entry', [
+          h('div.contact-matrix-monotonic-increasing', {
+            style: {
+              width: 17,
+              height: 17,
+              border: '4px solid black',
+              marginRight: 5,
+            },
           }),
+          h('div', 'Monotonic increasing'),
+        ]),
+        h('div.contact-matrix-legend-entry', [
+          h('div.contact-matrix-no-contact', {
+            style: {
+              width: 25,
+              height: 25,
+              backgroundColor: '#E5E5E5',
+              marginRight: 5,
+            },
+          }),
+          h('div', 'No contact'),
+        ]),
+        h('div.contact-matrix-legend-entry', [
+          h('div.contact-matrix-no-contact', {
+            style: {
+              width: 25,
+              height: 25,
+              backgroundColor: '#514D4D',
+              marginRight: 5,
+            },
+          }),
+          h('div', 'Symmetric values ignored'),
         ]),
       ]),
       h(
@@ -427,7 +513,7 @@ export default class ContactMatrix extends React.Component {
               columnHeight: 40,
               enableFixedColumnScroll: true,
               enableFixedRowScroll: true,
-              height: 750,
+              height: 700,
               width,
               rowCount: neuronsOrdered.length,
               columnCount: neuronsOrdered.length,

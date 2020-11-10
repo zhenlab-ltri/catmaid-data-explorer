@@ -4,7 +4,61 @@
   align-items: center;
 }
 
+.contact-matrix-header {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  justify-content: space-between;
+}
+
 .contact-matrix-controls {
   display: flex;
   padding: 10px;
+  width: 500px;
+  justify-content: space-evenly;
+}
+
+.contact-matrix-scale {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 650px;
+  justify-content: space-evenly;
+}
+
+.contact-matrix-color-scale {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 400px;
+  height: 20px;
+  border: 1px solid black;
+}
+
+.contact-matrix-scalebar-item {
+  width: 20px;
+  height: 20px;
+}
+
+.contact-matrix-input {
+  margin-left: 10px;
+  width: 60px;
+}
+
+.contact-matrix-legend {
+  position: absolute;
+  right: 30px;
+  top: 120px;
+  z-index: 1;
+  background-color: white;
+  padding: 1em;
+  border: 1px solid black;
+}
+
+.contact-matrix-legend-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  /* justify-content: space-between; */
 }
