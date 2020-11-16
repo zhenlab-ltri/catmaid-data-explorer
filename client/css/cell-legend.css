@@ -1,0 +1,16 @@
+.cell-legend {
+  position: absolute;
+  right: 30px;
+  top: 120px;
+  z-index: 1;
+  background-color: white;
+  padding: 1em;
+  border: 1px solid black;
+}
+
+.cell-legend-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}

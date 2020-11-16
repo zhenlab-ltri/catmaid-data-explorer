@@ -9,6 +9,8 @@ import { Line } from 'react-chartjs-2';
 
 import contactMatrix from '../data/combined-contact-matrices.json';
 
+import { monotonicIncreasing, monotonicDecreasing } from '../util';
+
 const areaScale = chroma
   .scale(['white', 'red'])
   .domain([0.0, contactMatrix.stats.max_area])
@@ -249,23 +251,40 @@ neuronsOrdered.forEach((neuron, index) => {
   neuronsIndexMap[neuron] = index;
 });
 
-const monotonicIncreasing = (arr) =>
-  arr.every((ele, index, arr) => (index > 0 ? ele > arr[index - 1] : true));
-const monotonicDecreasing = (arr) =>
-  arr.every((ele, index, arr) => (index > 0 ? ele < arr[index - 1] : true));
-
-const generateColorScaleBar = () => {
-  const NUM_STEPS = 60;
-  const STEP_SIZE = contactMatrix.stats.max_area / NUM_STEPS;
-
-  const scaleBar = [...Array(NUM_STEPS).keys()].map((el, index) => {
-    return h('div.contact-matrix-scalebar-item', {
-      style: { backgroundColor: areaScale(index * STEP_SIZE) },
+// component that renders color scale bars using a sequence of divs
+// dependent on a chroma-js scale object that maps values to colors
+class ColorScale extends React.Component {
+  render() {
+    const { numSteps, minVal, maxVal, units, colorScaleFn } = this.props;
+    const stepSize = maxVal / numSteps;
+    const colorScaleDivs = [...Array(numSteps).keys()].map((el, index) => {
+      return h('div.color-scalebar-item', {
+        style: { backgroundColor: colorScaleFn(index * stepSize) },
+      });
     });
-  });
 
-  return scaleBar;
-};
+    return h('div.color-scale', [
+      h('div', `${minVal} ${units}`),
+      h('div.color-scalebar', colorScaleDivs),
+      h('div', `${maxVal} ${units}`),
+    ]);
+  }
+}
+
+class CellLegend extends React.Component {
+  render() {
+    const { legendEntries } = this.props;
+
+    const legendEntryDivs = legendEntries.map((entry) => {
+      return h('div.cell-legend-entry', [
+        h('div', { className: entry.className }),
+        h('div', entry.label),
+      ]);
+    });
+
+    return h('div.cell-legend', legendEntryDivs);
+  }
+}
 
 class ContactMatrixCell extends React.Component {
   render() {
@@ -458,53 +477,30 @@ export default class ContactMatrix extends React.Component {
             }),
           ]),
         ]),
-        h('div.contact-matrix-scale', [
-          h(
-            'div.contact-matrix-scale-min-val',
-            `0 ${String.fromCharCode(181)}m^2`
-          ),
-          h('div.contact-matrix-color-scale', generateColorScaleBar()),
-          h(
-            'div.contact-matrix-scale-max-val',
-            `${contactMatrix.stats.max_area} ${String.fromCharCode(181)}m^2`
-          ),
-        ]),
+        h(ColorScale, {
+          numSteps: 60,
+          minVal: 0.0,
+          maxVal: contactMatrix.stats.max_area,
+          units: `${String.fromCharCode(181)}m^2`,
+          colorScaleFn: areaScale,
+        }),
       ]),
-      h('div.contact-matrix-legend', [
-        h('div.contact-matrix-legend-entry', [
-          h('div.contact-matrix-monotonic-increasing', {
-            style: {
-              width: 17,
-              height: 17,
-              border: '4px solid black',
-              marginRight: 5,
-            },
-          }),
-          h('div', 'Monotonic increasing'),
-        ]),
-        h('div.contact-matrix-legend-entry', [
-          h('div.contact-matrix-no-contact', {
-            style: {
-              width: 25,
-              height: 25,
-              backgroundColor: '#E5E5E5',
-              marginRight: 5,
-            },
-          }),
-          h('div', 'No contact'),
-        ]),
-        h('div.contact-matrix-legend-entry', [
-          h('div.contact-matrix-no-contact', {
-            style: {
-              width: 25,
-              height: 25,
-              backgroundColor: '#514D4D',
-              marginRight: 5,
-            },
-          }),
-          h('div', 'Symmetric values ignored'),
-        ]),
-      ]),
+      h(CellLegend, {
+        legendEntries: [
+          {
+            className: 'contact-matrix-legend-monotonic',
+            label: 'Monotonic increasing',
+          },
+          {
+            className: 'contact-matrix-legend-no-contact',
+            label: 'No contact',
+          },
+          {
+            className: 'contact-matrix-legend-value-ignored',
+            label: 'Symmetric values ignored',
+          },
+        ],
+      }),
       h(
         Modal,
         {

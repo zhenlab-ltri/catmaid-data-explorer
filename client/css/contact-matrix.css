@@ -18,48 +18,30 @@
   justify-content: space-evenly;
 }
 
-.contact-matrix-scale {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 650px;
-  justify-content: space-evenly;
-}
-
-.contact-matrix-color-scale {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 400px;
-  height: 20px;
-  border: 1px solid black;
-}
-
-.contact-matrix-scalebar-item {
-  width: 20px;
-  height: 20px;
-}
-
 .contact-matrix-input {
   margin-left: 10px;
   width: 60px;
 }
 
-.contact-matrix-legend {
-  position: absolute;
-  right: 30px;
-  top: 120px;
-  z-index: 1;
-  background-color: white;
-  padding: 1em;
-  border: 1px solid black;
+.contact-matrix-legend-monotonic {
+  width: 17px;
+  height: 17px;
+  border: 4px solid black;
+  margin-right: 5px;
 }
 
-.contact-matrix-legend-entry {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 10px;
+.contact-matrix-legend-no-contact {
+  width: 25px;
+  height: 25px;
+  background-color: #e5e5e5;
+  margin-right: 5px;
+}
+
+.contact-matrix-legend-value-ignored {
+  width: 25px;
+  height: 25px;
+  background-color: #514d4d;
+  margin-right: 5px;
 }
 
 .contact-matrix-cell-detail-modal {
