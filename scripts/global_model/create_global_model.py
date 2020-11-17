@@ -8,7 +8,8 @@ model = {
                 'RMDR', 'RMDVL', 'RMDVR', 'RMED', 'RMEL', 'RMER', 'RMEV', 'RMFL', 'RMFR', 'RMHL', 'RMHR', 'SIADL', 'SIADR', 'SIAVL', 'SIAVR', 'SIBDL', 'SIBDR', 'SIBVL', 'SIBVR', 'SMBDL', 'SMBDR', 'SMBVL', 'SMBVR', 'SMDDL', 'SMDDR', 'SMDVL', 'SMDVR', 'URADL', 'URADR', 'URAVL', 'URAVR', 'ADEL', 'ADER', 'AIML', 'AIMR', 'ALA', 'AVFL', 'AVFR', 'AVHL', 'AVHR', 'AVJL', 'AVJR', 'AVKL', 'AVKR', 'AVL', 'CEPDL', 'CEPDR', 'CEPVL', 'CEPVR', 'HSNL', 'HSNR', 'PVQL', 'PVQR', 'RICL', 'RICR', 'RID', 'RIS', 'RMGL', 'RMGR', 'BWM-DL01', 'BWM-DR01', 'BWM-VL01', 'BWM-VR01', 'BWM-DL02', 'BWM-DR02', 'BWM-VL02', 'BWM-VR02', 'BWM-DL03', 'BWM-DR03', 'BWM-VL03', 'BWM-VR03', 'BWM-DL04', 'BWM-DR04', 'BWM-VL04', 'BWM-VR04', 'BWM-DL05', 'BWM-DR05', 'BWM-VL05', 'BWM-VR05', 'BWM-DL06', 'BWM-DR06', 'BWM-VL06', 'BWM-VR06', 'BWM-DL07', 'BWM-DR07', 'BWM-VL07', 'BWM-VR07', 'BWM-DL08', 'BWM-DR08', 'BWM-VL08', 'BWM-VR08', 'CANL', 'CANR', 'CEPshDL', 'CEPshDR', 'CEPshVL', 'CEPshVR', 'GLRDL', 'GLRDR', 'GLRL', 'GLRR', 'GLRVL', 'GLRVR', 'excgl'],
     'stats': {
         'max-contact-area': 0.0,
-        'max-connectivity': 0
+        'max-connectivity-cs': 0,
+        'max-connectivity-gj': 0
     },
     'neuron-pair-data': {
     }
@@ -21,7 +22,8 @@ def init_model():
             key = neuron_pair_key(pre, post)
             model['neuron-pair-data'][key] = {
                 'contact': [],
-                'connectivity': [],
+                'connectivity-cs': [],
+                'connectivity-gj': [],
                 'annotations': []
             }
 
@@ -42,7 +44,7 @@ def add_contact_area_to_model():
 
     max_area = 0.0
     for dataset in model['datasets-sorted']:
-        fname = './processing/global_model/' + dataset + '_adjacency.csv'
+        fname = './scripts/global_model/' + dataset + '_adjacency.csv'
 
         if os.path.isfile(fname):
             with open(fname) as f:
@@ -74,14 +76,10 @@ def add_contact_area_to_model():
     model['stats']['max-contact-area'] = max_area
 
 
-def neuron_pair_key(neuron0, neuron1):
-    return f'{neuron0}${neuron1}'
-
-
-def add_connectivity_to_model():
+def add_connectivity_cs_to_model():
     max_connectivity = 0.0
     for dataset in model['datasets-sorted']:
-        fname = './processing/global_model/' + dataset + '_connectivity.csv'
+        fname = './scripts/global_model/' + dataset + '_connectivity.csv'
 
         if os.path.isfile(fname):
             with open(fname) as f:
@@ -96,22 +94,60 @@ def add_connectivity_to_model():
                         if weight > max_connectivity:
                             max_connectivity = weight
 
-                        model['neuron-pair-data'][key]['connectivity'].append(
+                        model['neuron-pair-data'][key]['connectivity-cs'].append(
                             weight)
 
         else:
             for n0 in model['neurons']:
                 for n1 in model['neurons']:
                     key = neuron_pair_key(n0, n1)
-                    model['neuron-pair-data'][key]['connectivity'].append(None)
+                    model['neuron-pair-data'][key]['connectivity-cs'].append(
+                        None)
 
     for k, v in model['neuron-pair-data'].items():
         # filter None values from contact
-        s = sum(filter(None, v['connectivity']))
+        s = sum(filter(None, v['connectivity-cs']))
         if s == 0:
-            model['neuron-pair-data'][k]['connectivity'] = None
+            model['neuron-pair-data'][k]['connectivity-cs'] = None
 
-    model['stats']['max-connectivity'] = max_connectivity
+    model['stats']['max-connectivity-cs'] = max_connectivity
+
+
+def add_connectivity_gj_to_model():
+    max_connectivity = 0.0
+    for dataset in model['datasets-sorted']:
+        fname = './scripts/global_model/' + dataset + '_connectivity_gj.csv'
+
+        if os.path.isfile(fname):
+            with open(fname) as f:
+                csvdata = list(csv.reader(f))
+                for line in csvdata[1:]:
+                    n0 = line[0]
+                    for i in range(1, len(line)):
+                        n1 = model['neurons'][i-1]
+                        key = neuron_pair_key(n0, n1)
+                        weight = int(line[i])
+
+                        if weight > max_connectivity:
+                            max_connectivity = weight
+
+                        model['neuron-pair-data'][key]['connectivity-gj'].append(
+                            weight)
+
+        else:
+            for n0 in model['neurons']:
+                for n1 in model['neurons']:
+                    key = neuron_pair_key(n0, n1)
+                    model['neuron-pair-data'][key]['connectivity-gj'].append(
+                        None)
+
+    for k, v in model['neuron-pair-data'].items():
+        # filter None values from contact
+        s = sum(filter(None, v['connectivity-gj']))
+        if s == 0:
+            model['neuron-pair-data'][k]['connectivity-gj'] = None
+
+    model['stats']['max-connectivity-gj'] = max_connectivity
 
 
 def add_annotations_to_model():
@@ -122,7 +158,7 @@ def add_annotations_to_model():
         'postembryonic': 'post-embryonic',
         'variable': 'variable'
     }
-    with open('./processing/global_model/edge_classifications.json') as f:
+    with open('./scripts/global_model/edge_classifications.json') as f:
         data = json.load(f)
         for k, v in data.items():
             for pair in v:
@@ -135,14 +171,15 @@ def add_annotations_to_model():
         for post in model['neurons']:
             key = neuron_pair_key(pre, post)
             annotations = model['neuron-pair-data'][key]['annotations']
-            if len(annotations) > 0:
+            if len(annotations) > 1:
                 print(annotations)
 
 
 init_model()
 add_contact_area_to_model()
-add_connectivity_to_model()
+add_connectivity_cs_to_model()
+add_connectivity_gj_to_model()
 add_annotations_to_model()
-with open('./processing/model-1.json', 'w') as f:
+with open('./scripts/model-1.json', 'w') as f:
     # json.dump(model, f, indent=2)
     json.dump(model, f)
