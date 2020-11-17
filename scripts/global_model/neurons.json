@@ -1,0 +1,5199 @@
+{
+  "cells": {
+    "ADAL": {
+      "id": "ADAL",
+      "class": "ADA",
+      "name": "ADAL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ADAR": {
+      "id": "ADAR",
+      "class": "ADA",
+      "name": "ADAR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIAL": {
+      "id": "AIAL",
+      "class": "AIA",
+      "name": "AIAL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIAR": {
+      "id": "AIAR",
+      "class": "AIA",
+      "name": "AIAR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIBL": {
+      "id": "AIBL",
+      "class": "AIB",
+      "name": "AIBL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIBR": {
+      "id": "AIBR",
+      "class": "AIB",
+      "name": "AIBR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIML": {
+      "id": "AIML",
+      "class": "AIM",
+      "name": "AIML",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIMR": {
+      "id": "AIMR",
+      "class": "AIM",
+      "name": "AIMR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AINL": {
+      "id": "AINL",
+      "class": "AIN",
+      "name": "AINL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AINR": {
+      "id": "AINR",
+      "class": "AIN",
+      "name": "AINR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIYL": {
+      "id": "AIYL",
+      "class": "AIY",
+      "name": "AIYL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIYR": {
+      "id": "AIYR",
+      "class": "AIY",
+      "name": "AIYR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIZL": {
+      "id": "AIZL",
+      "class": "AIZ",
+      "name": "AIZL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AIZR": {
+      "id": "AIZR",
+      "class": "AIZ",
+      "name": "AIZR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ALA": {
+      "id": "ALA",
+      "class": "ALA",
+      "name": "ALA",
+      "types": ["sensory", "interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AUAL": {
+      "id": "AUAL",
+      "class": "AUA",
+      "name": "AUAL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AUAR": {
+      "id": "AUAR",
+      "class": "AUA",
+      "name": "AUAR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVFL": {
+      "id": "AVFL",
+      "class": "AVF",
+      "name": "AVFL",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVFR": {
+      "id": "AVFR",
+      "class": "AVF",
+      "name": "AVFR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVG": {
+      "id": "AVG",
+      "class": "AVG",
+      "name": "AVG",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "AVHL": {
+      "id": "AVHL",
+      "class": "AVH",
+      "name": "AVHL",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVHR": {
+      "id": "AVHR",
+      "class": "AVH",
+      "name": "AVHR",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVJL": {
+      "id": "AVJL",
+      "class": "AVJ",
+      "name": "AVJL",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVJR": {
+      "id": "AVJR",
+      "class": "AVJ",
+      "name": "AVJR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVKL": {
+      "id": "AVKL",
+      "class": "AVK",
+      "name": "AVKL",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVKR": {
+      "id": "AVKR",
+      "class": "AVK",
+      "name": "AVKR",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BDUL": {
+      "id": "BDUL",
+      "class": "BDU",
+      "name": "BDUL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BDUR": {
+      "id": "BDUR",
+      "class": "BDU",
+      "name": "BDUR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "DVA": {
+      "id": "DVA",
+      "class": "DVA",
+      "name": "DVA",
+      "types": ["sensory", "interneuron", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "DVC": {
+      "id": "DVC",
+      "class": "DVC",
+      "name": "DVC",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "LUAL": {
+      "id": "LUAL",
+      "class": "LUA",
+      "name": "LUAL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "LUAR": {
+      "id": "LUAR",
+      "class": "LUA",
+      "name": "LUAR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PVPL": {
+      "id": "PVPL",
+      "class": "PVP",
+      "name": "PVPL",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVPR": {
+      "id": "PVPR",
+      "class": "PVP",
+      "name": "PVPR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVQL": {
+      "id": "PVQL",
+      "class": "PVQ",
+      "name": "PVQL",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVQR": {
+      "id": "PVQR",
+      "class": "PVQ",
+      "name": "PVQR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVR": {
+      "id": "PVR",
+      "class": "PVR",
+      "name": "PVR",
+      "types": ["sensory", "interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVT": {
+      "id": "PVT",
+      "class": "PVT",
+      "name": "PVT",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVWL": {
+      "id": "PVWL",
+      "class": "PVW",
+      "name": "PVWL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PVWR": {
+      "id": "PVWR",
+      "class": "PVW",
+      "name": "PVWR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "RIAL": {
+      "id": "RIAL",
+      "class": "RIA",
+      "name": "RIAL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIAR": {
+      "id": "RIAR",
+      "class": "RIA",
+      "name": "RIAR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIBL": {
+      "id": "RIBL",
+      "class": "RIB",
+      "name": "RIBL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine", "GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIBR": {
+      "id": "RIBR",
+      "class": "RIB",
+      "name": "RIBR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine", "GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RICL": {
+      "id": "RICL",
+      "class": "RIC",
+      "name": "RICL",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["octopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RICR": {
+      "id": "RICR",
+      "class": "RIC",
+      "name": "RICR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["octopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIFL": {
+      "id": "RIFL",
+      "class": "RIF",
+      "name": "RIFL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIFR": {
+      "id": "RIFR",
+      "class": "RIF",
+      "name": "RIFR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIGL": {
+      "id": "RIGL",
+      "class": "RIG",
+      "name": "RIGL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIGR": {
+      "id": "RIGR",
+      "class": "RIG",
+      "name": "RIGR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIH": {
+      "id": "RIH",
+      "class": "RIH",
+      "name": "RIH",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIR": {
+      "id": "RIR",
+      "class": "RIR",
+      "name": "RIR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIS": {
+      "id": "RIS",
+      "class": "RIS",
+      "name": "RIS",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SAADL": {
+      "id": "SAADL",
+      "class": "SAA",
+      "name": "SAADL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SAADR": {
+      "id": "SAADR",
+      "class": "SAA",
+      "name": "SAADR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SAAVL": {
+      "id": "SAAVL",
+      "class": "SAA",
+      "name": "SAAVL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SAAVR": {
+      "id": "SAAVR",
+      "class": "SAA",
+      "name": "SAAVR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVAL": {
+      "id": "AVAL",
+      "class": "AVA",
+      "name": "AVAL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVAR": {
+      "id": "AVAR",
+      "class": "AVA",
+      "name": "AVAR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVDL": {
+      "id": "AVDL",
+      "class": "AVD",
+      "name": "AVDL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVDR": {
+      "id": "AVDR",
+      "class": "AVD",
+      "name": "AVDR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "AVEL": {
+      "id": "AVEL",
+      "class": "AVE",
+      "name": "AVEL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVER": {
+      "id": "AVER",
+      "class": "AVE",
+      "name": "AVER",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVBL": {
+      "id": "AVBL",
+      "class": "AVB",
+      "name": "AVBL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVBR": {
+      "id": "AVBR",
+      "class": "AVB",
+      "name": "AVBR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "PVCL": {
+      "id": "PVCL",
+      "class": "PVC",
+      "name": "PVCL",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVCR": {
+      "id": "PVCR",
+      "class": "PVC",
+      "name": "PVCR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "ADEL": {
+      "id": "ADEL",
+      "class": "ADE",
+      "name": "ADEL",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ADER": {
+      "id": "ADER",
+      "class": "ADE",
+      "name": "ADER",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ADFL": {
+      "id": "ADFL",
+      "class": "ADF",
+      "name": "ADFL",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ADFR": {
+      "id": "ADFR",
+      "class": "ADF",
+      "name": "ADFR",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ADLL": {
+      "id": "ADLL",
+      "class": "ADL",
+      "name": "ADLL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ADLR": {
+      "id": "ADLR",
+      "class": "ADL",
+      "name": "ADLR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AFDL": {
+      "id": "AFDL",
+      "class": "AFD",
+      "name": "AFDL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AFDR": {
+      "id": "AFDR",
+      "class": "AFD",
+      "name": "AFDR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ALML": {
+      "id": "ALML",
+      "class": "ALM",
+      "name": "ALML",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ALMR": {
+      "id": "ALMR",
+      "class": "ALM",
+      "name": "ALMR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ALNL": {
+      "id": "ALNL",
+      "class": "ALN",
+      "name": "ALNL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ALNR": {
+      "id": "ALNR",
+      "class": "ALN",
+      "name": "ALNR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AQR": {
+      "id": "AQR",
+      "class": "AQR",
+      "name": "AQR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASEL": {
+      "id": "ASEL",
+      "class": "ASE",
+      "name": "ASEL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASER": {
+      "id": "ASER",
+      "class": "ASE",
+      "name": "ASER",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASGL": {
+      "id": "ASGL",
+      "class": "ASG",
+      "name": "ASGL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASGR": {
+      "id": "ASGR",
+      "class": "ASG",
+      "name": "ASGR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASHL": {
+      "id": "ASHL",
+      "class": "ASH",
+      "name": "ASHL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASHR": {
+      "id": "ASHR",
+      "class": "ASH",
+      "name": "ASHR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASIL": {
+      "id": "ASIL",
+      "class": "ASI",
+      "name": "ASIL",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASIR": {
+      "id": "ASIR",
+      "class": "ASI",
+      "name": "ASIR",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASJL": {
+      "id": "ASJL",
+      "class": "ASJ",
+      "name": "ASJL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASJR": {
+      "id": "ASJR",
+      "class": "ASJ",
+      "name": "ASJR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASKL": {
+      "id": "ASKL",
+      "class": "ASK",
+      "name": "ASKL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "ASKR": {
+      "id": "ASKR",
+      "class": "ASK",
+      "name": "ASKR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AVM": {
+      "id": "AVM",
+      "class": "AVM",
+      "name": "AVM",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AWAL": {
+      "id": "AWAL",
+      "class": "AWA",
+      "name": "AWAL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AWAR": {
+      "id": "AWAR",
+      "class": "AWA",
+      "name": "AWAR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AWBL": {
+      "id": "AWBL",
+      "class": "AWB",
+      "name": "AWBL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AWBR": {
+      "id": "AWBR",
+      "class": "AWB",
+      "name": "AWBR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AWCL": {
+      "id": "AWCL",
+      "class": "AWC",
+      "name": "AWCL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "AWCR": {
+      "id": "AWCR",
+      "class": "AWC",
+      "name": "AWCR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BAGL": {
+      "id": "BAGL",
+      "class": "BAG",
+      "name": "BAGL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BAGR": {
+      "id": "BAGR",
+      "class": "BAG",
+      "name": "BAGR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPDL": {
+      "id": "CEPDL",
+      "class": "CEP",
+      "name": "CEPDL",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPDR": {
+      "id": "CEPDR",
+      "class": "CEP",
+      "name": "CEPDR",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPVL": {
+      "id": "CEPVL",
+      "class": "CEP",
+      "name": "CEPVL",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPVR": {
+      "id": "CEPVR",
+      "class": "CEP",
+      "name": "CEPVR",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "FLPL": {
+      "id": "FLPL",
+      "class": "FLP",
+      "name": "FLPL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "FLPR": {
+      "id": "FLPR",
+      "class": "FLP",
+      "name": "FLPR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL2DL": {
+      "id": "IL2DL",
+      "class": "IL2",
+      "name": "IL2DL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL2DR": {
+      "id": "IL2DR",
+      "class": "IL2",
+      "name": "IL2DR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL2L": {
+      "id": "IL2L",
+      "class": "IL2",
+      "name": "IL2L",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL2R": {
+      "id": "IL2R",
+      "class": "IL2",
+      "name": "IL2R",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL2VL": {
+      "id": "IL2VL",
+      "class": "IL2",
+      "name": "IL2VL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL2VR": {
+      "id": "IL2VR",
+      "class": "IL2",
+      "name": "IL2VR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "OLLL": {
+      "id": "OLLL",
+      "class": "OLL",
+      "name": "OLLL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "OLLR": {
+      "id": "OLLR",
+      "class": "OLL",
+      "name": "OLLR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "OLQDL": {
+      "id": "OLQDL",
+      "class": "OLQ",
+      "name": "OLQDL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "OLQDR": {
+      "id": "OLQDR",
+      "class": "OLQ",
+      "name": "OLQDR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "OLQVL": {
+      "id": "OLQVL",
+      "class": "OLQ",
+      "name": "OLQVL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "OLQVR": {
+      "id": "OLQVR",
+      "class": "OLQ",
+      "name": "OLQVR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "PDEL": {
+      "id": "PDEL",
+      "class": "PDE",
+      "name": "PDEL",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "PDER": {
+      "id": "PDER",
+      "class": "PDE",
+      "name": "PDER",
+      "types": ["sensory", "modulatory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "PHAL": {
+      "id": "PHAL",
+      "class": "PHA",
+      "name": "PHAL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PHAR": {
+      "id": "PHAR",
+      "class": "PHA",
+      "name": "PHAR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PHBL": {
+      "id": "PHBL",
+      "class": "PHB",
+      "name": "PHBL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PHBR": {
+      "id": "PHBR",
+      "class": "PHB",
+      "name": "PHBR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PHCL": {
+      "id": "PHCL",
+      "class": "PHC",
+      "name": "PHCL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PHCR": {
+      "id": "PHCR",
+      "class": "PHC",
+      "name": "PHCR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PLML": {
+      "id": "PLML",
+      "class": "PLM",
+      "name": "PLML",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PLMR": {
+      "id": "PLMR",
+      "class": "PLM",
+      "name": "PLMR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PLNL": {
+      "id": "PLNL",
+      "class": "PLN",
+      "name": "PLNL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "PLNR": {
+      "id": "PLNR",
+      "class": "PLN",
+      "name": "PLNR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "PQR": {
+      "id": "PQR",
+      "class": "PQR",
+      "name": "PQR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PVDL": {
+      "id": "PVDL",
+      "class": "PVD",
+      "name": "PVDL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "PVDR": {
+      "id": "PVDR",
+      "class": "PVD",
+      "name": "PVDR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "PVM": {
+      "id": "PVM",
+      "class": "PVM",
+      "name": "PVM",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "SDQL": {
+      "id": "SDQL",
+      "class": "SDQ",
+      "name": "SDQL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SDQR": {
+      "id": "SDQR",
+      "class": "SDQ",
+      "name": "SDQR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URBL": {
+      "id": "URBL",
+      "class": "URB",
+      "name": "URBL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URBR": {
+      "id": "URBR",
+      "class": "URB",
+      "name": "URBR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URXL": {
+      "id": "URXL",
+      "class": "URX",
+      "name": "URXL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URXR": {
+      "id": "URXR",
+      "class": "URX",
+      "name": "URXR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URYDL": {
+      "id": "URYDL",
+      "class": "URY",
+      "name": "URYDL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URYDR": {
+      "id": "URYDR",
+      "class": "URY",
+      "name": "URYDR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URYVL": {
+      "id": "URYVL",
+      "class": "URY",
+      "name": "URYVL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URYVR": {
+      "id": "URYVR",
+      "class": "URY",
+      "name": "URYVR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL1DL": {
+      "id": "IL1DL",
+      "class": "IL1",
+      "name": "IL1DL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL1DR": {
+      "id": "IL1DR",
+      "class": "IL1",
+      "name": "IL1DR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL1L": {
+      "id": "IL1L",
+      "class": "IL1",
+      "name": "IL1L",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL1R": {
+      "id": "IL1R",
+      "class": "IL1",
+      "name": "IL1R",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL1VL": {
+      "id": "IL1VL",
+      "class": "IL1",
+      "name": "IL1VL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "IL1VR": {
+      "id": "IL1VR",
+      "class": "IL1",
+      "name": "IL1VR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIML": {
+      "id": "RIML",
+      "class": "RIM",
+      "name": "RIML",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["glutamate", "tyramine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIMR": {
+      "id": "RIMR",
+      "class": "RIM",
+      "name": "RIMR",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["glutamate", "tyramine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIVL": {
+      "id": "RIVL",
+      "class": "RIV",
+      "name": "RIVL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIVR": {
+      "id": "RIVR",
+      "class": "RIV",
+      "name": "RIVR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMDDL": {
+      "id": "RMDDL",
+      "class": "RMD",
+      "name": "RMDDL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMDDR": {
+      "id": "RMDDR",
+      "class": "RMD",
+      "name": "RMDDR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMDL": {
+      "id": "RMDL",
+      "class": "RMD",
+      "name": "RMDL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMDR": {
+      "id": "RMDR",
+      "class": "RMD",
+      "name": "RMDR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMDVL": {
+      "id": "RMDVL",
+      "class": "RMD",
+      "name": "RMDVL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMDVR": {
+      "id": "RMDVR",
+      "class": "RMD",
+      "name": "RMDVR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMED": {
+      "id": "RMED",
+      "class": "RME",
+      "name": "RMED",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMEL": {
+      "id": "RMEL",
+      "class": "RME",
+      "name": "RMEL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMER": {
+      "id": "RMER",
+      "class": "RME",
+      "name": "RMER",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMEV": {
+      "id": "RMEV",
+      "class": "RME",
+      "name": "RMEV",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMFL": {
+      "id": "RMFL",
+      "class": "RMF",
+      "name": "RMFL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMFR": {
+      "id": "RMFR",
+      "class": "RMF",
+      "name": "RMFR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMGL": {
+      "id": "RMGL",
+      "class": "RMG",
+      "name": "RMGL",
+      "types": ["motor", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMGR": {
+      "id": "RMGR",
+      "class": "RMG",
+      "name": "RMGR",
+      "types": ["motor", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMHL": {
+      "id": "RMHL",
+      "class": "RMH",
+      "name": "RMHL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RMHR": {
+      "id": "RMHR",
+      "class": "RMH",
+      "name": "RMHR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMBDL": {
+      "id": "SMBDL",
+      "class": "SMB",
+      "name": "SMBDL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMBDR": {
+      "id": "SMBDR",
+      "class": "SMB",
+      "name": "SMBDR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMBVL": {
+      "id": "SMBVL",
+      "class": "SMB",
+      "name": "SMBVL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMBVR": {
+      "id": "SMBVR",
+      "class": "SMB",
+      "name": "SMBVR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMDDL": {
+      "id": "SMDDL",
+      "class": "SMD",
+      "name": "SMDDL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMDDR": {
+      "id": "SMDDR",
+      "class": "SMD",
+      "name": "SMDDR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMDVL": {
+      "id": "SMDVL",
+      "class": "SMD",
+      "name": "SMDVL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SMDVR": {
+      "id": "SMDVR",
+      "class": "SMD",
+      "name": "SMDVR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URADL": {
+      "id": "URADL",
+      "class": "URA",
+      "name": "URADL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URADR": {
+      "id": "URADR",
+      "class": "URA",
+      "name": "URADR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URAVL": {
+      "id": "URAVL",
+      "class": "URA",
+      "name": "URAVL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "URAVR": {
+      "id": "URAVR",
+      "class": "URA",
+      "name": "URAVR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SABD": {
+      "id": "SABD",
+      "class": "SAB",
+      "name": "SABD",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "SABVL": {
+      "id": "SABVL",
+      "class": "SAB",
+      "name": "SABVL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "SABVR": {
+      "id": "SABVR",
+      "class": "SAB",
+      "name": "SABVR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA1": {
+      "id": "DA1",
+      "class": "DAn",
+      "name": "DA1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA2": {
+      "id": "DA2",
+      "class": "DAn",
+      "name": "DA2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA3": {
+      "id": "DA3",
+      "class": "DAn",
+      "name": "DA3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA4": {
+      "id": "DA4",
+      "class": "DAn",
+      "name": "DA4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA5": {
+      "id": "DA5",
+      "class": "DAn",
+      "name": "DA5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA6": {
+      "id": "DA6",
+      "class": "DAn",
+      "name": "DA6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA7": {
+      "id": "DA7",
+      "class": "DAn",
+      "name": "DA7",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DA8": {
+      "id": "DA8",
+      "class": "DAn",
+      "name": "DA8",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "DA9": {
+      "id": "DA9",
+      "class": "DAn",
+      "name": "DA9",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "DB1": {
+      "id": "DB1",
+      "class": "DBn",
+      "name": "DB1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DB2": {
+      "id": "DB2",
+      "class": "DBn",
+      "name": "DB2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DB3": {
+      "id": "DB3",
+      "class": "DBn",
+      "name": "DB3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DB4": {
+      "id": "DB4",
+      "class": "DBn",
+      "name": "DB4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DB5": {
+      "id": "DB5",
+      "class": "DBn",
+      "name": "DB5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DB6": {
+      "id": "DB6",
+      "class": "DBn",
+      "name": "DB6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DB7": {
+      "id": "DB7",
+      "class": "DBn",
+      "name": "DB7",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DD1": {
+      "id": "DD1",
+      "class": "DDn",
+      "name": "DD1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DD2": {
+      "id": "DD2",
+      "class": "DDn",
+      "name": "DD2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DD3": {
+      "id": "DD3",
+      "class": "DDn",
+      "name": "DD3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DD4": {
+      "id": "DD4",
+      "class": "DDn",
+      "name": "DD4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DD5": {
+      "id": "DD5",
+      "class": "DDn",
+      "name": "DD5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "DD6": {
+      "id": "DD6",
+      "class": "DDn",
+      "name": "DD6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "SIBDL": {
+      "id": "SIBDL",
+      "class": "SIB",
+      "name": "SIBDL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIBDR": {
+      "id": "SIBDR",
+      "class": "SIB",
+      "name": "SIBDR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIBVL": {
+      "id": "SIBVL",
+      "class": "SIB",
+      "name": "SIBVL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIBVR": {
+      "id": "SIBVR",
+      "class": "SIB",
+      "name": "SIBVR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "VA1": {
+      "id": "VA1",
+      "class": "VAn",
+      "name": "VA1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA2": {
+      "id": "VA2",
+      "class": "VAn",
+      "name": "VA2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA3": {
+      "id": "VA3",
+      "class": "VAn",
+      "name": "VA3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA4": {
+      "id": "VA4",
+      "class": "VAn",
+      "name": "VA4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA5": {
+      "id": "VA5",
+      "class": "VAn",
+      "name": "VA5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA6": {
+      "id": "VA6",
+      "class": "VAn",
+      "name": "VA6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA7": {
+      "id": "VA7",
+      "class": "VAn",
+      "name": "VA7",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA8": {
+      "id": "VA8",
+      "class": "VAn",
+      "name": "VA8",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA9": {
+      "id": "VA9",
+      "class": "VAn",
+      "name": "VA9",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA10": {
+      "id": "VA10",
+      "class": "VAn",
+      "name": "VA10",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VA11": {
+      "id": "VA11",
+      "class": "VAn",
+      "name": "VA11",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "VA12": {
+      "id": "VA12",
+      "class": "VAn",
+      "name": "VA12",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "VB1": {
+      "id": "VB1",
+      "class": "VBn",
+      "name": "VB1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB2": {
+      "id": "VB2",
+      "class": "VBn",
+      "name": "VB2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB3": {
+      "id": "VB3",
+      "class": "VBn",
+      "name": "VB3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB4": {
+      "id": "VB4",
+      "class": "VBn",
+      "name": "VB4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB5": {
+      "id": "VB5",
+      "class": "VBn",
+      "name": "VB5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB6": {
+      "id": "VB6",
+      "class": "VBn",
+      "name": "VB6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB7": {
+      "id": "VB7",
+      "class": "VBn",
+      "name": "VB7",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB8": {
+      "id": "VB8",
+      "class": "VBn",
+      "name": "VB8",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB9": {
+      "id": "VB9",
+      "class": "VBn",
+      "name": "VB9",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB10": {
+      "id": "VB10",
+      "class": "VBn",
+      "name": "VB10",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VB11": {
+      "id": "VB11",
+      "class": "VBn",
+      "name": "VB11",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD1": {
+      "id": "VD1",
+      "class": "VDn",
+      "name": "VD1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD2": {
+      "id": "VD2",
+      "class": "VDn",
+      "name": "VD2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD3": {
+      "id": "VD3",
+      "class": "VDn",
+      "name": "VD3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD4": {
+      "id": "VD4",
+      "class": "VDn",
+      "name": "VD4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD5": {
+      "id": "VD5",
+      "class": "VDn",
+      "name": "VD5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD6": {
+      "id": "VD6",
+      "class": "VDn",
+      "name": "VD6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD7": {
+      "id": "VD7",
+      "class": "VDn",
+      "name": "VD7",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD8": {
+      "id": "VD8",
+      "class": "VDn",
+      "name": "VD8",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD9": {
+      "id": "VD9",
+      "class": "VDn",
+      "name": "VD9",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD10": {
+      "id": "VD10",
+      "class": "VDn",
+      "name": "VD10",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD11": {
+      "id": "VD11",
+      "class": "VDn",
+      "name": "VD11",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VD12": {
+      "id": "VD12",
+      "class": "VDn",
+      "name": "VD12",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "VD13": {
+      "id": "VD13",
+      "class": "VDn",
+      "name": "VD13",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "AS1": {
+      "id": "AS1",
+      "class": "ASn",
+      "name": "AS1",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS2": {
+      "id": "AS2",
+      "class": "ASn",
+      "name": "AS2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS3": {
+      "id": "AS3",
+      "class": "ASn",
+      "name": "AS3",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS4": {
+      "id": "AS4",
+      "class": "ASn",
+      "name": "AS4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS5": {
+      "id": "AS5",
+      "class": "ASn",
+      "name": "AS5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS6": {
+      "id": "AS6",
+      "class": "ASn",
+      "name": "AS6",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS7": {
+      "id": "AS7",
+      "class": "ASn",
+      "name": "AS7",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS8": {
+      "id": "AS8",
+      "class": "ASn",
+      "name": "AS8",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS9": {
+      "id": "AS9",
+      "class": "ASn",
+      "name": "AS9",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS10": {
+      "id": "AS10",
+      "class": "ASn",
+      "name": "AS10",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "AS11": {
+      "id": "AS11",
+      "class": "ASn",
+      "name": "AS11",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PDA": {
+      "id": "PDA",
+      "class": "PDA",
+      "name": "PDA",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "PDB": {
+      "id": "PDB",
+      "class": "PDB",
+      "name": "PDB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "AVL": {
+      "id": "AVL",
+      "class": "AVL",
+      "name": "AVL",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "DVB": {
+      "id": "DVB",
+      "class": "DVB",
+      "name": "DVB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "inTail": 1,
+      "inHead": 0
+    },
+    "HSNL": {
+      "id": "HSNL",
+      "class": "HSN",
+      "name": "HSNL",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "HSNR": {
+      "id": "HSNR",
+      "class": "HSN",
+      "name": "HSNR",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "PVNL": {
+      "id": "PVNL",
+      "class": "PVN",
+      "name": "PVNL",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "PVNR": {
+      "id": "PVNR",
+      "class": "PVN",
+      "name": "PVNR",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "RID": {
+      "id": "RID",
+      "class": "RID",
+      "name": "RID",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIADL": {
+      "id": "SIADL",
+      "class": "SIA",
+      "name": "SIADL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIADR": {
+      "id": "SIADR",
+      "class": "SIA",
+      "name": "SIADR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIAVL": {
+      "id": "SIAVL",
+      "class": "SIA",
+      "name": "SIAVL",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "SIAVR": {
+      "id": "SIAVR",
+      "class": "SIA",
+      "name": "SIAVR",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "VC1": {
+      "id": "VC1",
+      "class": "VCn",
+      "name": "VC1",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VC2": {
+      "id": "VC2",
+      "class": "VCn",
+      "name": "VC2",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VC3": {
+      "id": "VC3",
+      "class": "VCn",
+      "name": "VC3",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VC4": {
+      "id": "VC4",
+      "class": "VCn",
+      "name": "VC4",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VC5": {
+      "id": "VC5",
+      "class": "VCn",
+      "name": "VC5",
+      "types": ["interneuron", "motor", "modulatory"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "VC6": {
+      "id": "VC6",
+      "class": "VCn",
+      "name": "VC6",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "RIPL": {
+      "id": "RIPL",
+      "class": "RIP",
+      "name": "RIPL",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "RIPR": {
+      "id": "RIPR",
+      "class": "RIP",
+      "name": "RIPR",
+      "types": ["interneuron", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "I1L": {
+      "id": "I1L",
+      "class": "I1",
+      "name": "I1L",
+      "types": ["sensory", "interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I1R": {
+      "id": "I1R",
+      "class": "I1",
+      "name": "I1R",
+      "types": ["sensory", "interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I2L": {
+      "id": "I2L",
+      "class": "I2",
+      "name": "I2L",
+      "types": ["sensory", "interneuron", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I2R": {
+      "id": "I2R",
+      "class": "I2",
+      "name": "I2R",
+      "types": ["sensory", "interneuron", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I3": {
+      "id": "I3",
+      "class": "I3",
+      "name": "I3",
+      "types": ["sensory", "interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I4": {
+      "id": "I4",
+      "class": "I4",
+      "name": "I4",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I5": {
+      "id": "I5",
+      "class": "I5",
+      "name": "I5",
+      "types": ["sensory", "interneuron", "motor"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "I6": {
+      "id": "I6",
+      "class": "I6",
+      "name": "I6",
+      "types": ["sensory", "interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M1": {
+      "id": "M1",
+      "class": "M1",
+      "name": "M1",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M2L": {
+      "id": "M2L",
+      "class": "M2",
+      "name": "M2L",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M2R": {
+      "id": "M2R",
+      "class": "M2",
+      "name": "M2R",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M3L": {
+      "id": "M3L",
+      "class": "M3",
+      "name": "M3L",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M3R": {
+      "id": "M3R",
+      "class": "M3",
+      "name": "M3R",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M4": {
+      "id": "M4",
+      "class": "M4",
+      "name": "M4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "M5": {
+      "id": "M5",
+      "class": "M5",
+      "name": "M5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "MCL": {
+      "id": "MCL",
+      "class": "MC",
+      "name": "MCL",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "MCR": {
+      "id": "MCR",
+      "class": "MC",
+      "name": "MCR",
+      "types": ["sensory", "motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "MI": {
+      "id": "MI",
+      "class": "MI",
+      "name": "MI",
+      "types": ["interneuron", "motor"],
+      "neurotransmitterTypes": ["glutamate"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "NSML": {
+      "id": "NSML",
+      "class": "NSM",
+      "name": "NSML",
+      "types": ["sensory", "motor", "modulatory"],
+      "neurotransmitterTypes": ["serotonin"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "NSMR": {
+      "id": "NSMR",
+      "class": "NSM",
+      "name": "NSMR",
+      "types": ["sensory", "motor", "modulatory"],
+      "neurotransmitterTypes": ["serotonin"],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL01": {
+      "id": "BWM-DL01",
+      "class": "BWM01",
+      "name": "BWM-DL01",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL02": {
+      "id": "BWM-DL02",
+      "class": "BWM02",
+      "name": "BWM-DL02",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL03": {
+      "id": "BWM-DL03",
+      "class": "BWM03",
+      "name": "BWM-DL03",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL04": {
+      "id": "BWM-DL04",
+      "class": "BWM04",
+      "name": "BWM-DL04",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL05": {
+      "id": "BWM-DL05",
+      "class": "BWM05",
+      "name": "BWM-DL05",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL06": {
+      "id": "BWM-DL06",
+      "class": "BWM06",
+      "name": "BWM-DL06",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL07": {
+      "id": "BWM-DL07",
+      "class": "BWM07",
+      "name": "BWM-DL07",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL08": {
+      "id": "BWM-DL08",
+      "class": "BWM08",
+      "name": "BWM-DL08",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DL09": {
+      "id": "BWM-DL09",
+      "class": "BWM09-24",
+      "name": "BWM-DL09",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL10": {
+      "id": "BWM-DL10",
+      "class": "BWM09-24",
+      "name": "BWM-DL10",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL11": {
+      "id": "BWM-DL11",
+      "class": "BWM09-24",
+      "name": "BWM-DL11",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL12": {
+      "id": "BWM-DL12",
+      "class": "BWM09-24",
+      "name": "BWM-DL12",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL13": {
+      "id": "BWM-DL13",
+      "class": "BWM09-24",
+      "name": "BWM-DL13",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL14": {
+      "id": "BWM-DL14",
+      "class": "BWM09-24",
+      "name": "BWM-DL14",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL15": {
+      "id": "BWM-DL15",
+      "class": "BWM09-24",
+      "name": "BWM-DL15",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL16": {
+      "id": "BWM-DL16",
+      "class": "BWM09-24",
+      "name": "BWM-DL16",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL17": {
+      "id": "BWM-DL17",
+      "class": "BWM09-24",
+      "name": "BWM-DL17",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL18": {
+      "id": "BWM-DL18",
+      "class": "BWM09-24",
+      "name": "BWM-DL18",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL19": {
+      "id": "BWM-DL19",
+      "class": "BWM09-24",
+      "name": "BWM-DL19",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL20": {
+      "id": "BWM-DL20",
+      "class": "BWM09-24",
+      "name": "BWM-DL20",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL21": {
+      "id": "BWM-DL21",
+      "class": "BWM09-24",
+      "name": "BWM-DL21",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL22": {
+      "id": "BWM-DL22",
+      "class": "BWM09-24",
+      "name": "BWM-DL22",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL23": {
+      "id": "BWM-DL23",
+      "class": "BWM09-24",
+      "name": "BWM-DL23",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DL24": {
+      "id": "BWM-DL24",
+      "class": "BWM09-24",
+      "name": "BWM-DL24",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR01": {
+      "id": "BWM-DR01",
+      "class": "BWM01",
+      "name": "BWM-DR01",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR02": {
+      "id": "BWM-DR02",
+      "class": "BWM02",
+      "name": "BWM-DR02",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR03": {
+      "id": "BWM-DR03",
+      "class": "BWM03",
+      "name": "BWM-DR03",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR04": {
+      "id": "BWM-DR04",
+      "class": "BWM04",
+      "name": "BWM-DR04",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR05": {
+      "id": "BWM-DR05",
+      "class": "BWM05",
+      "name": "BWM-DR05",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR06": {
+      "id": "BWM-DR06",
+      "class": "BWM06",
+      "name": "BWM-DR06",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR07": {
+      "id": "BWM-DR07",
+      "class": "BWM07",
+      "name": "BWM-DR07",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR08": {
+      "id": "BWM-DR08",
+      "class": "BWM08",
+      "name": "BWM-DR08",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-DR09": {
+      "id": "BWM-DR09",
+      "class": "BWM09-24",
+      "name": "BWM-DR09",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR10": {
+      "id": "BWM-DR10",
+      "class": "BWM09-24",
+      "name": "BWM-DR10",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR11": {
+      "id": "BWM-DR11",
+      "class": "BWM09-24",
+      "name": "BWM-DR11",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR12": {
+      "id": "BWM-DR12",
+      "class": "BWM09-24",
+      "name": "BWM-DR12",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR13": {
+      "id": "BWM-DR13",
+      "class": "BWM09-24",
+      "name": "BWM-DR13",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR14": {
+      "id": "BWM-DR14",
+      "class": "BWM09-24",
+      "name": "BWM-DR14",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR15": {
+      "id": "BWM-DR15",
+      "class": "BWM09-24",
+      "name": "BWM-DR15",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR16": {
+      "id": "BWM-DR16",
+      "class": "BWM09-24",
+      "name": "BWM-DR16",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR17": {
+      "id": "BWM-DR17",
+      "class": "BWM09-24",
+      "name": "BWM-DR17",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR18": {
+      "id": "BWM-DR18",
+      "class": "BWM09-24",
+      "name": "BWM-DR18",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR19": {
+      "id": "BWM-DR19",
+      "class": "BWM09-24",
+      "name": "BWM-DR19",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR20": {
+      "id": "BWM-DR20",
+      "class": "BWM09-24",
+      "name": "BWM-DR20",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR21": {
+      "id": "BWM-DR21",
+      "class": "BWM09-24",
+      "name": "BWM-DR21",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR22": {
+      "id": "BWM-DR22",
+      "class": "BWM09-24",
+      "name": "BWM-DR22",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR23": {
+      "id": "BWM-DR23",
+      "class": "BWM09-24",
+      "name": "BWM-DR23",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-DR24": {
+      "id": "BWM-DR24",
+      "class": "BWM09-24",
+      "name": "BWM-DR24",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL01": {
+      "id": "BWM-VL01",
+      "class": "BWM01",
+      "name": "BWM-VL01",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL02": {
+      "id": "BWM-VL02",
+      "class": "BWM02",
+      "name": "BWM-VL02",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL03": {
+      "id": "BWM-VL03",
+      "class": "BWM03",
+      "name": "BWM-VL03",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL04": {
+      "id": "BWM-VL04",
+      "class": "BWM04",
+      "name": "BWM-VL04",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL05": {
+      "id": "BWM-VL05",
+      "class": "BWM05",
+      "name": "BWM-VL05",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL06": {
+      "id": "BWM-VL06",
+      "class": "BWM06",
+      "name": "BWM-VL06",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL07": {
+      "id": "BWM-VL07",
+      "class": "BWM07",
+      "name": "BWM-VL07",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL08": {
+      "id": "BWM-VL08",
+      "class": "BWM08",
+      "name": "BWM-VL08",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VL09": {
+      "id": "BWM-VL09",
+      "class": "BWM09-24",
+      "name": "BWM-VL09",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL10": {
+      "id": "BWM-VL10",
+      "class": "BWM09-24",
+      "name": "BWM-VL10",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL11": {
+      "id": "BWM-VL11",
+      "class": "BWM09-24",
+      "name": "BWM-VL11",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL12": {
+      "id": "BWM-VL12",
+      "class": "BWM09-24",
+      "name": "BWM-VL12",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL13": {
+      "id": "BWM-VL13",
+      "class": "BWM09-24",
+      "name": "BWM-VL13",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL14": {
+      "id": "BWM-VL14",
+      "class": "BWM09-24",
+      "name": "BWM-VL14",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL15": {
+      "id": "BWM-VL15",
+      "class": "BWM09-24",
+      "name": "BWM-VL15",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL16": {
+      "id": "BWM-VL16",
+      "class": "BWM09-24",
+      "name": "BWM-VL16",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL17": {
+      "id": "BWM-VL17",
+      "class": "BWM09-24",
+      "name": "BWM-VL17",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL18": {
+      "id": "BWM-VL18",
+      "class": "BWM09-24",
+      "name": "BWM-VL18",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL19": {
+      "id": "BWM-VL19",
+      "class": "BWM09-24",
+      "name": "BWM-VL19",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL20": {
+      "id": "BWM-VL20",
+      "class": "BWM09-24",
+      "name": "BWM-VL20",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL21": {
+      "id": "BWM-VL21",
+      "class": "BWM09-24",
+      "name": "BWM-VL21",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL22": {
+      "id": "BWM-VL22",
+      "class": "BWM09-24",
+      "name": "BWM-VL22",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VL23": {
+      "id": "BWM-VL23",
+      "class": "BWM09-24",
+      "name": "BWM-VL23",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR01": {
+      "id": "BWM-VR01",
+      "class": "BWM01",
+      "name": "BWM-VR01",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR02": {
+      "id": "BWM-VR02",
+      "class": "BWM02",
+      "name": "BWM-VR02",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR03": {
+      "id": "BWM-VR03",
+      "class": "BWM03",
+      "name": "BWM-VR03",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR04": {
+      "id": "BWM-VR04",
+      "class": "BWM04",
+      "name": "BWM-VR04",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR05": {
+      "id": "BWM-VR05",
+      "class": "BWM05",
+      "name": "BWM-VR05",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR06": {
+      "id": "BWM-VR06",
+      "class": "BWM06",
+      "name": "BWM-VR06",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR07": {
+      "id": "BWM-VR07",
+      "class": "BWM07",
+      "name": "BWM-VR07",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR08": {
+      "id": "BWM-VR08",
+      "class": "BWM08",
+      "name": "BWM-VR08",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "BWM-VR09": {
+      "id": "BWM-VR09",
+      "class": "BWM09-24",
+      "name": "BWM-VR09",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR10": {
+      "id": "BWM-VR10",
+      "class": "BWM09-24",
+      "name": "BWM-VR10",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR11": {
+      "id": "BWM-VR11",
+      "class": "BWM09-24",
+      "name": "BWM-VR11",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR12": {
+      "id": "BWM-VR12",
+      "class": "BWM09-24",
+      "name": "BWM-VR12",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR13": {
+      "id": "BWM-VR13",
+      "class": "BWM09-24",
+      "name": "BWM-VR13",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR14": {
+      "id": "BWM-VR14",
+      "class": "BWM09-24",
+      "name": "BWM-VR14",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR15": {
+      "id": "BWM-VR15",
+      "class": "BWM09-24",
+      "name": "BWM-VR15",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR16": {
+      "id": "BWM-VR16",
+      "class": "BWM09-24",
+      "name": "BWM-VR16",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR17": {
+      "id": "BWM-VR17",
+      "class": "BWM09-24",
+      "name": "BWM-VR17",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR18": {
+      "id": "BWM-VR18",
+      "class": "BWM09-24",
+      "name": "BWM-VR18",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR19": {
+      "id": "BWM-VR19",
+      "class": "BWM09-24",
+      "name": "BWM-VR19",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR20": {
+      "id": "BWM-VR20",
+      "class": "BWM09-24",
+      "name": "BWM-VR20",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR21": {
+      "id": "BWM-VR21",
+      "class": "BWM09-24",
+      "name": "BWM-VR21",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR22": {
+      "id": "BWM-VR22",
+      "class": "BWM09-24",
+      "name": "BWM-VR22",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR23": {
+      "id": "BWM-VR23",
+      "class": "BWM09-24",
+      "name": "BWM-VR23",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "BWM-VR24": {
+      "id": "BWM-VR24",
+      "class": "BWM09-24",
+      "name": "BWM-VR24",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "HMC": {
+      "id": "HMC",
+      "class": "HMC",
+      "name": "HMC",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "intmuL": {
+      "id": "intmuL",
+      "class": "DefecationMuscles",
+      "name": "intmuL",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "intmuR": {
+      "id": "intmuR",
+      "class": "DefecationMuscles",
+      "name": "intmuR",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "sphmu": {
+      "id": "sphmu",
+      "class": "DefecationMuscles",
+      "name": "sphmu",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "analdep": {
+      "id": "analdep",
+      "class": "DefecationMuscles",
+      "name": "analdep",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm1": {
+      "id": "pm1",
+      "class": "pm1",
+      "name": "pm1",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm2D": {
+      "id": "pm2D",
+      "class": "pm2",
+      "name": "pm2D",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm2VL": {
+      "id": "pm2VL",
+      "class": "pm2",
+      "name": "pm2VL",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm2VR": {
+      "id": "pm2VR",
+      "class": "pm2",
+      "name": "pm2VR",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm3D": {
+      "id": "pm3D",
+      "class": "pm3",
+      "name": "pm3D",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm3VL": {
+      "id": "pm3VL",
+      "class": "pm3",
+      "name": "pm3VL",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm3VR": {
+      "id": "pm3VR",
+      "class": "pm3",
+      "name": "pm3VR",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm4": {
+      "id": "pm4",
+      "class": "pm4",
+      "name": "pm4",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm5D": {
+      "id": "pm5D",
+      "class": "pm5",
+      "name": "pm5D",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm5VL": {
+      "id": "pm5VL",
+      "class": "pm5",
+      "name": "pm5VL",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm5VR": {
+      "id": "pm5VR",
+      "class": "pm5",
+      "name": "pm5VR",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm6D": {
+      "id": "pm6D",
+      "class": "pm6",
+      "name": "pm6D",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm6VL": {
+      "id": "pm6VL",
+      "class": "pm6",
+      "name": "pm6VL",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm6VR": {
+      "id": "pm6VR",
+      "class": "pm6",
+      "name": "pm6VR",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm7D": {
+      "id": "pm7D",
+      "class": "pm7",
+      "name": "pm7D",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm7VL": {
+      "id": "pm7VL",
+      "class": "pm7",
+      "name": "pm7VL",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm7VR": {
+      "id": "pm7VR",
+      "class": "pm7",
+      "name": "pm7VR",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "pm8": {
+      "id": "pm8",
+      "class": "pm8",
+      "name": "pm8",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc1DL": {
+      "id": "mc1DL",
+      "class": "mc1",
+      "name": "mc1DL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc1DR": {
+      "id": "mc1DR",
+      "class": "mc1",
+      "name": "mc1DR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc1V": {
+      "id": "mc1V",
+      "class": "mc1",
+      "name": "mc1V",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc2DL": {
+      "id": "mc2DL",
+      "class": "mc2",
+      "name": "mc2DL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc2DR": {
+      "id": "mc2DR",
+      "class": "mc2",
+      "name": "mc2DR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc2V": {
+      "id": "mc2V",
+      "class": "mc2",
+      "name": "mc2V",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc3DL": {
+      "id": "mc3DL",
+      "class": "mc3",
+      "name": "mc3DL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc3DR": {
+      "id": "mc3DR",
+      "class": "mc3",
+      "name": "mc3DR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "mc3V": {
+      "id": "mc3V",
+      "class": "mc3",
+      "name": "mc3V",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "g1AL": {
+      "id": "g1AL",
+      "class": "g1",
+      "name": "g1AL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "g1AR": {
+      "id": "g1AR",
+      "class": "g1",
+      "name": "g1AR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "g1P": {
+      "id": "g1P",
+      "class": "g1",
+      "name": "g1P",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "g2L": {
+      "id": "g2L",
+      "class": "g2",
+      "name": "g2L",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "g2R": {
+      "id": "g2R",
+      "class": "g2",
+      "name": "g2R",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "CANL": {
+      "id": "CANL",
+      "class": "CAN",
+      "name": "CANL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CANR": {
+      "id": "CANR",
+      "class": "CAN",
+      "name": "CANR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "GLRL": {
+      "id": "GLRL",
+      "class": "GLR",
+      "name": "GLRL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "GLRR": {
+      "id": "GLRR",
+      "class": "GLR",
+      "name": "GLRR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "GLRVR": {
+      "id": "GLRVR",
+      "class": "GLR",
+      "name": "GLRVR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "GLRVL": {
+      "id": "GLRVL",
+      "class": "GLR",
+      "name": "GLRVL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "GLRDR": {
+      "id": "GLRDR",
+      "class": "GLR",
+      "name": "GLRDR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "GLRDL": {
+      "id": "GLRDL",
+      "class": "GLR",
+      "name": "GLRDL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPshVR": {
+      "id": "CEPshVR",
+      "class": "CEPsh",
+      "name": "CEPshVR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPshVL": {
+      "id": "CEPshVL",
+      "class": "CEPsh",
+      "name": "CEPshVL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPshDR": {
+      "id": "CEPshDR",
+      "class": "CEPsh",
+      "name": "CEPshDR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "CEPshDL": {
+      "id": "CEPshDL",
+      "class": "CEPsh",
+      "name": "CEPshDL",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "excgl": {
+      "id": "excgl",
+      "class": "exc",
+      "name": "excgl",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 1
+    },
+    "hyp": {
+      "id": "hyp",
+      "class": "hyp",
+      "name": "hyp",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 1,
+      "inHead": 1
+    },
+    "LegacyBodyWallMuscles": {
+      "id": "LegacyBodyWallMuscles",
+      "class": "BodyWallMuscles",
+      "name": "LegacyBodyWallMuscles",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    },
+    "G2": {
+      "id": "G2",
+      "class": "G2",
+      "name": "G2",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "inTail": 0,
+      "inHead": 0
+    }
+  },
+  "classes": {
+    "BWM07": {
+      "id": "BWM07",
+      "name": "BWM07",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL07", "BWM-DR07", "BWM-VL07", "BWM-VR07"]
+    },
+    "PVC": {
+      "id": "PVC",
+      "name": "PVC",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["PVCL", "PVCR"]
+    },
+    "VAn": {
+      "id": "VAn",
+      "name": "VAn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": [
+        "VA1",
+        "VA2",
+        "VA3",
+        "VA4",
+        "VA5",
+        "VA6",
+        "VA7",
+        "VA8",
+        "VA9",
+        "VA10",
+        "VA11",
+        "VA12"
+      ]
+    },
+    "AVE": {
+      "id": "AVE",
+      "name": "AVE",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AVEL", "AVER"]
+    },
+    "PHA": {
+      "id": "PHA",
+      "name": "PHA",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PHAL", "PHAR"]
+    },
+    "PVW": {
+      "id": "PVW",
+      "name": "PVW",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["PVWL", "PVWR"]
+    },
+    "AIA": {
+      "id": "AIA",
+      "name": "AIA",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AIAL", "AIAR"]
+    },
+    "PVD": {
+      "id": "PVD",
+      "name": "PVD",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PVDL", "PVDR"]
+    },
+    "BWM08": {
+      "id": "BWM08",
+      "name": "BWM08",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL08", "BWM-DR08", "BWM-VL08", "BWM-VR08"]
+    },
+    "PDA": {
+      "id": "PDA",
+      "name": "PDA",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["PDA"]
+    },
+    "M5": {
+      "id": "M5",
+      "name": "M5",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["M5"]
+    },
+    "pm5": {
+      "id": "pm5",
+      "name": "pm5",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm5D", "pm5VL", "pm5VR"]
+    },
+    "PHB": {
+      "id": "PHB",
+      "name": "PHB",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PHBL", "PHBR"]
+    },
+    "CEPsh": {
+      "id": "CEPsh",
+      "name": "CEPsh",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["CEPshVR", "CEPshVL", "CEPshDR", "CEPshDL"]
+    },
+    "ALM": {
+      "id": "ALM",
+      "name": "ALM",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ALML", "ALMR"]
+    },
+    "AVJ": {
+      "id": "AVJ",
+      "name": "AVJ",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["AVJL", "AVJR"]
+    },
+    "AIZ": {
+      "id": "AIZ",
+      "name": "AIZ",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AIZL", "AIZR"]
+    },
+    "PVN": {
+      "id": "PVN",
+      "name": "PVN",
+      "types": ["motor", "interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["PVNL", "PVNR"]
+    },
+    "DVA": {
+      "id": "DVA",
+      "name": "DVA",
+      "types": ["interneuron", "modulatory", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["DVA"]
+    },
+    "RMF": {
+      "id": "RMF",
+      "name": "RMF",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["RMFL", "RMFR"]
+    },
+    "PVR": {
+      "id": "PVR",
+      "name": "PVR",
+      "types": ["interneuron", "sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PVR"]
+    },
+    "M3": {
+      "id": "M3",
+      "name": "M3",
+      "types": ["motor", "sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["M3L", "M3R"]
+    },
+    "ASK": {
+      "id": "ASK",
+      "name": "ASK",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ASKL", "ASKR"]
+    },
+    "SAB": {
+      "id": "SAB",
+      "name": "SAB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SABD", "SABVL", "SABVR"]
+    },
+    "hyp": {
+      "id": "hyp",
+      "name": "hyp",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["hyp"]
+    },
+    "URA": {
+      "id": "URA",
+      "name": "URA",
+      "types": ["motor", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["URADL", "URADR", "URAVL", "URAVR"]
+    },
+    "ASJ": {
+      "id": "ASJ",
+      "name": "ASJ",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["ASJL", "ASJR"]
+    },
+    "SMB": {
+      "id": "SMB",
+      "name": "SMB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SMBDL", "SMBDR", "SMBVL", "SMBVR"]
+    },
+    "AVB": {
+      "id": "AVB",
+      "name": "AVB",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AVBL", "AVBR"]
+    },
+    "ASG": {
+      "id": "ASG",
+      "name": "ASG",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ASGL", "ASGR"]
+    },
+    "ASH": {
+      "id": "ASH",
+      "name": "ASH",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ASHL", "ASHR"]
+    },
+    "BDU": {
+      "id": "BDU",
+      "name": "BDU",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["BDUL", "BDUR"]
+    },
+    "PDB": {
+      "id": "PDB",
+      "name": "PDB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["PDB"]
+    },
+    "AVH": {
+      "id": "AVH",
+      "name": "AVH",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["AVHL", "AVHR"]
+    },
+    "AUA": {
+      "id": "AUA",
+      "name": "AUA",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AUAL", "AUAR"]
+    },
+    "MI": {
+      "id": "MI",
+      "name": "MI",
+      "types": ["motor", "interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["MI"]
+    },
+    "RIA": {
+      "id": "RIA",
+      "name": "RIA",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["RIAL", "RIAR"]
+    },
+    "BWM09-24": {
+      "id": "BWM09-24",
+      "name": "BWM09-24",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": [
+        "BWM-DL09",
+        "BWM-DL10",
+        "BWM-DL11",
+        "BWM-DL12",
+        "BWM-DL13",
+        "BWM-DL14",
+        "BWM-DL15",
+        "BWM-DL16",
+        "BWM-DL17",
+        "BWM-DL18",
+        "BWM-DL19",
+        "BWM-DL20",
+        "BWM-DL21",
+        "BWM-DL22",
+        "BWM-DL23",
+        "BWM-DL24",
+        "BWM-DR09",
+        "BWM-DR10",
+        "BWM-DR11",
+        "BWM-DR12",
+        "BWM-DR13",
+        "BWM-DR14",
+        "BWM-DR15",
+        "BWM-DR16",
+        "BWM-DR17",
+        "BWM-DR18",
+        "BWM-DR19",
+        "BWM-DR20",
+        "BWM-DR21",
+        "BWM-DR22",
+        "BWM-DR23",
+        "BWM-DR24",
+        "BWM-VL09",
+        "BWM-VL10",
+        "BWM-VL11",
+        "BWM-VL12",
+        "BWM-VL13",
+        "BWM-VL14",
+        "BWM-VL15",
+        "BWM-VL16",
+        "BWM-VL17",
+        "BWM-VL18",
+        "BWM-VL19",
+        "BWM-VL20",
+        "BWM-VL21",
+        "BWM-VL22",
+        "BWM-VL23",
+        "BWM-VR09",
+        "BWM-VR10",
+        "BWM-VR11",
+        "BWM-VR12",
+        "BWM-VR13",
+        "BWM-VR14",
+        "BWM-VR15",
+        "BWM-VR16",
+        "BWM-VR17",
+        "BWM-VR18",
+        "BWM-VR19",
+        "BWM-VR20",
+        "BWM-VR21",
+        "BWM-VR22",
+        "BWM-VR23",
+        "BWM-VR24"
+      ]
+    },
+    "DAn": {
+      "id": "DAn",
+      "name": "DAn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": [
+        "DA1",
+        "DA2",
+        "DA3",
+        "DA4",
+        "DA5",
+        "DA6",
+        "DA7",
+        "DA8",
+        "DA9"
+      ]
+    },
+    "pm7": {
+      "id": "pm7",
+      "name": "pm7",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm7D", "pm7VL", "pm7VR"]
+    },
+    "BWM02": {
+      "id": "BWM02",
+      "name": "BWM02",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL02", "BWM-DR02", "BWM-VL02", "BWM-VR02"]
+    },
+    "G2": {
+      "id": "G2",
+      "name": "G2",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["G2"]
+    },
+    "IL1": {
+      "id": "IL1",
+      "name": "IL1",
+      "types": ["motor", "sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["IL1DL", "IL1DR", "IL1L", "IL1R", "IL1VL", "IL1VR"]
+    },
+    "OLL": {
+      "id": "OLL",
+      "name": "OLL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["OLLL", "OLLR"]
+    },
+    "NSM": {
+      "id": "NSM",
+      "name": "NSM",
+      "types": ["motor", "modulatory", "sensory"],
+      "neurotransmitterTypes": ["serotonin"],
+      "classMemberIds": ["NSML", "NSMR"]
+    },
+    "RMD": {
+      "id": "RMD",
+      "name": "RMD",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["RMDDL", "RMDDR", "RMDL", "RMDR", "RMDVL", "RMDVR"]
+    },
+    "pm4": {
+      "id": "pm4",
+      "name": "pm4",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm4"]
+    },
+    "BWM01": {
+      "id": "BWM01",
+      "name": "BWM01",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL01", "BWM-DR01", "BWM-VL01", "BWM-VR01"]
+    },
+    "VDn": {
+      "id": "VDn",
+      "name": "VDn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "classMemberIds": [
+        "VD1",
+        "VD2",
+        "VD3",
+        "VD4",
+        "VD5",
+        "VD6",
+        "VD7",
+        "VD8",
+        "VD9",
+        "VD10",
+        "VD11",
+        "VD12",
+        "VD13"
+      ]
+    },
+    "VBn": {
+      "id": "VBn",
+      "name": "VBn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": [
+        "VB1",
+        "VB2",
+        "VB3",
+        "VB4",
+        "VB5",
+        "VB6",
+        "VB7",
+        "VB8",
+        "VB9",
+        "VB10",
+        "VB11"
+      ]
+    },
+    "AWA": {
+      "id": "AWA",
+      "name": "AWA",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["AWAL", "AWAR"]
+    },
+    "GLR": {
+      "id": "GLR",
+      "name": "GLR",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["GLRL", "GLRR", "GLRVR", "GLRVL", "GLRDR", "GLRDL"]
+    },
+    "OLQ": {
+      "id": "OLQ",
+      "name": "OLQ",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["OLQDL", "OLQDR", "OLQVL", "OLQVR"]
+    },
+    "AQR": {
+      "id": "AQR",
+      "name": "AQR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AQR"]
+    },
+    "LUA": {
+      "id": "LUA",
+      "name": "LUA",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["LUAL", "LUAR"]
+    },
+    "AVG": {
+      "id": "AVG",
+      "name": "AVG",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AVG"]
+    },
+    "PQR": {
+      "id": "PQR",
+      "name": "PQR",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PQR"]
+    },
+    "PVT": {
+      "id": "PVT",
+      "name": "PVT",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["PVT"]
+    },
+    "DefecationMuscles": {
+      "id": "DefecationMuscles",
+      "name": "Defecation muscles",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["intmuL", "intmuR", "sphmu", "analdep"]
+    },
+    "M2": {
+      "id": "M2",
+      "name": "M2",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["M2L", "M2R"]
+    },
+    "ADL": {
+      "id": "ADL",
+      "name": "ADL",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ADLL", "ADLR"]
+    },
+    "RIG": {
+      "id": "RIG",
+      "name": "RIG",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["RIGL", "RIGR"]
+    },
+    "RIR": {
+      "id": "RIR",
+      "name": "RIR",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["RIR"]
+    },
+    "ADF": {
+      "id": "ADF",
+      "name": "ADF",
+      "types": ["modulatory", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "classMemberIds": ["ADFL", "ADFR"]
+    },
+    "I3": {
+      "id": "I3",
+      "name": "I3",
+      "types": ["interneuron", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["I3"]
+    },
+    "SDQ": {
+      "id": "SDQ",
+      "name": "SDQ",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SDQL", "SDQR"]
+    },
+    "HSN": {
+      "id": "HSN",
+      "name": "HSN",
+      "types": ["motor", "modulatory", "interneuron"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "classMemberIds": ["HSNL", "HSNR"]
+    },
+    "AIN": {
+      "id": "AIN",
+      "name": "AIN",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AINL", "AINR"]
+    },
+    "g2": {
+      "id": "g2",
+      "name": "g2",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["g2L", "g2R"]
+    },
+    "DVC": {
+      "id": "DVC",
+      "name": "DVC",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["DVC"]
+    },
+    "RIS": {
+      "id": "RIS",
+      "name": "RIS",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["GABA"],
+      "classMemberIds": ["RIS"]
+    },
+    "RIF": {
+      "id": "RIF",
+      "name": "RIF",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["RIFL", "RIFR"]
+    },
+    "pm1": {
+      "id": "pm1",
+      "name": "pm1",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm1"]
+    },
+    "DBn": {
+      "id": "DBn",
+      "name": "DBn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["DB1", "DB2", "DB3", "DB4", "DB5", "DB6", "DB7"]
+    },
+    "AVL": {
+      "id": "AVL",
+      "name": "AVL",
+      "types": ["motor", "modulatory", "interneuron"],
+      "neurotransmitterTypes": ["GABA"],
+      "classMemberIds": ["AVL"]
+    },
+    "AIY": {
+      "id": "AIY",
+      "name": "AIY",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AIYL", "AIYR"]
+    },
+    "AVD": {
+      "id": "AVD",
+      "name": "AVD",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AVDL", "AVDR"]
+    },
+    "I6": {
+      "id": "I6",
+      "name": "I6",
+      "types": ["interneuron", "sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["I6"]
+    },
+    "URX": {
+      "id": "URX",
+      "name": "URX",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["URXL", "URXR"]
+    },
+    "pm6": {
+      "id": "pm6",
+      "name": "pm6",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm6D", "pm6VL", "pm6VR"]
+    },
+    "RIB": {
+      "id": "RIB",
+      "name": "RIB",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine", "GABA"],
+      "classMemberIds": ["RIBL", "RIBR"]
+    },
+    "ADA": {
+      "id": "ADA",
+      "name": "ADA",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ADAL", "ADAR"]
+    },
+    "DDn": {
+      "id": "DDn",
+      "name": "DDn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "classMemberIds": ["DD1", "DD2", "DD3", "DD4", "DD5", "DD6"]
+    },
+    "PVQ": {
+      "id": "PVQ",
+      "name": "PVQ",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PVQL", "PVQR"]
+    },
+    "BWM04": {
+      "id": "BWM04",
+      "name": "BWM04",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL04", "BWM-DR04", "BWM-VL04", "BWM-VR04"]
+    },
+    "RIV": {
+      "id": "RIV",
+      "name": "RIV",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["RIVL", "RIVR"]
+    },
+    "I2": {
+      "id": "I2",
+      "name": "I2",
+      "types": ["motor", "interneuron", "sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["I2L", "I2R"]
+    },
+    "mc3": {
+      "id": "mc3",
+      "name": "mc3",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["mc3DL", "mc3DR", "mc3V"]
+    },
+    "ADE": {
+      "id": "ADE",
+      "name": "ADE",
+      "types": ["modulatory", "sensory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "classMemberIds": ["ADEL", "ADER"]
+    },
+    "RIP": {
+      "id": "RIP",
+      "name": "RIP",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["RIPL", "RIPR"]
+    },
+    "pm3": {
+      "id": "pm3",
+      "name": "pm3",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm3D", "pm3VL", "pm3VR"]
+    },
+    "URB": {
+      "id": "URB",
+      "name": "URB",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["URBL", "URBR"]
+    },
+    "AWB": {
+      "id": "AWB",
+      "name": "AWB",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AWBL", "AWBR"]
+    },
+    "IL2": {
+      "id": "IL2",
+      "name": "IL2",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["IL2DL", "IL2DR", "IL2L", "IL2R", "IL2VL", "IL2VR"]
+    },
+    "pm2": {
+      "id": "pm2",
+      "name": "pm2",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm2D", "pm2VL", "pm2VR"]
+    },
+    "AFD": {
+      "id": "AFD",
+      "name": "AFD",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AFDL", "AFDR"]
+    },
+    "FLP": {
+      "id": "FLP",
+      "name": "FLP",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["FLPL", "FLPR"]
+    },
+    "ASE": {
+      "id": "ASE",
+      "name": "ASE",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["ASEL", "ASER"]
+    },
+    "g1": {
+      "id": "g1",
+      "name": "g1",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["g1AL", "g1AR", "g1P"]
+    },
+    "URY": {
+      "id": "URY",
+      "name": "URY",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["URYDL", "URYDR", "URYVL", "URYVR"]
+    },
+    "PDE": {
+      "id": "PDE",
+      "name": "PDE",
+      "types": ["modulatory", "sensory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "classMemberIds": ["PDEL", "PDER"]
+    },
+    "PLN": {
+      "id": "PLN",
+      "name": "PLN",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["PLNL", "PLNR"]
+    },
+    "PVP": {
+      "id": "PVP",
+      "name": "PVP",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["PVPL", "PVPR"]
+    },
+    "BWM03": {
+      "id": "BWM03",
+      "name": "BWM03",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL03", "BWM-DR03", "BWM-VL03", "BWM-VR03"]
+    },
+    "HMC": {
+      "id": "HMC",
+      "name": "HMC",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["HMC"]
+    },
+    "RID": {
+      "id": "RID",
+      "name": "RID",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["RID"]
+    },
+    "SAA": {
+      "id": "SAA",
+      "name": "SAA",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SAADL", "SAADR", "SAAVL", "SAAVR"]
+    },
+    "BWM05": {
+      "id": "BWM05",
+      "name": "BWM05",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL05", "BWM-DR05", "BWM-VL05", "BWM-VR05"]
+    },
+    "BAG": {
+      "id": "BAG",
+      "name": "BAG",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["BAGL", "BAGR"]
+    },
+    "PHC": {
+      "id": "PHC",
+      "name": "PHC",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PHCL", "PHCR"]
+    },
+    "CEP": {
+      "id": "CEP",
+      "name": "CEP",
+      "types": ["modulatory", "sensory"],
+      "neurotransmitterTypes": ["dopamine"],
+      "classMemberIds": ["CEPDL", "CEPDR", "CEPVL", "CEPVR"]
+    },
+    "ALN": {
+      "id": "ALN",
+      "name": "ALN",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["ALNL", "ALNR"]
+    },
+    "PVM": {
+      "id": "PVM",
+      "name": "PVM",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["PVM"]
+    },
+    "PLM": {
+      "id": "PLM",
+      "name": "PLM",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["PLML", "PLMR"]
+    },
+    "I4": {
+      "id": "I4",
+      "name": "I4",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["I4"]
+    },
+    "I5": {
+      "id": "I5",
+      "name": "I5",
+      "types": ["motor", "interneuron", "sensory"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "classMemberIds": ["I5"]
+    },
+    "pm8": {
+      "id": "pm8",
+      "name": "pm8",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["pm8"]
+    },
+    "RIM": {
+      "id": "RIM",
+      "name": "RIM",
+      "types": ["motor", "modulatory", "interneuron"],
+      "neurotransmitterTypes": ["tyramine", "glutamate"],
+      "classMemberIds": ["RIML", "RIMR"]
+    },
+    "AIM": {
+      "id": "AIM",
+      "name": "AIM",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["glutamate", "serotonin"],
+      "classMemberIds": ["AIML", "AIMR"]
+    },
+    "VCn": {
+      "id": "VCn",
+      "name": "VCn",
+      "types": ["motor", "modulatory", "interneuron"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "classMemberIds": ["VC1", "VC2", "VC3", "VC4", "VC5", "VC6"]
+    },
+    "AVA": {
+      "id": "AVA",
+      "name": "AVA",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["AVAL", "AVAR"]
+    },
+    "AVM": {
+      "id": "AVM",
+      "name": "AVM",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AVM"]
+    },
+    "SIA": {
+      "id": "SIA",
+      "name": "SIA",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SIADL", "SIADR", "SIAVL", "SIAVR"]
+    },
+    "RIH": {
+      "id": "RIH",
+      "name": "RIH",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["acetylcholine", "serotonin"],
+      "classMemberIds": ["RIH"]
+    },
+    "AVF": {
+      "id": "AVF",
+      "name": "AVF",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["AVFL", "AVFR"]
+    },
+    "BWM06": {
+      "id": "BWM06",
+      "name": "BWM06",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["BWM-DL06", "BWM-DR06", "BWM-VL06", "BWM-VR06"]
+    },
+    "BodyWallMuscles": {
+      "id": "BodyWallMuscles",
+      "name": "Body wall muscles",
+      "types": ["muscle"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["LegacyBodyWallMuscles"]
+    },
+    "RMG": {
+      "id": "RMG",
+      "name": "RMG",
+      "types": ["motor", "modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["RMGL", "RMGR"]
+    },
+    "DVB": {
+      "id": "DVB",
+      "name": "DVB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "classMemberIds": ["DVB"]
+    },
+    "mc2": {
+      "id": "mc2",
+      "name": "mc2",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["mc2DL", "mc2DR", "mc2V"]
+    },
+    "RME": {
+      "id": "RME",
+      "name": "RME",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["GABA"],
+      "classMemberIds": ["RMED", "RMEL", "RMER", "RMEV"]
+    },
+    "RMH": {
+      "id": "RMH",
+      "name": "RMH",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["RMHL", "RMHR"]
+    },
+    "CAN": {
+      "id": "CAN",
+      "name": "CAN",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["CANL", "CANR"]
+    },
+    "ALA": {
+      "id": "ALA",
+      "name": "ALA",
+      "types": ["interneuron", "modulatory", "sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["ALA"]
+    },
+    "M4": {
+      "id": "M4",
+      "name": "M4",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["M4"]
+    },
+    "M1": {
+      "id": "M1",
+      "name": "M1",
+      "types": ["motor", "interneuron"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["M1"]
+    },
+    "SIB": {
+      "id": "SIB",
+      "name": "SIB",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SIBDL", "SIBDR", "SIBVL", "SIBVR"]
+    },
+    "ASn": {
+      "id": "ASn",
+      "name": "ASn",
+      "types": ["motor"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": [
+        "AS1",
+        "AS2",
+        "AS3",
+        "AS4",
+        "AS5",
+        "AS6",
+        "AS7",
+        "AS8",
+        "AS9",
+        "AS10",
+        "AS11"
+      ]
+    },
+    "RIC": {
+      "id": "RIC",
+      "name": "RIC",
+      "types": ["modulatory", "interneuron"],
+      "neurotransmitterTypes": ["octopamine"],
+      "classMemberIds": ["RICL", "RICR"]
+    },
+    "ASI": {
+      "id": "ASI",
+      "name": "ASI",
+      "types": ["modulatory", "sensory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["ASIL", "ASIR"]
+    },
+    "I1": {
+      "id": "I1",
+      "name": "I1",
+      "types": ["motor", "interneuron", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["I1L", "I1R"]
+    },
+    "mc1": {
+      "id": "mc1",
+      "name": "mc1",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["mc1DL", "mc1DR", "mc1V"]
+    },
+    "AIB": {
+      "id": "AIB",
+      "name": "AIB",
+      "types": ["interneuron"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AIBL", "AIBR"]
+    },
+    "SMD": {
+      "id": "SMD",
+      "name": "SMD",
+      "types": ["motor", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["SMDDL", "SMDDR", "SMDVL", "SMDVR"]
+    },
+    "AWC": {
+      "id": "AWC",
+      "name": "AWC",
+      "types": ["sensory"],
+      "neurotransmitterTypes": ["glutamate"],
+      "classMemberIds": ["AWCL", "AWCR"]
+    },
+    "MC": {
+      "id": "MC",
+      "name": "MC",
+      "types": ["motor", "sensory"],
+      "neurotransmitterTypes": ["acetylcholine"],
+      "classMemberIds": ["MCL", "MCR"]
+    },
+    "exc": {
+      "id": "exc",
+      "name": "exc",
+      "types": ["other"],
+      "neurotransmitterTypes": [],
+      "classMemberIds": ["excgl"]
+    },
+    "AVK": {
+      "id": "AVK",
+      "name": "AVK",
+      "types": ["modulatory"],
+      "neurotransmitterTypes": ["unknown"],
+      "classMemberIds": ["AVKL", "AVKR"]
+    }
+  }
+}
