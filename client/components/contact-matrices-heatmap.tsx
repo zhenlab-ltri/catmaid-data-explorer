@@ -8,20 +8,7 @@ import Modal from 'react-modal';
 import { Line } from 'react-chartjs-2';
 
 import model from '../model';
-
 import { monotonicIncreasing, monotonicDecreasing } from '../util';
-
-const areaScale = chroma
-  .scale(['white', 'red'])
-  .domain([0.0, model.stats.maxContactArea])
-  .gamma(0.6);
-
-const datasetsOrdered = model.datasetsSorted;
-const neuronsOrdered = model.neuronsSorted;
-const neuronsIndexMap = {};
-neuronsOrdered.forEach((neuron, index) => {
-  neuronsIndexMap[neuron] = index;
-});
 
 // component that renders color scale bars using a sequence of divs
 // dependent on a chroma-js scale object that maps values to colors
@@ -58,23 +45,6 @@ class CellLegend extends React.Component {
   }
 }
 
-// TODO this function will be moved to the model module
-const modelGetContactAreaData = (neuronPairKey) => {
-  // TODO move this logic to model file
-  const contactAreaDataWithoutTEMAdult =
-    model.neuronPairData[neuronPairKey]?.contact?.filter(
-      (area) => area != null
-    ) || null;
-  const datasetsWithoutTEMAdult = datasetsOrdered.filter(
-    (dataset) => dataset !== 'TEM_adult'
-  );
-
-  return {
-    contactAreas: contactAreaDataWithoutTEMAdult,
-    contactAreaDatasets: datasetsWithoutTEMAdult,
-  };
-};
-
 class ContactMatrixCell extends React.Component {
   render() {
     const {
@@ -84,24 +54,23 @@ class ContactMatrixCell extends React.Component {
       style,
       onHover,
       onClick,
+      colorScaleFn,
     } = this.props;
-    const rowNeuron = neuronsOrdered[rowIndex];
-    const colNeuron = neuronsOrdered[columnIndex];
-    const neuronKey = `${rowNeuron}$${colNeuron}`;
-    const { contactAreas: contactMatrixData } = modelGetContactAreaData(
-      neuronKey
-    );
+    const rowNeuron = model.neuronsSorted[rowIndex];
+    const colNeuron = model.neuronsSorted[columnIndex];
+    const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
+    const { contactAreas } = model.getContactArea(neuronKey);
 
     let backgroundColor = 'white';
 
-    if (contactMatrixData == null) {
+    if (contactAreas == null) {
       backgroundColor = 'gray';
     } else {
-      if (monotonicIncreasing(contactMatrixData)) {
+      if (monotonicIncreasing(contactAreas)) {
         backgroundColor = 'black';
       }
 
-      if (monotonicDecreasing(contactMatrixData)) {
+      if (monotonicDecreasing(contactAreas)) {
         backgroundColor = 'blue';
       }
     }
@@ -144,11 +113,10 @@ class ContactMatrixCell extends React.Component {
     // only render half the matrix
     if (rowIndex <= columnIndex) {
       return h('div.contact-matrix-cell', {
-        key: `${rowNeuron}$${colNeuron}`,
+        key: model.neuronPairKey(rowNeuron, colNeuron),
         style: {
           ...style,
           border: '1px solid black',
-          // opacity: 0.2,
           backgroundColor: '#514d4d',
         },
       });
@@ -157,31 +125,36 @@ class ContactMatrixCell extends React.Component {
     return h(
       'div.contact-matrix-cell',
       {
-        key: `${rowNeuron}$${colNeuron}`,
+        key: model.neuronPairKey(rowNeuron, colNeuron),
         onMouseOver: (e) => onHover(e),
         onClick: (e) =>
-          onClick(e, `${rowNeuron}$${colNeuron}`, rowIndex, columnIndex),
+          this.props.onClick(
+            e,
+            model.neuronPairKey(rowNeuron, colNeuron),
+            rowIndex,
+            columnIndex
+          ),
         style: {
           ...style,
           border: '1px solid black',
-          opacity: contactMatrixData == null ? 0.2 : 1,
+          opacity: contactAreas == null ? 0.2 : 1,
           backgroundColor,
-          cursor: contactMatrixData == null ? 'default' : 'pointer',
+          cursor: contactAreas == null ? 'default' : 'pointer',
         },
       },
-      contactMatrixData == null
+      contactAreas == null
         ? []
-        : contactMatrixData.map((areaValue) =>
+        : contactAreas.map((areaValue) =>
             h('div', {
               style: {
-                height: monotonicIncreasing(contactMatrixData)
+                height: monotonicIncreasing(contactAreas)
                   ? style.height - 8
                   : style.height,
                 width:
-                  (monotonicIncreasing(contactMatrixData)
+                  (monotonicIncreasing(contactAreas)
                     ? style.width - 8
-                    : style.width) / contactMatrixData.length,
-                backgroundColor: areaScale(areaValue),
+                    : style.width) / contactAreas.length,
+                backgroundColor: colorScaleFn(areaValue),
               },
             })
           )
@@ -192,7 +165,7 @@ class ContactMatrixCell extends React.Component {
 class ContactAreaLineChart extends React.Component {
   render() {
     const { neuronPairKey } = this.props;
-    const { contactAreas, contactAreaDatasets } = modelGetContactAreaData(
+    const { contactAreas, contactAreaDatasets } = model.getContactArea(
       neuronPairKey
     );
 
@@ -230,17 +203,22 @@ class ContactAreaLineChart extends React.Component {
 export default class ContactMatrix extends React.Component {
   constructor(props) {
     super(props);
+
+    const colorScaleFn = chroma
+      .scale(['white', 'red'])
+      .domain([0.0, model.stats.maxContactArea])
+      .gamma(0.6);
+
     this.state = {
       hoveredRowIndex: -1,
       hoveredColumnIndex: -1,
-      fixedColumnCount: 1,
-      fixedRowCount: 1,
       scrollToColumn: 0,
       scrollToRow: 0,
       rowInput: '',
       colInput: '',
       showCellDetail: false,
       cellDetailKey: '',
+      colorScaleFn,
     };
   }
 
@@ -252,18 +230,18 @@ export default class ContactMatrix extends React.Component {
   }
 
   handleRowInputChange(newVal: string) {
+    // TODO create function that centers searched neuron in row/col
+    const neuronIndex = model.getIndexOfNeuron(newVal);
+
     this.setState(
       {
         rowInput: newVal,
       },
       () => {
-        if (neuronsIndexMap[newVal] != null) {
+        if (neuronIndex != null) {
           this.setState({
-            scrollToRow: Math.min(
-              neuronsIndexMap[newVal] + 6,
-              neuronsOrdered.length
-            ),
-            hoveredRowIndex: neuronsIndexMap[newVal],
+            scrollToRow: Math.min(neuronIndex + 6, model.neuronsSorted.length),
+            hoveredRowIndex: neuronIndex,
           });
         }
       }
@@ -271,18 +249,21 @@ export default class ContactMatrix extends React.Component {
   }
 
   handleColInputChange(newVal: string) {
+    // TODO create function that centers searched neuron in row/col
+    const neuronIndex = model.getIndexOfNeuron(newVal);
+
     this.setState(
       {
         colInput: newVal,
       },
       () => {
-        if (neuronsIndexMap[newVal] != null) {
+        if (neuronIndex != null) {
           this.setState({
             scrollToColumn: Math.min(
-              neuronsIndexMap[newVal] + 13,
-              neuronsOrdered.length
+              neuronIndex + 13,
+              model.neuronsSorted.length
             ),
-            hoveredColumnIndex: neuronsIndexMap[newVal],
+            hoveredColumnIndex: neuronIndex,
           });
         }
       }
@@ -290,6 +271,7 @@ export default class ContactMatrix extends React.Component {
   }
 
   render() {
+    const { colorScaleFn } = this.state;
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
         h('h3.contact-matrix-title', 'Contact Matrix'),
@@ -312,7 +294,7 @@ export default class ContactMatrix extends React.Component {
           minVal: 0.0,
           maxVal: model.stats.maxContactArea,
           units: `${String.fromCharCode(181)}m^2`,
-          colorScaleFn: areaScale,
+          colorScaleFn: colorScaleFn,
         }),
       ]),
       h(CellLegend, {
@@ -340,7 +322,7 @@ export default class ContactMatrix extends React.Component {
             },
           },
           isOpen: this.state.showCellDetail,
-          className: 'contact-matrix-cell-detail-modal',
+          className: 'modal',
         },
         [
           h(
@@ -364,7 +346,8 @@ export default class ContactMatrix extends React.Component {
                 h(ContactMatrixCell, {
                   columnIndex,
                   rowIndex,
-                  key: `${rowIndex}-${columnIndex}`,
+                  colorScaleFn,
+                  key: `${rowIndex}$${columnIndex}`,
                   style,
                   highlighted:
                     columnIndex === this.state.hoveredColumnIndex ||
@@ -386,8 +369,8 @@ export default class ContactMatrix extends React.Component {
               enableFixedRowScroll: true,
               height: 700,
               width,
-              rowCount: neuronsOrdered.length,
-              columnCount: neuronsOrdered.length,
+              rowCount: model.neuronsSorted.length,
+              columnCount: model.neuronsSorted.length,
               style: { border: '1px solid #ddd' },
               styleBottomLeftGrid: {
                 borderRight: '2px solid #aaa',

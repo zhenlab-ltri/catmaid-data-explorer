@@ -43,15 +43,3 @@
   background-color: #514d4d;
   margin-right: 5px;
 }
-
-.contact-matrix-cell-detail-modal {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 800px;
-  height: 500px;
-  background-color: white;
-  border: 1px solid black;
-  padding: 10px;
-}
