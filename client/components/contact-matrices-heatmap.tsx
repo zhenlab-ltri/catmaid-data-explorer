@@ -58,6 +58,23 @@ class CellLegend extends React.Component {
   }
 }
 
+// TODO this function will be moved to the model module
+const modelGetContactAreaData = (neuronPairKey) => {
+  // TODO move this logic to model file
+  const contactAreaDataWithoutTEMAdult =
+    model.neuronPairData[neuronPairKey]?.contact?.filter(
+      (area) => area != null
+    ) || null;
+  const datasetsWithoutTEMAdult = datasetsOrdered.filter(
+    (dataset) => dataset !== 'TEM_adult'
+  );
+
+  return {
+    contactAreas: contactAreaDataWithoutTEMAdult,
+    contactAreaDatasets: datasetsWithoutTEMAdult,
+  };
+};
+
 class ContactMatrixCell extends React.Component {
   render() {
     const {
@@ -71,7 +88,10 @@ class ContactMatrixCell extends React.Component {
     const rowNeuron = neuronsOrdered[rowIndex];
     const colNeuron = neuronsOrdered[columnIndex];
     const neuronKey = `${rowNeuron}$${colNeuron}`;
-    const contactMatrixData = model.neuronPairData[neuronKey].contact;
+    const { contactAreas: contactMatrixData } = modelGetContactAreaData(
+      neuronKey
+    );
+
     let backgroundColor = 'white';
 
     if (contactMatrixData == null) {
@@ -161,12 +181,49 @@ class ContactMatrixCell extends React.Component {
                   (monotonicIncreasing(contactMatrixData)
                     ? style.width - 8
                     : style.width) / contactMatrixData.length,
-                backgroundColor:
-                  areaValue != null ? areaScale(areaValue) : 'gray',
+                backgroundColor: areaScale(areaValue),
               },
             })
           )
     );
+  }
+}
+
+class ContactAreaLineChart extends React.Component {
+  render() {
+    const { neuronPairKey } = this.props;
+    const { contactAreas, contactAreaDatasets } = modelGetContactAreaData(
+      neuronPairKey
+    );
+
+    return h(Line, {
+      data: {
+        labels: contactAreaDatasets,
+        datasets: [
+          {
+            label: `Contact area between ${neuronPairKey.replace(
+              '$',
+              ' and '
+            )} (${String.fromCharCode(181)}m^2)`,
+            data: contactAreas || [],
+            fill: false,
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgba(255, 99, 132, 0.2)',
+          },
+        ],
+      },
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+      },
+    });
   }
 }
 
@@ -291,36 +348,7 @@ export default class ContactMatrix extends React.Component {
             { onClick: (e) => this.setState({ showCellDetail: false }) },
             'close'
           ),
-          h(Line, {
-            data: {
-              labels: datasetsOrdered,
-              datasets: [
-                {
-                  label: `Contact area between ${this.state.cellDetailKey.replace(
-                    '$',
-                    ' and '
-                  )} (${String.fromCharCode(181)}m^2)`,
-                  data: model.neuronPairData[this.state.cellDetailKey]
-                    ? model.neuronPairData[this.state.cellDetailKey]
-                    : [],
-                  fill: false,
-                  backgroundColor: 'rgb(255, 99, 132)',
-                  borderColor: 'rgba(255, 99, 132, 0.2)',
-                },
-              ],
-            },
-            options: {
-              scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                    },
-                  },
-                ],
-              },
-            },
-          }),
+          h(ContactAreaLineChart, { neuronPairKey: this.state.cellDetailKey }),
         ]
       ),
       h(
