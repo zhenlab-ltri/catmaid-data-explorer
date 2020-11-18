@@ -65,7 +65,8 @@ def add_neuron_info_to_model():
 
     for neuron in model['neuronsSorted']:
         info = neuron_info['cells'][neuron]
-        class_members = neuron_info[info['class']]['classMembersIds']
+        class_members = neuron_info['classes'][info['class']
+                                               ]['classMemberIds']
 
         model['neurons'][neuron] = {
             'class': info['class'],
@@ -212,12 +213,13 @@ def add_annotations_to_model():
 
 init_model()
 add_datasets_to_model()
+add_neuron_info_to_model()
 add_contact_area_to_model()
 add_connectivity_cs_to_model()
 add_connectivity_gj_to_model()
 add_annotations_to_model()
-with open('./scripts/model-1.json', 'w') as f:
+with open('./scripts/model.json', 'w') as f:
     json.dump(model, f, indent=2)
 
-with open('./scripts/model-1.compressed.json', 'w') as f:
+with open('./scripts/model.compressed.json', 'w') as f:
     json.dump(model, f, separators=(',', ': '))

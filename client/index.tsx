@@ -4,6 +4,7 @@ import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
 import Heatmap from './components/contact-matrices-heatmap';
+
 class App extends React.Component {
   render() {
     return h(Router, [
