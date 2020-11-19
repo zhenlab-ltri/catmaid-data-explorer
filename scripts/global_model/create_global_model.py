@@ -4,7 +4,6 @@ import os
 import copy
 
 
-
 # temp values used to help pre populate the model
 # these values are pulled from Daniels data
 datasetsSorted = ['SEM_L1_3', 'TEM_L1_5', 'SEM_L1_4',
@@ -279,19 +278,19 @@ def compress_model_full(m):
 
             if len(annotations) > 0:
                 m['neuronPairData'][key][key_to_compressed_key['annotations']
-                                             ] = [compressed_pair_classification[a] for a in m['neuronPairData'][key]['annotations']]
+                                         ] = [compressed_pair_classification[a] for a in m['neuronPairData'][key]['annotations']]
 
             if contactArea != None:
                 m['neuronPairData'][key][key_to_compressed_key['contactArea']
-                                             ] = m['neuronPairData'][key]['contactArea']
+                                         ] = m['neuronPairData'][key]['contactArea']
 
             if cs != None:
                 m['neuronPairData'][key][key_to_compressed_key['connectivityCs']
-                                             ] = m['neuronPairData'][key]['connectivityCs']
+                                         ] = m['neuronPairData'][key]['connectivityCs']
 
             if gj != None:
                 m['neuronPairData'][key][key_to_compressed_key['connectivityGj']
-                                             ] = m['neuronPairData'][key]['connectivityGj']
+                                         ] = m['neuronPairData'][key]['connectivityGj']
 
             del m['neuronPairData'][key]['annotations']
             del m['neuronPairData'][key]['contactArea']
@@ -300,10 +299,10 @@ def compress_model_full(m):
 
             m['neuronPairData'][compressed_key] = m['neuronPairData'][key]
 
-
             del m['neuronPairData'][key]
             if m['neuronPairData'][compressed_key] == {}:
                 del m['neuronPairData'][compressed_key]
+
 
 def compress_model_lite(m):
     # prune empty values
@@ -340,12 +339,15 @@ add_connectivity_cs_to_model()
 add_connectivity_gj_to_model()
 add_annotations_to_model()
 
-full_model = copy.deepcopy(model)
-compress_model_lite(full_model)
-with open('./scripts/model.json', 'w') as f:
-    json.dump(full_model, f, indent=2)
+light_compressed_model = copy.deepcopy(model)
+compress_model_lite(light_compressed_model)
+with open('./scripts/model.light-compression.json', 'w') as f:
+    json.dump(light_compressed_model, f, indent=2)
 
 compressed_model = copy.deepcopy(model)
 compress_model_full(compressed_model)
-with open('./scripts/model.compressed.json', 'w') as f:
+with open('./scripts/model.full-compression.json', 'w') as f:
     json.dump(compressed_model, f, separators=(',', ': '))
+
+with open('./scripts/model.no-compression.json', 'w') as f:
+    json.dump(model, f, indent=2)
