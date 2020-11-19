@@ -26,7 +26,7 @@ def init_model():
         for post in model['neuronsSorted']:
             key = neuron_pair_key(pre, post)
             model['neuronPairData'][key] = {
-                'contact': [],
+                'contactArea': [],
                 'connectivityCs': [],
                 'connectivityGj': [],
                 'annotations': []
@@ -95,19 +95,20 @@ def add_contact_area_to_model():
                         if float_area > max_area:
                             max_area = float_area
 
-                        model['neuronPairData'][key]['contact'].append(
+                        model['neuronPairData'][key]['contactArea'].append(
                             float_area)
 
         else:
             for n0 in model['neuronsSorted']:
                 for n1 in model['neuronsSorted']:
                     key = neuron_pair_key(n0, n1)
-                    model['neuronPairData'][key]['contact'].append(None)
+                    model['neuronPairData'][key]['contactArea'].append(None)
 
     for k, v in model['neuronPairData'].items():
-        s = sum(filter(None, v['contact']))  # filter None values from contact
+        # filter None values from contact
+        s = sum(filter(None, v['contactArea']))
         if s == 0.0:
-            model['neuronPairData'][k]['contact'] = None
+            model['neuronPairData'][k]['contactArea'] = None
 
     model['stats']['maxContactArea'] = max_area
 

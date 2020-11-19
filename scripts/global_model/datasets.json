@@ -1,34 +1,34 @@
 {
   "SEM_L1_3": {
     "stage": "L1",
-    "age_hours": 0
+    "ageHours": 0
   },
   "TEM_L1_5": {
     "stage": "L1",
-    "age_hours": 5
+    "ageHours": 5
   },
   "SEM_L1_4": {
     "stage": "L1",
-    "age_hours": 8
+    "ageHours": 8
   },
   "SEM_L1_2": {
     "stage": "L1",
-    "age_hours": 16
+    "ageHours": 16
   },
   "SEM_L2_2": {
     "stage": "L2",
-    "age_hours": 23
+    "ageHours": 23
   },
   "TEM_L3": {
     "stage": "L3",
-    "age_hours": 27
+    "ageHours": 27
   },
   "TEM_adult": {
     "stage": "Adult",
-    "age_hours": 50
+    "ageHours": 50
   },
    "SEM_adult": {
     "stage": "Adult",
-    "age_hours": 50
+    "ageHours": 50
   }
 }
