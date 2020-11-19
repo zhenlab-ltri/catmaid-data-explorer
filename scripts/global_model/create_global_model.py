@@ -1,6 +1,8 @@
 import csv
 import json
 import os
+import copy
+
 
 
 # temp values used to help pre populate the model
@@ -204,7 +206,7 @@ def add_annotations_to_model():
                 model['neuronPairData'][key]['annotations'].append(k)
 
 
-def compress_model_full():
+def compress_model_full(m):
     # prune empty values and compress json keys
     key_to_compressed_key = {
         'contactArea': 'ca',
@@ -248,7 +250,7 @@ def compress_model_full():
         'variable': 'v'
     }
 
-    for neuron in model['neurons']:
+    for neuron in m['neurons']:
         neuron['types'] = ''.join(
             [neuron_type_to_compressed_type[t] for t in neuron['types']])
         neuron['neurotransmitterTypes'] = ''.join(
@@ -270,64 +272,64 @@ def compress_model_full():
         for post_index, post in enumerate(neuronsSorted):
             key = neuron_pair_key(pre, post)
             compressed_key = neuron_pair_key(pre_index, post_index)
-            annotations = model['neuronPairData'][key]['annotations']
-            contactArea = model['neuronPairData'][key]['contactArea']
-            cs = model['neuronPairData'][key]['connectivityCs']
-            gj = model['neuronPairData'][key]['connectivityGj']
+            annotations = m['neuronPairData'][key]['annotations']
+            contactArea = m['neuronPairData'][key]['contactArea']
+            cs = m['neuronPairData'][key]['connectivityCs']
+            gj = m['neuronPairData'][key]['connectivityGj']
 
             if len(annotations) > 0:
-                model['neuronPairData'][key][key_to_compressed_key['annotations']
-                                             ] = [compressed_pair_classification[a] for a in model['neuronPairData'][key]['annotations']]
+                m['neuronPairData'][key][key_to_compressed_key['annotations']
+                                             ] = [compressed_pair_classification[a] for a in m['neuronPairData'][key]['annotations']]
 
             if contactArea != None:
-                model['neuronPairData'][key][key_to_compressed_key['contactArea']
-                                             ] = model['neuronPairData'][key]['contactArea']
+                m['neuronPairData'][key][key_to_compressed_key['contactArea']
+                                             ] = m['neuronPairData'][key]['contactArea']
 
             if cs != None:
-                model['neuronPairData'][key][key_to_compressed_key['connectivityCs']
-                                             ] = model['neuronPairData'][key]['connectivityCs']
+                m['neuronPairData'][key][key_to_compressed_key['connectivityCs']
+                                             ] = m['neuronPairData'][key]['connectivityCs']
 
             if gj != None:
-                model['neuronPairData'][key][key_to_compressed_key['connectivityGj']
-                                             ] = model['neuronPairData'][key]['connectivityGj']
+                m['neuronPairData'][key][key_to_compressed_key['connectivityGj']
+                                             ] = m['neuronPairData'][key]['connectivityGj']
 
-            del model['neuronPairData'][key]['annotations']
-            del model['neuronPairData'][key]['contactArea']
-            del model['neuronPairData'][key]['connectivityCs']
-            del model['neuronPairData'][key]['connectivityGj']
+            del m['neuronPairData'][key]['annotations']
+            del m['neuronPairData'][key]['contactArea']
+            del m['neuronPairData'][key]['connectivityCs']
+            del m['neuronPairData'][key]['connectivityGj']
 
-            model['neuronPairData'][compressed_key] = model['neuronPairData'][key]
+            m['neuronPairData'][compressed_key] = m['neuronPairData'][key]
 
 
-            del model['neuronPairData'][key]
-            if model['neuronPairData'][compressed_key] == {}:
-                del model['neuronPairData'][compressed_key]
+            del m['neuronPairData'][key]
+            if m['neuronPairData'][compressed_key] == {}:
+                del m['neuronPairData'][compressed_key]
 
-def compress_model_lite():
+def compress_model_lite(m):
     # prune empty values
     # a compressed model json file is about 6x smaller
     for pre in neuronsSorted:
         for post in neuronsSorted:
             key = neuron_pair_key(pre, post)
-            annotations = model['neuronPairData'][key]['annotations']
-            contactArea = model['neuronPairData'][key]['contactArea']
-            cs = model['neuronPairData'][key]['connectivityCs']
-            gj = model['neuronPairData'][key]['connectivityGj']
+            annotations = m['neuronPairData'][key]['annotations']
+            contactArea = m['neuronPairData'][key]['contactArea']
+            cs = m['neuronPairData'][key]['connectivityCs']
+            gj = m['neuronPairData'][key]['connectivityGj']
 
             if len(annotations) > 0:
-                del model['neuronPairData'][key]['annotations']
+                del m['neuronPairData'][key]['annotations']
 
             if contactArea == None:
-                del model['neuronPairData'][key]['contactArea']
+                del m['neuronPairData'][key]['contactArea']
 
             if cs == None:
-                del model['neuronPairData'][key]['connectivityCs']
+                del m['neuronPairData'][key]['connectivityCs']
 
             if gj == None:
-                del model['neuronPairData'][key]['connectivityGj']
+                del m['neuronPairData'][key]['connectivityGj']
 
-            if model['neuronPairData'][key] == {}:
-                del model['neuronPairData'][key]
+            if m['neuronPairData'][key] == {}:
+                del m['neuronPairData'][key]
 
 
 init_model()
@@ -337,9 +339,13 @@ add_contact_area_to_model()
 add_connectivity_cs_to_model()
 add_connectivity_gj_to_model()
 add_annotations_to_model()
-with open('./scripts/model.json', 'w') as f:
-    json.dump(model, f, indent=2)
 
-compress_model_full()
+full_model = copy.deepcopy(model)
+compress_model_lite(full_model)
+with open('./scripts/model.json', 'w') as f:
+    json.dump(full_model, f, indent=2)
+
+compressed_model = copy.deepcopy(model)
+compress_model_full(compressed_model)
 with open('./scripts/model.compressed.json', 'w') as f:
-    json.dump(model, f, separators=(',', ': '))
+    json.dump(compressed_model, f, separators=(',', ': '))
