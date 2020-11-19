@@ -11,6 +11,9 @@ datasetsSorted = ['SEM_L1_3', 'TEM_L1_5', 'SEM_L1_4',
 neuronsSorted = ['ADFL', 'ADFR', 'ADLL', 'ADLR', 'AFDL', 'AFDR', 'ALML', 'ALMR', 'ALNL', 'ALNR', 'AQR', 'ASEL', 'ASER', 'ASGL', 'ASGR', 'ASHL', 'ASHR', 'ASIL', 'ASIR', 'ASJL', 'ASJR', 'ASKL', 'ASKR', 'AUAL', 'AUAR', 'AVM', 'AWAL', 'AWAR', 'AWBL', 'AWBR', 'AWCL', 'AWCR', 'BAGL', 'BAGR', 'DVA', 'FLPL', 'FLPR', 'IL2DL', 'IL2DR', 'IL2L', 'IL2R', 'IL2VL', 'IL2VR', 'OLLL', 'OLLR', 'OLQDL', 'OLQDR', 'OLQVL', 'OLQVR', 'PLNL', 'PLNR', 'SAADL', 'SAADR', 'SAAVL', 'SAAVR', 'SDQL', 'SDQR', 'URBL', 'URBR', 'URXL', 'URXR', 'URYDL', 'URYDR', 'URYVL', 'URYVR', 'ADAL', 'ADAR', 'AIAL', 'AIAR', 'AIBL', 'AIBR', 'AINL', 'AINR', 'AIYL', 'AIYR', 'AIZL', 'AIZR', 'AVAL', 'AVAR', 'AVBL', 'AVBR', 'AVDL', 'AVDR', 'AVEL', 'AVER', 'BDUL', 'BDUR', 'DVC', 'PVCL', 'PVCR', 'PVNL', 'PVNR', 'PVPL', 'PVPR', 'PVR', 'PVT', 'RIAL', 'RIAR', 'RIBL', 'RIBR', 'RIFL', 'RIFR', 'RIGL', 'RIGR', 'RIH', 'RIML', 'RIMR', 'RIPL', 'RIPR', 'RIR', 'IL1DL', 'IL1DR', 'IL1L', 'IL1R', 'IL1VL', 'IL1VR', 'RIVL', 'RIVR', 'RMDDL', 'RMDDR', 'RMDL',
                  'RMDR', 'RMDVL', 'RMDVR', 'RMED', 'RMEL', 'RMER', 'RMEV', 'RMFL', 'RMFR', 'RMHL', 'RMHR', 'SIADL', 'SIADR', 'SIAVL', 'SIAVR', 'SIBDL', 'SIBDR', 'SIBVL', 'SIBVR', 'SMBDL', 'SMBDR', 'SMBVL', 'SMBVR', 'SMDDL', 'SMDDR', 'SMDVL', 'SMDVR', 'URADL', 'URADR', 'URAVL', 'URAVR', 'ADEL', 'ADER', 'AIML', 'AIMR', 'ALA', 'AVFL', 'AVFR', 'AVHL', 'AVHR', 'AVJL', 'AVJR', 'AVKL', 'AVKR', 'AVL', 'CEPDL', 'CEPDR', 'CEPVL', 'CEPVR', 'HSNL', 'HSNR', 'PVQL', 'PVQR', 'RICL', 'RICR', 'RID', 'RIS', 'RMGL', 'RMGR', 'BWM-DL01', 'BWM-DR01', 'BWM-VL01', 'BWM-VR01', 'BWM-DL02', 'BWM-DR02', 'BWM-VL02', 'BWM-VR02', 'BWM-DL03', 'BWM-DR03', 'BWM-VL03', 'BWM-VR03', 'BWM-DL04', 'BWM-DR04', 'BWM-VL04', 'BWM-VR04', 'BWM-DL05', 'BWM-DR05', 'BWM-VL05', 'BWM-VR05', 'BWM-DL06', 'BWM-DR06', 'BWM-VL06', 'BWM-VR06', 'BWM-DL07', 'BWM-DR07', 'BWM-VL07', 'BWM-VR07', 'BWM-DL08', 'BWM-DR08', 'BWM-VL08', 'BWM-VR08', 'CANL', 'CANR', 'CEPshDL', 'CEPshDR', 'CEPshVL', 'CEPshVR', 'GLRDL', 'GLRDR', 'GLRL', 'GLRR', 'GLRVL', 'GLRVR', 'excgl']
 
+neuron_to_index = {}
+for index, neuron in enumerate(neuronsSorted):
+    neuron_to_index[neuron] = index
 # this is the skeleton of the model
 # it will be filled out by the various functions below
 # and exported to json
@@ -215,6 +218,7 @@ def compress_model_full(m):
     }
 
     neuron_field_key_to_compressed_key = {
+        'name': 'n',
         'class': 'c',
         'types': 't',
         'neurotransmitterTypes': 'nt',
@@ -249,18 +253,21 @@ def compress_model_full(m):
         'variable': 'v'
     }
 
-    for neuron in m['neurons']:
+    for index, neuron in enumerate(m['neurons']):
+
         neuron['types'] = ''.join(
             [neuron_type_to_compressed_type[t] for t in neuron['types']])
         neuron['neurotransmitterTypes'] = ''.join(
             [neuron_neurotransmitter_type_to_compressed_type[nt] for nt in neuron['neurotransmitterTypes']])
+
+        neuron[neuron_field_key_to_compressed_key['name']] = index
 
         neuron[neuron_field_key_to_compressed_key['class']] = neuron['class']
         neuron[neuron_field_key_to_compressed_key['types']] = neuron['types']
         neuron[neuron_field_key_to_compressed_key['neurotransmitterTypes']
                ] = neuron['neurotransmitterTypes']
         neuron[neuron_field_key_to_compressed_key['classMembers']
-               ] = neuron['classMembers']
+               ] = [neuron_to_index[neuron] for neuron in neuron['classMembers']]
 
         del neuron['class']
         del neuron['types']
@@ -339,15 +346,15 @@ add_connectivity_cs_to_model()
 add_connectivity_gj_to_model()
 add_annotations_to_model()
 
-light_compressed_model = copy.deepcopy(model)
-compress_model_lite(light_compressed_model)
-with open('./scripts/model.light-compression.json', 'w') as f:
-    json.dump(light_compressed_model, f, indent=2)
+lite_compressed_model = copy.deepcopy(model)
+compress_model_lite(lite_compressed_model)
+with open('./scripts/model.lite-compression.json', 'w') as f:
+    json.dump(lite_compressed_model, f, indent=2)
 
 compressed_model = copy.deepcopy(model)
 compress_model_full(compressed_model)
 with open('./scripts/model.full-compression.json', 'w') as f:
-    json.dump(compressed_model, f, separators=(',', ': '))
+    json.dump(compressed_model, f, indent=2)
 
 with open('./scripts/model.no-compression.json', 'w') as f:
     json.dump(model, f, indent=2)
