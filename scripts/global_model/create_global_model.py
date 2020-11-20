@@ -81,6 +81,7 @@ def add_neuron_info_to_model():
             'id': neuron,
             'class': info['class'],
             'types': info['types'],
+            'canonicalType': info['canonicalType'],
             'neurotransmitterTypes': info['neurotransmitterTypes'],
             'classMembers': class_members
         })
@@ -222,7 +223,8 @@ def compress_model_full(m):
         'class': 'c',
         'types': 't',
         'neurotransmitterTypes': 'nt',
-        'classMembers': 'cm'
+        'classMembers': 'cm',
+        'canonicalType': 'ct'
     }
 
     neuron_type_to_compressed_type = {
@@ -263,6 +265,8 @@ def compress_model_full(m):
         neuron[neuron_field_key_to_compressed_key['name']] = index
 
         neuron[neuron_field_key_to_compressed_key['class']] = neuron['class']
+        neuron[neuron_field_key_to_compressed_key['canonicalType']
+               ] = neuron['canonicalType']
         neuron[neuron_field_key_to_compressed_key['types']] = neuron['types']
         neuron[neuron_field_key_to_compressed_key['neurotransmitterTypes']
                ] = neuron['neurotransmitterTypes']
@@ -271,6 +275,7 @@ def compress_model_full(m):
 
         del neuron['class']
         del neuron['types']
+        del neuron['canonicalType']
         del neuron['neurotransmitterTypes']
         del neuron['classMembers']
 
