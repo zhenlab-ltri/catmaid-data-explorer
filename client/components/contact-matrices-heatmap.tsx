@@ -94,7 +94,13 @@ class ContactMatrixCell extends React.Component {
 
     // cell is in the row header
     if (columnIndex === 0 && rowIndex > 0) {
-      const content = [rowNeuron];
+      const content = [
+        h(
+          'div',
+          { style: { fontSize: highlighted ? '1.25em' : '0.7em' } },
+          rowNeuron
+        ),
+      ];
       if (rowMid === rowIndex) {
         content.push(
           h('div.column-header-cell-class-label', rowNeuronCanonicalType)
@@ -107,7 +113,7 @@ class ContactMatrixCell extends React.Component {
           style: {
             zIndex: 100,
             ...style,
-            fontSize: highlighted ? '1.25em' : '0.7em',
+            overflow: 'visible',
             backgroundColor: this.neuronClassToColor[rowNeuronCanonicalType],
           },
         },
@@ -117,7 +123,13 @@ class ContactMatrixCell extends React.Component {
 
     // cell is in the column header
     if (rowIndex === 0 && columnIndex > 0) {
-      const content = [colNeuron];
+      const content = [
+        h(
+          'div',
+          { style: { fontSize: highlighted ? '1.25em' : '0.7em' } },
+          colNeuron
+        ),
+      ];
       if (columnMid === columnIndex) {
         content.push(
           h('div.row-header-cell-class-label', colNeuronCanonicalType)
@@ -130,7 +142,6 @@ class ContactMatrixCell extends React.Component {
           style: {
             ...style,
             zIndex: 100,
-            fontSize: highlighted ? '1.25em' : '0.7em',
             backgroundColor: this.neuronClassToColor[colNeuronCanonicalType],
           },
         },
@@ -260,8 +271,8 @@ export default class ContactMatrix extends React.Component {
       columnStartIndex,
       columnStopIndex,
     } = opts;
-    const rowMid = Math.floor((rowStartIndex + rowStopIndex) / 2);
-    const columnMid = Math.floor((columnStartIndex + columnStopIndex) / 2);
+    const rowMid = Math.floor((rowStartIndex + rowStopIndex) / 2) + 1;
+    const columnMid = Math.floor((columnStartIndex + columnStopIndex) / 2) + 1;
 
     this.setState({
       rowMid,
