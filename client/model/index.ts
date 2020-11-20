@@ -7,7 +7,7 @@ model.neurons.forEach((neuron, index: number): void => {
 });
 
 const datasetsIndexMap = {};
-model.datasetsSorted.forEach((dataset: string, index: number): void => {
+model.datasets.forEach((dataset, index: number): void => {
   datasetsIndexMap[dataset] = index;
 });
 
@@ -38,8 +38,8 @@ model.getContactArea = (neuronPairKey: string) => {
     model.neuronPairData[neuronPairKey]?.contactArea?.filter(
       (area: number) => area != null
     ) || null;
-  const datasetsWithoutTEMAdult = model.datasetsSorted.filter(
-    (dataset: string) => dataset !== 'TEM_adult'
+  const datasetsWithoutTEMAdult = model.datasets.map(d => d.id).filter(
+    (dataset) => dataset !== 'TEM_adult'
   );
 
   return {
