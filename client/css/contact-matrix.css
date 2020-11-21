@@ -1,3 +1,7 @@
+.contact-matrix-title {
+  margin: 0;
+}
+
 .contact-matrix-cell {
   display: flex;
   justify-content: center;
@@ -8,7 +12,6 @@
   display: flex;
   align-items: center;
   margin: 0;
-  justify-content: space-between;
 }
 
 .contact-matrix-controls {
@@ -54,4 +57,31 @@
 .row-header-cell-class-label {
   position: absolute;
   bottom: 30px;
+}
+
+.row-neuron-type-label {
+  position: absolute;
+  left: 10px;
+}
+
+.row-neuron-type-label {
+  position: absolute;
+  z-index: 2;
+  top: 688px;
+  left: -2px;
+  background-color: white;
+  padding: 1em;
+  border: 1px solid black;
+  width: 50px;
+}
+
+.column-neuron-type-label {
+  position: absolute;
+  z-index: 2;
+  top: 26px;
+  left: 1360px;
+  background-color: white;
+  padding: 1em;
+  border: 1px solid black;
+  width: 50px;
 }

@@ -2,15 +2,15 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 650px;
-  justify-content: space-evenly;
+  width: 250px;
+  justify-content: space-around;
 }
 
 .color-scalebar {
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 400px;
+  width: 100px;
   height: 20px;
   border: 1px solid black;
 }

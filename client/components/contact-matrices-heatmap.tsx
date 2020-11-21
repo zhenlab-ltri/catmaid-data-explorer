@@ -14,7 +14,15 @@ import { monotonicIncreasing, monotonicDecreasing } from '../util';
 // dependent on a chroma-js scale object that maps values to colors
 class ColorScale extends React.Component {
   render() {
-    const { numSteps, minVal, maxVal, units, colorScaleFn } = this.props;
+    const {
+      numSteps,
+      minVal,
+      maxVal,
+      minValLabel,
+      maxValLabel,
+      units,
+      colorScaleFn,
+    } = this.props;
     const stepSize = maxVal / numSteps;
     const colorScaleDivs = [...Array(numSteps).keys()].map((el, index) => {
       return h('div.color-scalebar-item', {
@@ -23,9 +31,8 @@ class ColorScale extends React.Component {
     });
 
     return h('div.color-scale', [
-      h('div', `${minVal} ${units}`),
       h('div.color-scalebar', colorScaleDivs),
-      h('div', `${maxVal} ${units}`),
+      h('div', `[${minValLabel}, ${maxValLabel}] ${units}`),
     ]);
   }
 }
@@ -41,7 +48,7 @@ class CellLegend extends React.Component {
       ]);
     });
 
-    return h('div.cell-legend', legendEntryDivs);
+    return h('div.cell-legend', [...legendEntryDivs, this.props.children]);
   }
 }
 
@@ -57,8 +64,6 @@ class ContactMatrixCell extends React.Component {
 
   render() {
     const {
-      rowMid,
-      columnMid,
       highlighted,
       columnIndex,
       rowIndex,
@@ -101,17 +106,12 @@ class ContactMatrixCell extends React.Component {
           rowNeuron
         ),
       ];
-      if (rowMid === rowIndex) {
-        content.push(
-          h('div.column-header-cell-class-label', rowNeuronCanonicalType)
-        );
-      }
+
       return h(
         'div.contact-matrix-cell',
         {
           key: `${rowNeuron}$0`,
           style: {
-            zIndex: 100,
             ...style,
             overflow: 'visible',
             backgroundColor: this.neuronClassToColor[rowNeuronCanonicalType],
@@ -130,18 +130,13 @@ class ContactMatrixCell extends React.Component {
           colNeuron
         ),
       ];
-      if (columnMid === columnIndex) {
-        content.push(
-          h('div.row-header-cell-class-label', colNeuronCanonicalType)
-        );
-      }
+
       return h(
         'div.contact-matrix-cell',
         {
           key: `0$${colNeuron}`,
           style: {
             ...style,
-            zIndex: 100,
             backgroundColor: this.neuronClassToColor[colNeuronCanonicalType],
           },
         },
@@ -306,7 +301,7 @@ export default class ContactMatrix extends React.Component {
     );
   }
 
-  handlecolumnInputChange(newVal: string) {
+  handleColumnInputChange(newVal: string) {
     // TODO create function that centers searched neuron in row/col
     const neuronIndex = model.getIndexOfNeuron(newVal);
 
@@ -336,6 +331,8 @@ export default class ContactMatrix extends React.Component {
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
         h('h3.contact-matrix-title', 'Contact Matrix'),
+        h('div.row-neuron-type-label', 'Type: sensory'),
+        h('div.column-neuron-type-label', 'Type: sensory'),
         h('div.contact-matrix-controls', [
           h('div', [
             h('label', 'Find row neuron'),
@@ -346,34 +343,43 @@ export default class ContactMatrix extends React.Component {
           h('div', [
             h('label', 'Find column neuron'),
             h('input.contact-matrix-input', {
-              onChange: (e) => this.handlecolumnInputChange(e.target.value),
+              onChange: (e) => this.handleColumnInputChange(e.target.value),
             }),
           ]),
         ]),
-        h(ColorScale, {
-          numSteps: 60,
-          minVal: 0.0,
-          maxVal: model.stats.maxContactArea,
-          units: `${String.fromCharCode(181)}m^2`,
-          colorScaleFn: colorScaleFn,
-        }),
       ]),
-      h(CellLegend, {
-        legendEntries: [
-          {
-            className: 'contact-matrix-legend-monotonic',
-            label: 'Monotonic increasing',
-          },
-          {
-            className: 'contact-matrix-legend-no-contact',
-            label: 'No contact',
-          },
-          {
-            className: 'contact-matrix-legend-value-ignored',
-            label: 'Symmetric values ignored',
-          },
-        ],
-      }),
+      h(
+        CellLegend,
+        {
+          legendEntries: [
+            {
+              className: 'contact-matrix-legend-monotonic',
+              label: 'Monotonic increasing',
+            },
+            {
+              className: 'contact-matrix-legend-no-contact',
+              label: 'No contact',
+            },
+            {
+              className: 'contact-matrix-legend-value-ignored',
+              label: 'Symmetric values ignored',
+            },
+          ],
+        },
+        [
+          h(ColorScale, {
+            numSteps: 5,
+            minVal: 0.0,
+            minValLabel: '0',
+            maxValLabel: `${Number(
+              model.stats.maxContactArea / 1000000
+            ).toFixed(2)} X 10^7`,
+            maxVal: model.stats.maxContactArea,
+            units: `${String.fromCharCode(181)}m^2`,
+            colorScaleFn: colorScaleFn,
+          }),
+        ]
+      ),
       h(
         Modal,
         {
@@ -407,8 +413,6 @@ export default class ContactMatrix extends React.Component {
               fixedRowCount: 1,
               cellRenderer: ({ isScrolling, columnIndex, rowIndex, style }) =>
                 h(ContactMatrixCell, {
-                  rowMid: this.state.rowMid,
-                  columnMid: this.state.columnMid,
                   isScrolling,
                   columnIndex,
                   rowIndex,
