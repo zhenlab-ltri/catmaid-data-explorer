@@ -10,6 +10,15 @@ import { Line } from 'react-chartjs-2';
 import model from '../model';
 import { monotonicIncreasing, monotonicDecreasing } from '../util';
 
+const neuronClassToColor = {
+  sensory: '#f9cef9',
+  interneuron: '#ff887a',
+  motor: '#b7daf5',
+  modulatory: '#f9d77b',
+  muscle: '#a8f5a2',
+  other: '#d9d9d9',
+};
+
 // component that renders color scale bars using a sequence of divs
 // dependent on a chroma-js scale object that maps values to colors
 class ColorScale extends React.Component {
@@ -53,15 +62,6 @@ class CellLegend extends React.Component {
 }
 
 class ContactMatrixCell extends React.Component {
-  neuronClassToColor = {
-    sensory: '#f9cef9',
-    interneuron: '#ff887a',
-    motor: '#b7daf5',
-    modulatory: '#f9d77b',
-    muscle: '#a8f5a2',
-    other: '#d9d9d9',
-  };
-
   render() {
     const {
       highlighted,
@@ -114,7 +114,7 @@ class ContactMatrixCell extends React.Component {
           style: {
             ...style,
             overflow: 'visible',
-            backgroundColor: this.neuronClassToColor[rowNeuronCanonicalType],
+            backgroundColor: neuronClassToColor[rowNeuronCanonicalType],
           },
         },
         content
@@ -137,7 +137,7 @@ class ContactMatrixCell extends React.Component {
           key: `0$${colNeuron}`,
           style: {
             ...style,
-            backgroundColor: this.neuronClassToColor[colNeuronCanonicalType],
+            backgroundColor: neuronClassToColor[colNeuronCanonicalType],
           },
         },
         content
@@ -249,8 +249,8 @@ export default class ContactMatrix extends React.Component {
       hoveredColumnIndex: -1,
       scrollToColumn: 0,
       scrollToRow: 0,
-      rowMid: -1,
-      columnMid: -1,
+      lastRowIndex: 0,
+      lastColumnIndex: 0,
       rowInput: '',
       columnInput: '',
       showCellDetail: false,
@@ -266,12 +266,10 @@ export default class ContactMatrix extends React.Component {
       columnStartIndex,
       columnStopIndex,
     } = opts;
-    const rowMid = Math.floor((rowStartIndex + rowStopIndex) / 2) + 1;
-    const columnMid = Math.floor((columnStartIndex + columnStopIndex) / 2) + 1;
 
     this.setState({
-      rowMid,
-      columnMid,
+      lastRowIndex: rowStopIndex,
+      lastColumnIndex: columnStopIndex,
     });
   }
 
@@ -327,12 +325,42 @@ export default class ContactMatrix extends React.Component {
   }, 5);
 
   render() {
-    const { colorScaleFn } = this.state;
+    const { colorScaleFn, lastRowIndex, lastColumnIndex } = this.state;
+    const lastRowNeuronCanonicalType =
+      model.neurons[lastRowIndex].canonicalType;
+    const lastColumnNeuronCanonicalType =
+      model.neurons[lastColumnIndex].canonicalType;
+
+    const showColumnType = lastColumnIndex !== model.neurons.length - 2;
+    const showRowType = lastRowIndex !== model.neurons.length - 2;
+
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
         h('h3.contact-matrix-title', 'Contact Matrix'),
-        h('div.row-neuron-type-label', 'Type: sensory'),
-        h('div.column-neuron-type-label', 'Type: sensory'),
+        showRowType
+          ? h(
+              'div.row-neuron-type-label',
+              {
+                style: {
+                  backgroundColor:
+                    neuronClassToColor[lastRowNeuronCanonicalType],
+                },
+              },
+              `Type: ${lastRowNeuronCanonicalType}`
+            )
+          : null,
+        showColumnType
+          ? h(
+              'div.column-neuron-type-label',
+              {
+                style: {
+                  backgroundColor:
+                    neuronClassToColor[lastColumnNeuronCanonicalType],
+                },
+              },
+              `Type: ${lastColumnNeuronCanonicalType}`
+            )
+          : null,
         h('div.contact-matrix-controls', [
           h('div', [
             h('label', 'Find row neuron'),

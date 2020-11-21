@@ -66,9 +66,9 @@
 
 .row-neuron-type-label {
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   top: 688px;
-  left: -2px;
+  left: -3px;
   background-color: white;
   padding: 1em;
   border: 1px solid black;
@@ -77,8 +77,8 @@
 
 .column-neuron-type-label {
   position: absolute;
-  z-index: 2;
-  top: 26px;
+  z-index: 1;
+  top: 12px;
   left: 1360px;
   background-color: white;
   padding: 1em;
