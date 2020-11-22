@@ -10,15 +10,6 @@ import { Line } from 'react-chartjs-2';
 import model from '../model';
 import { monotonicIncreasing, monotonicDecreasing } from '../util';
 
-const neuronClassToColor = {
-  sensory: '#f9cef9',
-  interneuron: '#ff887a',
-  motor: '#b7daf5',
-  modulatory: '#f9d77b',
-  muscle: '#a8f5a2',
-  other: '#d9d9d9',
-};
-
 // component that renders color scale bars using a sequence of divs
 // dependent on a chroma-js scale object that maps values to colors
 class ColorScale extends React.Component {
@@ -111,11 +102,8 @@ class ContactMatrixCell extends React.Component {
         'div.contact-matrix-cell',
         {
           key: `${rowNeuron}$0`,
-          style: {
-            ...style,
-            overflow: 'visible',
-            backgroundColor: neuronClassToColor[rowNeuronCanonicalType],
-          },
+          className: `contact-matrix-cell ${rowNeuronCanonicalType}`,
+          style,
         },
         content
       );
@@ -135,10 +123,8 @@ class ContactMatrixCell extends React.Component {
         'div.contact-matrix-cell',
         {
           key: `0$${colNeuron}`,
-          style: {
-            ...style,
-            backgroundColor: neuronClassToColor[colNeuronCanonicalType],
-          },
+          className: `contact-matrix-cell ${colNeuronCanonicalType}`,
+          style,
         },
         content
       );
@@ -249,8 +235,8 @@ export default class ContactMatrix extends React.Component {
       hoveredColumnIndex: -1,
       scrollToColumn: 0,
       scrollToRow: 0,
-      lastRowIndex: 0,
-      lastColumnIndex: 0,
+      numVisibleRows: 0,
+      numVisibleColumns: 0,
       rowInput: '',
       columnInput: '',
       showCellDetail: false,
@@ -267,9 +253,12 @@ export default class ContactMatrix extends React.Component {
       columnStopIndex,
     } = opts;
 
+    const numVisibleRows = rowStopIndex - rowStartIndex;
+    const numVisibleColumns = columnStopIndex - columnStartIndex;
+
     this.setState({
-      lastRowIndex: rowStopIndex,
-      lastColumnIndex: columnStopIndex,
+      numVisibleRows,
+      numVisibleColumns,
     });
   }
 
@@ -280,8 +269,28 @@ export default class ContactMatrix extends React.Component {
     });
   }
 
+  scrollToColumnNeuron(neuronIndex: number) {
+    // scroll to the neuron and make sure it's column is centered
+    const columnPadding = Math.floor(this.state.numVisibleColumns / 2);
+    this.setState({
+      scrollToColumn: Math.min(
+        neuronIndex + columnPadding,
+        model.neurons.length
+      ),
+      hoveredColumnIndex: neuronIndex,
+    });
+  }
+
+  scrollToRowNeuron(neuronIndex: number) {
+    // scroll to the row neuron and make sure it's column is centered
+    const rowPadding = Math.floor(this.state.numVisibleRows / 2);
+    this.setState({
+      scrollToRow: Math.min(neuronIndex + rowPadding, model.neurons.length),
+      hoveredRowIndex: neuronIndex,
+    });
+  }
+
   handleRowInputChange(newVal: string) {
-    // TODO create function that centers searched neuron in row/col
     const neuronIndex = model.getIndexOfNeuron(newVal);
 
     this.setState(
@@ -290,17 +299,13 @@ export default class ContactMatrix extends React.Component {
       },
       () => {
         if (neuronIndex != null) {
-          this.setState({
-            scrollToRow: Math.min(neuronIndex + 6, model.neurons.length),
-            hoveredRowIndex: neuronIndex,
-          });
+          this.scrollToRowNeuron(neuronIndex);
         }
       }
     );
   }
 
   handleColumnInputChange(newVal: string) {
-    // TODO create function that centers searched neuron in row/col
     const neuronIndex = model.getIndexOfNeuron(newVal);
 
     this.setState(
@@ -309,10 +314,7 @@ export default class ContactMatrix extends React.Component {
       },
       () => {
         if (neuronIndex != null) {
-          this.setState({
-            scrollToColumn: Math.min(neuronIndex + 13, model.neurons.length),
-            hoveredColumnIndex: neuronIndex,
-          });
+          this.scrollToColumnNeuron(neuronIndex);
         }
       }
     );
@@ -325,42 +327,29 @@ export default class ContactMatrix extends React.Component {
   }, 5);
 
   render() {
-    const { colorScaleFn, lastRowIndex, lastColumnIndex } = this.state;
-    const lastRowNeuronCanonicalType =
-      model.neurons[lastRowIndex].canonicalType;
-    const lastColumnNeuronCanonicalType =
-      model.neurons[lastColumnIndex].canonicalType;
+    const { colorScaleFn } = this.state;
 
-    const showColumnType = lastColumnIndex !== model.neurons.length - 2;
-    const showRowType = lastRowIndex !== model.neurons.length - 2;
+    const neuronClassTabs = model.allNeuronTypes().map((t) =>
+      h(
+        'div',
+        {
+          className: `${t} column-neuron-type-label`,
+          onClick: (e) => {
+            const firstNeuronIndexOfType = model.neurons.findIndex(
+              (n) => n.canonicalType === t
+            );
+            if (firstNeuronIndexOfType >= 0) {
+              this.scrollToColumnNeuron(firstNeuronIndexOfType);
+            }
+          },
+        },
+        t
+      )
+    );
 
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
         h('h3.contact-matrix-title', 'Contact Matrix'),
-        showRowType
-          ? h(
-              'div.row-neuron-type-label',
-              {
-                style: {
-                  backgroundColor:
-                    neuronClassToColor[lastRowNeuronCanonicalType],
-                },
-              },
-              `Type: ${lastRowNeuronCanonicalType}`
-            )
-          : null,
-        showColumnType
-          ? h(
-              'div.column-neuron-type-label',
-              {
-                style: {
-                  backgroundColor:
-                    neuronClassToColor[lastColumnNeuronCanonicalType],
-                },
-              },
-              `Type: ${lastColumnNeuronCanonicalType}`
-            )
-          : null,
         h('div.contact-matrix-controls', [
           h('div', [
             h('label', 'Find row neuron'),
@@ -375,6 +364,7 @@ export default class ContactMatrix extends React.Component {
             }),
           ]),
         ]),
+        ...neuronClassTabs,
       ]),
       h(
         CellLegend,
@@ -466,7 +456,6 @@ export default class ContactMatrix extends React.Component {
               onSectionRendered: (opts) => this.handleSectionRendered(opts),
               rowCount: model.neurons.length,
               columnCount: model.neurons.length,
-              style: { border: '1px solid #ddd' },
               styleBottomLeftGrid: {
                 borderRight: '2px solid #aaa',
                 backgroundColor: '#f7f7f7',

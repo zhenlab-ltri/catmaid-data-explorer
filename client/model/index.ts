@@ -31,6 +31,9 @@ model.neuronsFromPairKey = (neuronPairKey: string): [string, string] => {
   return [neuron0, neuron1]
 };
 
+model.allNeuronTypes = () => {
+  return ['sensory', 'interneuron', 'motor', 'modulatory', 'muscle', 'other'];
+};
 
 model.getContactArea = (neuronPairKey: string) => {
   // the TEM_adult dataset does not have contact areas
