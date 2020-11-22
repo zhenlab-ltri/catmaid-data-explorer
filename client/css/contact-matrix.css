@@ -1,3 +1,7 @@
+.row {
+  display: flex;
+}
+
 .contact-matrix-title {
   margin: 0;
 }
@@ -59,20 +63,28 @@
   bottom: 30px;
 }
 
-.row-neuron-type-label {
-  position: absolute;
-  left: 10px;
+.row-neuron-tabs {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 80px;
+  height: 700px;
+  margin-top: 350px;
+  align-items: right;
 }
 
 .row-neuron-type-label {
-  position: absolute;
-  z-index: 1;
-  top: 688px;
-  left: -3px;
-  background-color: white;
-  padding: 1em;
-  border: 1px solid black;
-  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  height: 40px;
+}
+
+.column-neuron-tabs {
+  display: flex;
+  align-self: flex-end;
+  margin-left: 160px;
 }
 
 .column-neuron-type-label {
@@ -81,11 +93,6 @@
   align-items: center;
   align-self: flex-end;
   cursor: pointer;
-  background-color: white;
-  border-top: 1px solid black;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  border-radius: 0.25em 0.25em 0em 0em;
   width: 80px;
   height: 36px;
 }
