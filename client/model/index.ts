@@ -51,4 +51,18 @@ model.getContactArea = (neuronPairKey: string) => {
   };
 };
 
+model.getChemicalSynapses = (neuronPairKey: string) => {
+  return {
+    chemicalSynapses: model.neuronPairData[neuronPairKey]?.chemicalSynapses,
+    chemicalSynapsesDatasets: model.datasets.map(d => d.id),
+  };
+}
+
+model.getGapJunctions = (neuronPairKey: string) => {
+  return {
+    gapJunctions: model.neuronPairData[neuronPairKey]?.gapJunctions,
+    gapJunctionsDatasets: model.datasets.map(d => d.id),
+  };
+}
+
 export default model;

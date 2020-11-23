@@ -6,9 +6,103 @@ import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
 import Modal from 'react-modal';
 import { Line } from 'react-chartjs-2';
+import Select from 'react-select';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import model from '../model';
 import { monotonicIncreasing, monotonicDecreasing } from '../util';
+
+class MultiTabModal extends React.Component {
+  render() {
+    const { isOpen, className, onClick, neuronPairKey } = this.props;
+    const { gapJunctions, gapJunctionsDatasets } = model.getGapJunctions(
+      neuronPairKey
+    );
+    const {
+      chemicalSynapses,
+      chemicalSynapsesDatasets,
+    } = model.getChemicalSynapses(neuronPairKey);
+    const { contactAreas, contactAreaDatasets } = model.getContactArea(
+      neuronPairKey
+    );
+
+    return h(
+      Modal,
+      {
+        style: {
+          overlay: {
+            zIndex: 1,
+          },
+        },
+        isOpen,
+        className,
+      },
+      [
+        h('button', { onClick: (e) => this.props.onClick(e) }, 'close'),
+        h(Tabs, [
+          h(TabList, [
+            h(Tab, 'Chemical Synapses'),
+            h(Tab, 'Gap Junctions'),
+            h(Tab, 'Contact Area'),
+          ]),
+          h(
+            TabPanel,
+            { key: '0' },
+            chemicalSynapses != null
+              ? h(NeuronPairLineChart, {
+                  id: 'cs',
+                  values: chemicalSynapses,
+                  datasets: chemicalSynapsesDatasets,
+                  label: `Chemical Synapses between ${neuronPairKey.replace(
+                    '$',
+                    ' and '
+                  )}`,
+                })
+              : h(
+                  'div',
+                  `No chemical synapses found between ${neuronPairKey.replace(
+                    '$',
+                    ' and '
+                  )}`
+                )
+          ),
+          h(
+            TabPanel,
+            { key: '1' },
+            gapJunctions != null
+              ? h(NeuronPairLineChart, {
+                  id: 'gj',
+                  values: gapJunctions,
+                  datasets: gapJunctionsDatasets,
+                  label: `Gap junctions between ${neuronPairKey.replace(
+                    '$',
+                    ' and '
+                  )}`,
+                })
+              : h(
+                  'div',
+                  `No gap junctions found between ${neuronPairKey.replace(
+                    '$',
+                    ' and '
+                  )}`
+                )
+          ),
+          h(TabPanel, { key: '2' }, [
+            h(NeuronPairLineChart, {
+              id: 'ca',
+              values: contactAreas,
+              datasets: contactAreaDatasets,
+              label: `Contact area between ${neuronPairKey.replace(
+                '$',
+                ' and '
+              )} (${String.fromCharCode(181)}m^2)`,
+            }),
+          ]),
+        ]),
+      ]
+    );
+  }
+}
 
 // component that renders color scale bars using a sequence of divs
 // dependent on a chroma-js scale object that maps values to colors
@@ -183,23 +277,18 @@ class ContactMatrixCell extends React.Component {
   }
 }
 
-class ContactAreaLineChart extends React.Component {
+class NeuronPairLineChart extends React.Component {
   render() {
-    const { neuronPairKey } = this.props;
-    const { contactAreas, contactAreaDatasets } = model.getContactArea(
-      neuronPairKey
-    );
+    const { id, label, datasets, values } = this.props;
 
     return h(Line, {
+      id,
       data: {
-        labels: contactAreaDatasets,
+        labels: datasets,
         datasets: [
           {
-            label: `Contact area between ${neuronPairKey.replace(
-              '$',
-              ' and '
-            )} (${String.fromCharCode(181)}m^2)`,
-            data: contactAreas || [],
+            label,
+            data: values || [],
             fill: false,
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgba(255, 99, 132, 0.2)',
@@ -263,10 +352,19 @@ export default class ContactMatrix extends React.Component {
   }
 
   handleCellClick(e, neuronKey, rowIndex, columnIndex) {
-    this.setState({
-      showCellDetail: true,
-      cellDetailKey: neuronKey,
-    });
+    this.setState(
+      {
+        cellDetailKey: neuronKey,
+      },
+      () =>
+        this.setState({
+          showCellDetail: true,
+        })
+    );
+    // this.setState({
+    //   showCellDetail: true,
+    //   cellDetailKey: neuronKey,
+    // });
   }
 
   scrollToColumnNeuron(neuronIndex: number) {
@@ -373,6 +471,14 @@ export default class ContactMatrix extends React.Component {
 
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
+        // h(Select, {
+        //   className: 'contact-matrix-title',
+        //   options: [
+        //     { value: 'gap-junctions', label: 'Gap Junctions' },
+        //     { value: 'chemical-synapses', label: 'Chemical Synapses' },
+        //     { value: 'contact-area', label: 'Contact Area' },
+        //   ],
+        // }),
         h('h3.contact-matrix-title', 'Contact Matrix'),
         h('div.contact-matrix-controls', [
           h('div', [
@@ -422,26 +528,12 @@ export default class ContactMatrix extends React.Component {
           }),
         ]
       ),
-      h(
-        Modal,
-        {
-          style: {
-            overlay: {
-              zIndex: 1,
-            },
-          },
-          isOpen: this.state.showCellDetail,
-          className: 'modal',
-        },
-        [
-          h(
-            'button',
-            { onClick: (e) => this.setState({ showCellDetail: false }) },
-            'close'
-          ),
-          h(ContactAreaLineChart, { neuronPairKey: this.state.cellDetailKey }),
-        ]
-      ),
+      h(MultiTabModal, {
+        isOpen: this.state.showCellDetail,
+        className: 'modal',
+        onClick: (e) => this.setState({ showCellDetail: false }),
+        neuronPairKey: this.state.cellDetailKey,
+      }),
       h('div.row', [
         neuronClassRowTabs,
         h(
