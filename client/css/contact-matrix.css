@@ -1,9 +1,15 @@
+.contact-matrix {
+  margin: 20px;
+  box-shadow: 3px 3px 5px 6px #ccc;
+}
+
 .row {
   display: flex;
 }
 
 .contact-matrix-title {
   margin: 0;
+  margin-left: 80px;
 }
 
 .contact-matrix-cell {
@@ -17,6 +23,7 @@
   align-items: center;
   margin: 0;
   height: 40px;
+  justify-content: space-between;
 }
 
 .contact-matrix-controls {
@@ -69,7 +76,7 @@
   flex-direction: column;
   flex-wrap: wrap;
   width: 80px;
-  margin-top: 510px;
+  margin-top: 468px;
   align-items: right;
 }
 
@@ -81,11 +88,13 @@
   height: 40px;
   width: 80px;
   border-radius: 0.5em 0em 0 0.5em;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  margin-top: 2px;
 }
 
 .column-neuron-tabs {
   display: flex;
-  margin-left: 510px;
+  /* margin-left: 510px; */
 }
 
 .column-neuron-type-label {
@@ -97,6 +106,8 @@
   cursor: pointer;
   width: 80px;
   height: 40px;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  margin-right: 2px;
 }
 
 .sensory {

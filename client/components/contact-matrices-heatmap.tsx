@@ -476,7 +476,7 @@ export default class ContactMatrix extends React.Component {
                 columnHeight: 40,
                 enableFixedColumnScroll: true,
                 enableFixedRowScroll: true,
-                height: 750,
+                height: 720,
                 width: width - 80,
                 onSectionRendered: (opts) => this.handleSectionRendered(opts),
                 rowCount: model.neurons.length,
