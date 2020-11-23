@@ -3,7 +3,7 @@ import h from 'react-hyperscript';
 import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
-import Heatmap from './components/contact-matrices-heatmap';
+import MultiMatrix from './components/contact-matrices-heatmap';
 
 class App extends React.Component {
   render() {
@@ -13,15 +13,13 @@ class App extends React.Component {
           exact: true,
           path: '/',
           render: () => {
-            return h('div', [
-              h(Link, { to: '/contact-matrix' }, 'Contact Matrix'),
-            ]);
+            return h('div', [h(Link, { to: '/multi-matrix' }, 'Multi Matrix')]);
           },
         }),
         h(Route, {
           exact: true,
-          path: '/contact-matrix',
-          component: Heatmap,
+          path: '/multi-matrix',
+          component: MultiMatrix,
         }),
       ]),
     ]);

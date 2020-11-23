@@ -1,0 +1,33 @@
+.matrix-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  cursor: pointer;
+  /* background-color: white; */
+}
+
+.matrix-cell-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.matrix-cell-ignored {
+  cursor: default;
+  background-color: #514d4d;
+}
+
+.matrix-cell-no-value {
+  opacity: 0.2;
+  cursor: default;
+  background-color: gray;
+}
+
+.matrix-cell-highlighted {
+  font-size: 1.25em;
+}
+
+.matrix-cell-unhighlighted {
+  font-size: 0.75em;
+}

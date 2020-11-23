@@ -5,12 +5,22 @@ import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
 import Modal from 'react-modal';
-import { Line } from 'react-chartjs-2';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Dropdown from 'react-dropdown';
 
+import {
+  ContactMatrixCell,
+  ChemicalSynapseMatrixCell,
+  GapJunctionMatrixCell,
+} from './cell-renderer';
+import {
+  ContactMatrixCellLegend,
+  ChemicalSynapseMatrixCellLegend,
+  GapJunctionMatrixCellLegend,
+} from './cell-legend';
+import { LineChart } from './charts';
+
 import model from '../model';
-import { monotonicIncreasing, monotonicDecreasing } from '../util';
 
 class MultiTabModal extends React.Component {
   render() {
@@ -57,7 +67,7 @@ class MultiTabModal extends React.Component {
             TabPanel,
             { key: '0' },
             chemicalSynapses != null
-              ? h(NeuronPairLineChart, {
+              ? h(LineChart, {
                   id: 'cs',
                   values: chemicalSynapses,
                   datasets: chemicalSynapsesDatasets,
@@ -78,7 +88,7 @@ class MultiTabModal extends React.Component {
             TabPanel,
             { key: '1' },
             gapJunctions != null
-              ? h(NeuronPairLineChart, {
+              ? h(LineChart, {
                   id: 'gj',
                   values: gapJunctions,
                   datasets: gapJunctionsDatasets,
@@ -96,7 +106,7 @@ class MultiTabModal extends React.Component {
                 )
           ),
           h(TabPanel, { key: '2' }, [
-            h(NeuronPairLineChart, {
+            h(LineChart, {
               id: 'ca',
               values: contactAreas,
               datasets: contactAreaDatasets,
@@ -112,229 +122,48 @@ class MultiTabModal extends React.Component {
   }
 }
 
-// component that renders color scale bars using a sequence of divs
-// dependent on a chroma-js scale object that maps values to colors
-class ColorScale extends React.Component {
-  render() {
-    const {
-      numSteps,
-      minVal,
-      maxVal,
-      minValLabel,
-      maxValLabel,
-      units,
-      colorScaleFn,
-    } = this.props;
-    const stepSize = maxVal / numSteps;
-    const colorScaleDivs = [...Array(numSteps).keys()].map((el, index) => {
-      return h('div.color-scalebar-item', {
-        style: { backgroundColor: colorScaleFn(index * stepSize) },
-      });
-    });
+const multiMatrixData = {
+  contactArea: {
+    label: 'Contact Area',
+    value: 'contactArea',
+    maxVal: model.stats.maxContactArea,
+    colorScaleFn: chroma
+      .scale(['white', 'red'])
+      .domain([0, model.stats.maxContactArea])
+      .gamma(0.6),
+    cellRenderer: ContactMatrixCell,
+    cellLegend: ContactMatrixCellLegend,
+  },
+  chemicalSynapses: {
+    label: 'Chemical Synapses',
+    value: 'chemicalSynapses',
+    maxVal: model.stats.maxConnectivityCs,
+    colorScaleFn: chroma
+      .scale(['white', 'red'])
+      .domain([0, model.stats.maxConnectivityCs])
+      .gamma(0.6),
+    cellRenderer: ChemicalSynapseMatrixCell,
+    cellLegend: ChemicalSynapseMatrixCellLegend,
+  },
+  gapJunctions: {
+    label: 'Gap Junctions',
+    value: 'gapJunctions',
+    maxVal: model.stats.maxConnectivityGj,
+    colorScaleFn: chroma
+      .scale(['white', 'red'])
+      .domain([0, model.stats.maxConnectivityGj])
+      .gamma(0.6),
+    cellRenderer: GapJunctionMatrixCell,
+    cellLegend: GapJunctionMatrixCellLegend,
+  },
+};
 
-    return h('div.color-scale', [
-      h('div.color-scalebar', colorScaleDivs),
-      h('div', `[${minValLabel}, ${maxValLabel}] ${units}`),
-    ]);
-  }
-}
-
-class CellLegend extends React.Component {
-  render() {
-    const { legendEntries } = this.props;
-
-    const legendEntryDivs = legendEntries.map((entry) => {
-      return h('div.cell-legend-entry', [
-        h('div', { className: entry.className }),
-        h('div', entry.label),
-      ]);
-    });
-
-    return h('div.cell-legend', [...legendEntryDivs, this.props.children]);
-  }
-}
-
-class ContactMatrixCell extends React.Component {
-  render() {
-    const {
-      highlighted,
-      columnIndex,
-      rowIndex,
-      style,
-      onHover,
-      onClick,
-      colorScaleFn,
-    } = this.props;
-    const rowNeuron = model.neurons[rowIndex].id;
-    const colNeuron = model.neurons[columnIndex].id;
-    const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
-    const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
-    const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { contactAreas } = model.getContactArea(neuronKey);
-
-    let backgroundColor = 'white';
-
-    if (contactAreas == null) {
-      backgroundColor = 'gray';
-    } else {
-      if (monotonicIncreasing(contactAreas)) {
-        backgroundColor = 'black';
-      }
-
-      if (monotonicDecreasing(contactAreas)) {
-        backgroundColor = 'blue';
-      }
-    }
-
-    if (columnIndex === 0 && rowIndex === 0) {
-      return h('div.contact-matrix-cell', { key: '0-0', style });
-    }
-
-    // cell is in the row header
-    if (columnIndex === 0 && rowIndex > 0) {
-      const content = [
-        h(
-          'div',
-          { style: { fontSize: highlighted ? '1.25em' : '0.7em' } },
-          rowNeuron
-        ),
-      ];
-
-      return h(
-        'div.contact-matrix-cell',
-        {
-          key: `${rowNeuron}$0`,
-          className: `contact-matrix-cell ${rowNeuronCanonicalType}`,
-          style,
-        },
-        content
-      );
-    }
-
-    // cell is in the column header
-    if (rowIndex === 0 && columnIndex > 0) {
-      const content = [
-        h(
-          'div',
-          { style: { fontSize: highlighted ? '1.25em' : '0.7em' } },
-          colNeuron
-        ),
-      ];
-
-      return h(
-        'div.contact-matrix-cell',
-        {
-          key: `0$${colNeuron}`,
-          className: `contact-matrix-cell ${colNeuronCanonicalType}`,
-          style,
-        },
-        content
-      );
-    }
-
-    // contact matrix data is symmetric
-    // only render half the matrix
-    if (rowIndex <= columnIndex) {
-      return h('div.contact-matrix-cell', {
-        key: model.neuronPairKey(rowNeuron, colNeuron),
-        style: {
-          ...style,
-          border: '1px solid black',
-          backgroundColor: '#514d4d',
-        },
-      });
-    }
-
-    return h(
-      'div.contact-matrix-cell',
-      {
-        key: model.neuronPairKey(rowNeuron, colNeuron),
-        onMouseOver: (e) => onHover(rowIndex, columnIndex),
-        onClick: (e) =>
-          this.props.onClick(
-            e,
-            model.neuronPairKey(rowNeuron, colNeuron),
-            rowIndex,
-            columnIndex
-          ),
-        style: {
-          ...style,
-          border: '1px solid black',
-          opacity: contactAreas == null ? 0.2 : 1,
-          backgroundColor,
-          cursor: contactAreas == null ? 'default' : 'pointer',
-        },
-      },
-      contactAreas == null
-        ? []
-        : contactAreas.map((areaValue) =>
-            h('div', {
-              style: {
-                height: monotonicIncreasing(contactAreas)
-                  ? style.height - 8
-                  : style.height,
-                width:
-                  (monotonicIncreasing(contactAreas)
-                    ? style.width - 8
-                    : style.width) / contactAreas.length,
-                backgroundColor: colorScaleFn(areaValue),
-              },
-            })
-          )
-    );
-  }
-}
-
-class NeuronPairLineChart extends React.Component {
-  render() {
-    const { id, label, datasets, values } = this.props;
-
-    return h(Line, {
-      id,
-      data: {
-        labels: datasets,
-        datasets: [
-          {
-            label,
-            data: values || [],
-            fill: false,
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgba(255, 99, 132, 0.2)',
-          },
-        ],
-      },
-      options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
-      },
-    });
-  }
-}
-
-export default class ContactMatrix extends React.Component {
+export default class MultiMatrix extends React.Component {
   constructor(props) {
     super(props);
 
-    const colorScaleFn = chroma
-      .scale(['white', 'red'])
-      .domain([0.0, model.stats.maxContactArea])
-      .gamma(0.6);
-
-    const MATRIX_MAP = {
-      CONTACT_AREA: { label: 'Contact Area', value: 0 },
-      CHEMICAL_SYNAPSES: { label: 'Chemical Synapses', value: 1 },
-      GAP_JUNCTIONS: { label: 'Gap Junctions', value: 2 },
-    };
-
     this.state = {
-      selectedMatrix: MATRIX_MAP.CONTACT_AREA,
+      selectedMatrix: multiMatrixData.contactArea.value,
       hoveredRowIndex: -1,
       hoveredColumnIndex: -1,
       scrollToColumn: 0,
@@ -347,8 +176,13 @@ export default class ContactMatrix extends React.Component {
       columnInput: '',
       showCellDetail: false,
       cellDetailKey: '',
-      colorScaleFn,
     };
+  }
+
+  onDropdownSelect(e) {
+    this.setState({
+      selectedMatrix: e.value,
+    });
   }
 
   handleSectionRendered(opts) {
@@ -444,11 +278,14 @@ export default class ContactMatrix extends React.Component {
 
   render() {
     const {
-      colorScaleFn,
       neuronTypeWithMostColumns,
       neuronTypeWithMostRows,
       selectedMatrix,
     } = this.state;
+
+    const { colorScaleFn, cellRenderer, cellLegend, maxVal } = multiMatrixData[
+      selectedMatrix
+    ];
 
     const neuronClassColumnTabs = h(
       'div.column-neuron-tabs',
@@ -504,13 +341,10 @@ export default class ContactMatrix extends React.Component {
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
         h(Dropdown, {
+          onChange: (e) => this.onDropdownSelect(e),
           value: this.state.selectedMatrix,
           className: 'contact-matrix-title',
-          options: [
-            { value: 'gap-junctions', label: 'Gap Junctions' },
-            { value: 'chemical-synapses', label: 'Chemical Synapses' },
-            { value: 'contact-area', label: 'Contact Area' },
-          ],
+          options: Object.values(multiMatrixData),
         }),
         h('div.contact-matrix-controls', [
           h('div', [
@@ -528,44 +362,13 @@ export default class ContactMatrix extends React.Component {
         ]),
         neuronClassColumnTabs,
       ]),
-      h(
-        CellLegend,
-        {
-          legendEntries: [
-            {
-              className: 'contact-matrix-legend-monotonic',
-              label: 'Monotonic increasing',
-            },
-            {
-              className: 'contact-matrix-legend-no-contact',
-              label: 'No contact',
-            },
-            {
-              className: 'contact-matrix-legend-value-ignored',
-              label: 'Symmetric values ignored',
-            },
-          ],
-        },
-        [
-          h(ColorScale, {
-            numSteps: 5,
-            minVal: 0.0,
-            minValLabel: '0',
-            maxValLabel: `${Number(
-              model.stats.maxContactArea / 1000000
-            ).toFixed(2)} X 10^7`,
-            maxVal: model.stats.maxContactArea,
-            units: `${String.fromCharCode(181)}m^2`,
-            colorScaleFn: colorScaleFn,
-          }),
-        ]
-      ),
       h(MultiTabModal, {
         isOpen: this.state.showCellDetail,
         className: 'modal',
         onClick: (e) => this.setState({ showCellDetail: false }),
         neuronPairKey: this.state.cellDetailKey,
       }),
+      h(cellLegend, { maxVal, colorScaleFn }),
       h('div.row', [
         neuronClassRowTabs,
         h(
@@ -580,7 +383,7 @@ export default class ContactMatrix extends React.Component {
                 fixedColumnCount: 1,
                 fixedRowCount: 1,
                 cellRenderer: ({ isScrolling, columnIndex, rowIndex, style }) =>
-                  h(ContactMatrixCell, {
+                  h(cellRenderer, {
                     isScrolling,
                     columnIndex,
                     rowIndex,

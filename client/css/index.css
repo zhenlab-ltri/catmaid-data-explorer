@@ -5,6 +5,7 @@
 @import './mona-heatmap.css';
 @import './tabs.css';
 @import './dropdown.css';
+@import './matrix-cell.css';
 
 body {
   margin: 0;
