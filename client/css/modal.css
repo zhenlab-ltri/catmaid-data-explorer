@@ -9,3 +9,8 @@
   border: 1px solid black;
   padding: 10px;
 }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+}

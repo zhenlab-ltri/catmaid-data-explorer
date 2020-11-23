@@ -94,7 +94,6 @@
 
 .column-neuron-tabs {
   display: flex;
-  /* margin-left: 510px; */
 }
 
 .column-neuron-type-label {
@@ -108,6 +107,14 @@
   height: 40px;
   box-shadow: 3px 3px 5px 6px #ccc;
   margin-right: 2px;
+}
+
+.neuron-type-label-deactivated {
+  opacity: 0.3;
+}
+
+.neuron-type-label-activated {
+  opacity: 1;
 }
 
 .sensory {

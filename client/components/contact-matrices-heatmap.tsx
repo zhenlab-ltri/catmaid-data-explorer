@@ -26,6 +26,8 @@ class MultiTabModal extends React.Component {
       neuronPairKey
     );
 
+    const annotations = model.getAnnotations(neuronPairKey);
+
     return h(
       Modal,
       {
@@ -38,7 +40,13 @@ class MultiTabModal extends React.Component {
         className,
       },
       [
-        h('button', { onClick: (e) => this.props.onClick(e) }, 'close'),
+        h('div.modal-header', [
+          h('button', { onClick: (e) => this.props.onClick(e) }, 'close'),
+          h(
+            'div',
+            annotations.map((a) => h('div', a))
+          ),
+        ]),
         h(Tabs, [
           h(TabList, [
             h(Tab, 'Chemical Synapses'),
@@ -326,6 +334,8 @@ export default class ContactMatrix extends React.Component {
       scrollToRow: 0,
       numVisibleRows: 0,
       numVisibleColumns: 0,
+      neuronTypeWithMostRows: 'sensory',
+      neuronTypewithMostColumns: 'sensory',
       rowInput: '',
       columnInput: '',
       showCellDetail: false,
@@ -344,10 +354,15 @@ export default class ContactMatrix extends React.Component {
 
     const numVisibleRows = rowStopIndex - rowStartIndex;
     const numVisibleColumns = columnStopIndex - columnStartIndex;
+    const neuronTypeWithMostRows = model.neurons[rowStopIndex].canonicalType;
+    const neuronTypeWithMostColumns =
+      model.neurons[columnStopIndex].canonicalType;
 
     this.setState({
       numVisibleRows,
       numVisibleColumns,
+      neuronTypeWithMostRows,
+      neuronTypeWithMostColumns,
     });
   }
 
@@ -361,10 +376,6 @@ export default class ContactMatrix extends React.Component {
           showCellDetail: true,
         })
     );
-    // this.setState({
-    //   showCellDetail: true,
-    //   cellDetailKey: neuronKey,
-    // });
   }
 
   scrollToColumnNeuron(neuronIndex: number) {
@@ -425,7 +436,11 @@ export default class ContactMatrix extends React.Component {
   }, 5);
 
   render() {
-    const { colorScaleFn } = this.state;
+    const {
+      colorScaleFn,
+      neuronTypeWithMostColumns,
+      neuronTypeWithMostRows,
+    } = this.state;
 
     const neuronClassColumnTabs = h(
       'div.column-neuron-tabs',
@@ -433,7 +448,11 @@ export default class ContactMatrix extends React.Component {
         h(
           'div',
           {
-            className: `${t} column-neuron-type-label`,
+            className: `${t} column-neuron-type-label ${
+              neuronTypeWithMostColumns !== t
+                ? 'neuron-type-label-deactivated'
+                : 'neuron-type-label-activated'
+            }`,
             onClick: (e) => {
               const firstNeuronIndexOfType = model.neurons.findIndex(
                 (n) => n.canonicalType === t
@@ -454,7 +473,12 @@ export default class ContactMatrix extends React.Component {
         h(
           'div',
           {
-            className: `${t} row-neuron-type-label`,
+            className: `${t} row-neuron-type-label
+            ${
+              neuronTypeWithMostRows !== t
+                ? 'neuron-type-label-deactivated'
+                : 'neuron-type-label-activated'
+            }`,
             onClick: (e) => {
               const firstNeuronIndexOfType = model.neurons.findIndex(
                 (n) => n.canonicalType === t

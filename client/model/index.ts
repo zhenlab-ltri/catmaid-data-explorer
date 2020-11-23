@@ -65,4 +65,8 @@ model.getGapJunctions = (neuronPairKey: string) => {
   };
 }
 
+model.getAnnotations = (neuornPairKey: string) => {
+  return model.neuronPairData[neuornPairKey]?.annotations || [];
+}
+
 export default model;
