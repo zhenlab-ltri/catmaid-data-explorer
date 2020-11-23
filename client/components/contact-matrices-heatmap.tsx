@@ -373,7 +373,6 @@ export default class ContactMatrix extends React.Component {
 
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
-        neuronClassColumnTabs,
         h('h3.contact-matrix-title', 'Contact Matrix'),
         h('div.contact-matrix-controls', [
           h('div', [
@@ -389,6 +388,7 @@ export default class ContactMatrix extends React.Component {
             }),
           ]),
         ]),
+        neuronClassColumnTabs,
       ]),
       h(
         CellLegend,
