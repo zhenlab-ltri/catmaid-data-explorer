@@ -329,21 +329,45 @@ export default class ContactMatrix extends React.Component {
   render() {
     const { colorScaleFn } = this.state;
 
-    const neuronClassTabs = model.allNeuronTypes().map((t) =>
-      h(
-        'div',
-        {
-          className: `${t} column-neuron-type-label`,
-          onClick: (e) => {
-            const firstNeuronIndexOfType = model.neurons.findIndex(
-              (n) => n.canonicalType === t
-            );
-            if (firstNeuronIndexOfType >= 0) {
-              this.scrollToColumnNeuron(firstNeuronIndexOfType);
-            }
+    const neuronClassColumnTabs = h(
+      'div.column-neuron-tabs',
+      model.allNeuronTypes().map((t) =>
+        h(
+          'div',
+          {
+            className: `${t} column-neuron-type-label`,
+            onClick: (e) => {
+              const firstNeuronIndexOfType = model.neurons.findIndex(
+                (n) => n.canonicalType === t
+              );
+              if (firstNeuronIndexOfType >= 0) {
+                this.scrollToColumnNeuron(firstNeuronIndexOfType);
+              }
+            },
           },
-        },
-        t
+          t
+        )
+      )
+    );
+
+    const neuronClassRowTabs = h(
+      'div.row-neuron-tabs',
+      model.allNeuronTypes().map((t) =>
+        h(
+          'div',
+          {
+            className: `${t} row-neuron-type-label`,
+            onClick: (e) => {
+              const firstNeuronIndexOfType = model.neurons.findIndex(
+                (n) => n.canonicalType === t
+              );
+              if (firstNeuronIndexOfType >= 0) {
+                this.scrollToRowNeuron(firstNeuronIndexOfType);
+              }
+            },
+          },
+          t
+        )
       )
     );
 
@@ -364,7 +388,7 @@ export default class ContactMatrix extends React.Component {
             }),
           ]),
         ]),
-        ...neuronClassTabs,
+        neuronClassColumnTabs,
       ]),
       h(
         CellLegend,
@@ -418,62 +442,64 @@ export default class ContactMatrix extends React.Component {
           h(ContactAreaLineChart, { neuronPairKey: this.state.cellDetailKey }),
         ]
       ),
-      h(
-        AutoSizer,
-        {
-          disableHeight: true,
-        },
-        [
-          ({ width }) =>
-            h(MultiGrid, {
-              ...this.state,
-              fixedColumnCount: 1,
-              fixedRowCount: 1,
-              cellRenderer: ({ isScrolling, columnIndex, rowIndex, style }) =>
-                h(ContactMatrixCell, {
-                  isScrolling,
-                  columnIndex,
-                  rowIndex,
-                  colorScaleFn,
-                  key: `${rowIndex}$${columnIndex}`,
-                  style,
-                  highlighted:
-                    columnIndex === this.state.hoveredColumnIndex ||
-                    rowIndex === this.state.hoveredRowIndex,
-                  onHover: this.handleCellHover,
-                  onClick: (e, neuronKey, rowIndex, columnIndex) =>
-                    this.handleCellClick(e, neuronKey, rowIndex, columnIndex),
-                }),
-              rowHeight: 40,
-              rowWidth: 80,
-              columnWidth: 80,
-              columnHeight: 40,
-              enableFixedColumnScroll: true,
-              enableFixedRowScroll: true,
-              height: 700,
-              width,
-              // isScrollingOptOut: true,
-              onSectionRendered: (opts) => this.handleSectionRendered(opts),
-              rowCount: model.neurons.length,
-              columnCount: model.neurons.length,
-              styleBottomLeftGrid: {
-                borderRight: '2px solid #aaa',
-                backgroundColor: '#f7f7f7',
-              },
-              styleTopLeftGrid: {
-                borderBottom: '2px solid #aaa',
-                borderRight: '2px solid #aaa',
-                backgroundColor: '#f7f7f7',
-              },
-              styleTopRightGrid: {
-                borderBottom: '2px solid #aaa',
-                backgroundColor: '#f7f7f7',
-              },
-              hideTopRightGridScrollbar: true,
-              hideBottomLeftGridScrollbar: true,
-            }),
-        ]
-      ),
+      h('div.row', [
+        neuronClassRowTabs,
+        h(
+          AutoSizer,
+          {
+            // disableHeight: true,
+          },
+          [
+            ({ width }) =>
+              h(MultiGrid, {
+                ...this.state,
+                fixedColumnCount: 1,
+                fixedRowCount: 1,
+                cellRenderer: ({ isScrolling, columnIndex, rowIndex, style }) =>
+                  h(ContactMatrixCell, {
+                    isScrolling,
+                    columnIndex,
+                    rowIndex,
+                    colorScaleFn,
+                    key: `${rowIndex}$${columnIndex}`,
+                    style,
+                    highlighted:
+                      columnIndex === this.state.hoveredColumnIndex ||
+                      rowIndex === this.state.hoveredRowIndex,
+                    onHover: this.handleCellHover,
+                    onClick: (e, neuronKey, rowIndex, columnIndex) =>
+                      this.handleCellClick(e, neuronKey, rowIndex, columnIndex),
+                  }),
+                rowHeight: 40,
+                rowWidth: 80,
+                columnWidth: 80,
+                columnHeight: 40,
+                enableFixedColumnScroll: true,
+                enableFixedRowScroll: true,
+                height: 720,
+                width: width - 80,
+                onSectionRendered: (opts) => this.handleSectionRendered(opts),
+                rowCount: model.neurons.length,
+                columnCount: model.neurons.length,
+                styleBottomLeftGrid: {
+                  borderRight: '2px solid #aaa',
+                  backgroundColor: '#f7f7f7',
+                },
+                styleTopLeftGrid: {
+                  borderBottom: '2px solid #aaa',
+                  borderRight: '2px solid #aaa',
+                  backgroundColor: '#f7f7f7',
+                },
+                styleTopRightGrid: {
+                  borderBottom: '2px solid #aaa',
+                  backgroundColor: '#f7f7f7',
+                },
+                hideTopRightGridScrollbar: true,
+                hideBottomLeftGridScrollbar: true,
+              }),
+          ]
+        ),
+      ]),
     ]);
   }
 }
