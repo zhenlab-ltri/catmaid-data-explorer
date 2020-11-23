@@ -122,6 +122,62 @@ class MultiTabModal extends React.Component {
   }
 }
 
+class NeuronColumnTabs extends React.PureComponent {
+  render() {
+    const { neuronTypeWithMostColumns, onNeuronTabClick } = this.props;
+    return h(
+      'div.column-neuron-tabs',
+      model.allNeuronTypes().map((t) =>
+        h(
+          'div',
+          {
+            className: `${t} column-neuron-type-label ${
+              neuronTypeWithMostColumns !== t
+                ? 'neuron-type-label-deactivated'
+                : 'neuron-type-label-activated'
+            }`,
+            onClick: () => {
+              const firstNeuronIndexOfType = model.neurons.findIndex(
+                (n) => n.canonicalType === t
+              );
+              onNeuronTabClick(firstNeuronIndexOfType);
+            },
+          },
+          t
+        )
+      )
+    );
+  }
+}
+
+class NeuronRowTabs extends React.PureComponent {
+  render() {
+    const { neuronTypeWithMostRows, onNeuronTabClick } = this.props;
+    return h(
+      'div.row-neuron-tabs',
+      model.allNeuronTypes().map((t) =>
+        h(
+          'div',
+          {
+            className: `${t} row-neuron-type-label ${
+              neuronTypeWithMostRows !== t
+                ? 'neuron-type-label-deactivated'
+                : 'neuron-type-label-activated'
+            }`,
+            onClick: () => {
+              const firstNeuronIndexOfType = model.neurons.findIndex(
+                (n) => n.canonicalType === t
+              );
+              onNeuronTabClick(firstNeuronIndexOfType);
+            },
+          },
+          t
+        )
+      )
+    );
+  }
+}
+
 const multiMatrixData = {
   contactArea: {
     label: 'Contact Area',
@@ -287,57 +343,6 @@ export default class MultiMatrix extends React.Component {
       selectedMatrix
     ];
 
-    const neuronClassColumnTabs = h(
-      'div.column-neuron-tabs',
-      model.allNeuronTypes().map((t) =>
-        h(
-          'div',
-          {
-            className: `${t} column-neuron-type-label ${
-              neuronTypeWithMostColumns !== t
-                ? 'neuron-type-label-deactivated'
-                : 'neuron-type-label-activated'
-            }`,
-            onClick: (e) => {
-              const firstNeuronIndexOfType = model.neurons.findIndex(
-                (n) => n.canonicalType === t
-              );
-              if (firstNeuronIndexOfType >= 0) {
-                this.scrollToColumnNeuron(firstNeuronIndexOfType);
-              }
-            },
-          },
-          t
-        )
-      )
-    );
-
-    const neuronClassRowTabs = h(
-      'div.row-neuron-tabs',
-      model.allNeuronTypes().map((t) =>
-        h(
-          'div',
-          {
-            className: `${t} row-neuron-type-label
-            ${
-              neuronTypeWithMostRows !== t
-                ? 'neuron-type-label-deactivated'
-                : 'neuron-type-label-activated'
-            }`,
-            onClick: (e) => {
-              const firstNeuronIndexOfType = model.neurons.findIndex(
-                (n) => n.canonicalType === t
-              );
-              if (firstNeuronIndexOfType >= 0) {
-                this.scrollToRowNeuron(firstNeuronIndexOfType);
-              }
-            },
-          },
-          t
-        )
-      )
-    );
-
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
         h(Dropdown, {
@@ -360,7 +365,14 @@ export default class MultiMatrix extends React.Component {
             }),
           ]),
         ]),
-        neuronClassColumnTabs,
+        h(NeuronColumnTabs, {
+          neuronTypeWithMostColumns,
+          onNeuronTabClick: (firstNeuronIndexOfType) => {
+            if (firstNeuronIndexOfType >= 0) {
+              this.scrollToColumnNeuron(firstNeuronIndexOfType);
+            }
+          },
+        }),
       ]),
       h(MultiTabModal, {
         isOpen: this.state.showCellDetail,
@@ -370,7 +382,14 @@ export default class MultiMatrix extends React.Component {
       }),
       h(cellLegend, { maxVal, colorScaleFn }),
       h('div.row', [
-        neuronClassRowTabs,
+        h(NeuronRowTabs, {
+          neuronTypeWithMostRows,
+          onNeuronTabClick: (firstNeuronIndexOfType) => {
+            if (firstNeuronIndexOfType >= 0) {
+              this.scrollToRowNeuron(firstNeuronIndexOfType);
+            }
+          },
+        }),
         h(
           AutoSizer,
           {

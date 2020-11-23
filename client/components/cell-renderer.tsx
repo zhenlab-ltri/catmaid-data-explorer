@@ -3,7 +3,7 @@ import h from 'react-hyperscript';
 
 import model from '../model';
 
-class RowHeaderCell extends React.Component {
+class RowHeaderCell extends React.PureComponent {
   render() {
     const { highlighted, label, style, className } = this.props;
 
@@ -21,7 +21,7 @@ class RowHeaderCell extends React.Component {
   }
 }
 
-class ColumnHeaderCell extends React.Component {
+class ColumnHeaderCell extends React.PureComponent {
   render() {
     const { highlighted, label, style, className } = this.props;
 
@@ -39,7 +39,7 @@ class ColumnHeaderCell extends React.Component {
   }
 }
 
-export class GapJunctionMatrixCell extends React.Component {
+export class GapJunctionMatrixCell extends React.PureComponent {
   render() {
     const {
       highlighted,
@@ -116,7 +116,7 @@ export class GapJunctionMatrixCell extends React.Component {
   }
 }
 
-export class ChemicalSynapseMatrixCell extends React.Component {
+export class ChemicalSynapseMatrixCell extends React.PureComponent {
   render() {
     const {
       highlighted,
@@ -193,7 +193,7 @@ export class ChemicalSynapseMatrixCell extends React.Component {
   }
 }
 
-export class ContactMatrixCell extends React.Component {
+export class ContactMatrixCell extends React.PureComponent {
   render() {
     const {
       highlighted,
