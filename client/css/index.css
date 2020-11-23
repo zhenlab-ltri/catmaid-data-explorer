@@ -4,6 +4,7 @@
 @import './modal.css';
 @import './mona-heatmap.css';
 @import './tabs.css';
+@import './dropdown.css';
 
 body {
   margin: 0;

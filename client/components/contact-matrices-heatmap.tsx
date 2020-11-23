@@ -6,8 +6,8 @@ import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
 import Modal from 'react-modal';
 import { Line } from 'react-chartjs-2';
-import Select from 'react-select';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import Dropdown from 'react-dropdown';
 
 import model from '../model';
 import { monotonicIncreasing, monotonicDecreasing } from '../util';
@@ -327,7 +327,14 @@ export default class ContactMatrix extends React.Component {
       .domain([0.0, model.stats.maxContactArea])
       .gamma(0.6);
 
+    const MATRIX_MAP = {
+      CONTACT_AREA: { label: 'Contact Area', value: 0 },
+      CHEMICAL_SYNAPSES: { label: 'Chemical Synapses', value: 1 },
+      GAP_JUNCTIONS: { label: 'Gap Junctions', value: 2 },
+    };
+
     this.state = {
+      selectedMatrix: MATRIX_MAP.CONTACT_AREA,
       hoveredRowIndex: -1,
       hoveredColumnIndex: -1,
       scrollToColumn: 0,
@@ -440,6 +447,7 @@ export default class ContactMatrix extends React.Component {
       colorScaleFn,
       neuronTypeWithMostColumns,
       neuronTypeWithMostRows,
+      selectedMatrix,
     } = this.state;
 
     const neuronClassColumnTabs = h(
@@ -495,15 +503,15 @@ export default class ContactMatrix extends React.Component {
 
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
-        // h(Select, {
-        //   className: 'contact-matrix-title',
-        //   options: [
-        //     { value: 'gap-junctions', label: 'Gap Junctions' },
-        //     { value: 'chemical-synapses', label: 'Chemical Synapses' },
-        //     { value: 'contact-area', label: 'Contact Area' },
-        //   ],
-        // }),
-        h('h3.contact-matrix-title', 'Contact Matrix'),
+        h(Dropdown, {
+          value: this.state.selectedMatrix,
+          className: 'contact-matrix-title',
+          options: [
+            { value: 'gap-junctions', label: 'Gap Junctions' },
+            { value: 'chemical-synapses', label: 'Chemical Synapses' },
+            { value: 'contact-area', label: 'Contact Area' },
+          ],
+        }),
         h('div.contact-matrix-controls', [
           h('div', [
             h('label', 'Find row neuron'),
