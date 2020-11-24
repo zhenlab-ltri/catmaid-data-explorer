@@ -10,7 +10,8 @@ datasetsSorted = ['SEM_L1_3', 'TEM_L1_5', 'SEM_L1_4',
                   'SEM_L1_2', 'SEM_L2_2', 'TEM_L3', 'TEM_adult', 'SEM_adult']
 neuronsSorted = ['ADFL', 'ADFR', 'ADLL', 'ADLR', 'AFDL', 'AFDR', 'ALML', 'ALMR', 'ALNL', 'ALNR', 'AQR', 'ASEL', 'ASER', 'ASGL', 'ASGR', 'ASHL', 'ASHR', 'ASIL', 'ASIR', 'ASJL', 'ASJR', 'ASKL', 'ASKR', 'AUAL', 'AUAR', 'AVM', 'AWAL', 'AWAR', 'AWBL', 'AWBR', 'AWCL', 'AWCR', 'BAGL', 'BAGR', 'DVA', 'FLPL', 'FLPR', 'IL2DL', 'IL2DR', 'IL2L', 'IL2R', 'IL2VL', 'IL2VR', 'OLLL', 'OLLR', 'OLQDL', 'OLQDR', 'OLQVL', 'OLQVR', 'PLNL', 'PLNR', 'SAADL', 'SAADR', 'SAAVL', 'SAAVR', 'SDQL', 'SDQR', 'URBL', 'URBR', 'URXL', 'URXR', 'URYDL', 'URYDR', 'URYVL', 'URYVR', 'ADAL', 'ADAR', 'AIAL', 'AIAR', 'AIBL', 'AIBR', 'AINL', 'AINR', 'AIYL', 'AIYR', 'AIZL', 'AIZR', 'AVAL', 'AVAR', 'AVBL', 'AVBR', 'AVDL', 'AVDR', 'AVEL', 'AVER', 'BDUL', 'BDUR', 'DVC', 'PVCL', 'PVCR', 'PVNL', 'PVNR', 'PVPL', 'PVPR', 'PVR', 'PVT', 'RIAL', 'RIAR', 'RIBL', 'RIBR', 'RIFL', 'RIFR', 'RIGL', 'RIGR', 'RIH', 'RIML', 'RIMR', 'RIPL', 'RIPR', 'RIR', 'IL1DL', 'IL1DR', 'IL1L', 'IL1R', 'IL1VL', 'IL1VR', 'RIVL', 'RIVR', 'RMDDL', 'RMDDR', 'RMDL',
                  'RMDR', 'RMDVL', 'RMDVR', 'RMED', 'RMEL', 'RMER', 'RMEV', 'RMFL', 'RMFR', 'RMHL', 'RMHR', 'SIADL', 'SIADR', 'SIAVL', 'SIAVR', 'SIBDL', 'SIBDR', 'SIBVL', 'SIBVR', 'SMBDL', 'SMBDR', 'SMBVL', 'SMBVR', 'SMDDL', 'SMDDR', 'SMDVL', 'SMDVR', 'URADL', 'URADR', 'URAVL', 'URAVR', 'ADEL', 'ADER', 'AIML', 'AIMR', 'ALA', 'AVFL', 'AVFR', 'AVHL', 'AVHR', 'AVJL', 'AVJR', 'AVKL', 'AVKR', 'AVL', 'CEPDL', 'CEPDR', 'CEPVL', 'CEPVR', 'HSNL', 'HSNR', 'PVQL', 'PVQR', 'RICL', 'RICR', 'RID', 'RIS', 'RMGL', 'RMGR', 'BWM-DL01', 'BWM-DR01', 'BWM-VL01', 'BWM-VR01', 'BWM-DL02', 'BWM-DR02', 'BWM-VL02', 'BWM-VR02', 'BWM-DL03', 'BWM-DR03', 'BWM-VL03', 'BWM-VR03', 'BWM-DL04', 'BWM-DR04', 'BWM-VL04', 'BWM-VR04', 'BWM-DL05', 'BWM-DR05', 'BWM-VL05', 'BWM-VR05', 'BWM-DL06', 'BWM-DR06', 'BWM-VL06', 'BWM-VR06', 'BWM-DL07', 'BWM-DR07', 'BWM-VL07', 'BWM-VR07', 'BWM-DL08', 'BWM-DR08', 'BWM-VL08', 'BWM-VR08', 'CANL', 'CANR', 'CEPshDL', 'CEPshDR', 'CEPshVL', 'CEPshVR', 'GLRDL', 'GLRDR', 'GLRL', 'GLRR', 'GLRVL', 'GLRVR', 'excgl']
-
+neuronsGj = ['RID', 'AVDR', 'RMHL', 'AVAL', 'BWM-VL06', 'IL2L', 'URXR', 'BDUR', 'ASIL', 'ADER', 'SIADL', 'RMED', 'GLRDL', 'PVCR', 'AWCL', 'URYVR', 'BAGR', 'CEPshVL', 'CEPDR', 'RMDDL', 'BDUL', 'ADLL', 'BWM-VR04', 'SIADR', 'URADR', 'SIBDL', 'PVNL', 'AVER', 'AFDR', 'IL2DR', 'IL1VL', 'BWM-DR07', 'AIBR', 'RMFR', 'GLRVL', 'IL1DL', 'RIAR', 'AVFR', 'PVCL', 'AFDL', 'ASKL', 'RMEL', 'RMDVR', 'SMBVR', 'RIBR', 'GLRVR', 'AIZR', 'AVJR', 'SMBVL', 'PVPL', 'RMDVL', 'AIML', 'OLQDR', 'RIH', 'AWAR', 'AVM', 'BWM-DR02', 'CEPVL', 'BWM-VR02', 'BWM-VL01', 'RIFR', 'ASGR', 'BWM-DR01', 'BWM-DL03', 'AVL', 'AVAR', 'DVA', 'AVKL', 'BWM-DR03', 'AINR', 'SIAVR', 'GLRL', 'RIFL', 'AQR', 'PVR', 'IL1R', 'PVQR', 'RIR', 'RIPR', 'SMDVR', 'BWM-VR01', 'RMGR', 'ADEL', 'OLQVL', 'RIGR', 'ALNL', 'AINL', 'ALMR', 'AUAR', 'URXL', 'SIBVR', 'AVHR', 'SDQR', 'HSNL', 'AVEL', 'ASHR', 'ASHL', 'SAADL', 'OLQDL', 'RMDDR', 'URYDR', 'ADAR', 'IL1L', 'PVNR',
+             'BWM-VL02', 'ASKR', 'CEPshVR', 'SMDDL', 'PVT', 'SMDVL', 'AWCR', 'ALML', 'BAGL', 'PLNR', 'AIMR', 'BWM-DL07', 'FLPR', 'RIML', 'AVBR', 'AIZL', 'URBR', 'RIBL', 'BWM-VL05', 'AIYL', 'BWM-DL02', 'RMGL', 'ADLR', 'IL1DR', 'RICL', 'RIVR', 'CEPDL', 'BWM-DR05', 'ADFL', 'GLRR', 'RIVL', 'ADFR', 'RMDL', 'AIBL', 'BWM-VL04', 'SAAVL', 'HSNR', 'SAADR', 'AWAL', 'SIBVL', 'RIGL', 'IL1VR', 'BWM-DR04', 'ALNR', 'AVDL', 'OLQVR', 'AUAL', 'URYDL', 'CEPVR', 'ADAL', 'SIBDR', 'SIAVL', 'ASJL', 'CEPshDR', 'AVBL', 'SMBDR', 'GLRDR', 'URAVR', 'AIYR', 'SMDDR', 'AVHL', 'OLLR', 'RMFL', 'RIMR', 'BWM-VR08', 'PVQL', 'RIPL', 'RIS', 'AWBR', 'BWM-VR03', 'excgl', 'ASJR', 'ASIR', 'ALA', 'RMDR', 'ASEL', 'SDQL', 'AIAR', 'AVJL', 'BWM-DL05', 'CANR', 'BWM-VR05', 'RIAL', 'DVC', 'ASGL', 'BWM-VL03', 'IL2R', 'AIAL', 'ASER', 'RMEV', 'RMHR', 'AVKR', 'SAAVR', 'PVPR', 'URYVL', 'SMBDL', 'BWM-DR06', 'RMER', 'FLPL', 'RICR', 'URBL', 'BWM-DL01', 'OLLL', 'AWBL']
 neuron_to_index = {}
 for index, neuron in enumerate(neuronsSorted):
     neuron_to_index[neuron] = index
@@ -163,31 +164,37 @@ def add_connectivity_cs_to_model():
 
 def add_connectivity_gj_to_model():
     max_connectivity = 0.0
+
+    gj_data_per_dataset = []
+
     for dataset in datasetsSorted:
         fname = './scripts/global_model/' + dataset + '_connectivity_gj.csv'
 
+        gj_data = {}
         if os.path.isfile(fname):
             with open(fname) as f:
                 csvdata = list(csv.reader(f))
+                neuron_column_header = csvdata[0][1:]
                 for line in csvdata[1:]:
                     n0 = line[0]
                     for i in range(1, len(line)):
-                        n1 = neuronsSorted[i-1]
+                        n1 = neuron_column_header[i-1]
+
                         key = neuron_pair_key(n0, n1)
                         weight = int(line[i])
 
                         if weight > max_connectivity:
                             max_connectivity = weight
+                        gj_data[key] = weight
+        gj_data_per_dataset.append(gj_data)
 
-                        model['neuronPairData'][key]['connectivityGj'].append(
-                            weight)
+    for index0, n0 in enumerate(neuronsSorted):
+        for index1, n1 in enumerate(neuronsSorted):
+            key = neuron_pair_key(n0, n1)
 
-        else:
-            for n0 in neuronsSorted:
-                for n1 in neuronsSorted:
-                    key = neuron_pair_key(n0, n1)
-                    model['neuronPairData'][key]['connectivityGj'].append(
-                        None)
+            for i in range(len(datasetsSorted)):
+                model['neuronPairData'][key]['connectivityGj'].append(
+                    gj_data_per_dataset[i].get(key, 0))
 
     for k, v in model['neuronPairData'].items():
         # filter None values from contact
@@ -359,6 +366,9 @@ with open('./scripts/model.lite-compression.json', 'w') as f:
 compressed_model = copy.deepcopy(model)
 compress_model_full(compressed_model)
 with open('./scripts/model.full-compression.json', 'w') as f:
+    json.dump(compressed_model, f, indent=2)
+
+with open('./client/model/model.full-compression.json', 'w') as f:
     json.dump(compressed_model, f, indent=2)
 
 with open('./scripts/model.no-compression.json', 'w') as f:
