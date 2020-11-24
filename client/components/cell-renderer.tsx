@@ -82,6 +82,16 @@ export class GapJunctionMatrixCell extends React.PureComponent {
       });
     }
 
+    // contact matrix data is symmetric
+    // only render half the matrix
+    if (rowIndex <= columnIndex) {
+      return h('div', {
+        key: model.neuronPairKey(rowNeuron, colNeuron),
+        className: 'matrix-cell matrix-cell-ignored',
+        style,
+      });
+    }
+
     return h(
       'div.matrix-cell',
       {

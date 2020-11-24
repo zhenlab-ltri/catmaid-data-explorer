@@ -59,9 +59,9 @@ class MultiTabModal extends React.Component {
         ]),
         h(Tabs, { defaultIndex: activeTab }, [
           h(TabList, [
-            h(Tab, 'Chemical Synapses'),
-            h(Tab, 'Gap Junctions'),
-            h(Tab, 'Contact Area'),
+            h(Tab, { disabled: chemicalSynapses == null }, 'Chemical Synapses'),
+            h(Tab, { disabled: gapJunctions == null }, 'Gap Junctions'),
+            h(Tab, { disabled: contactAreas == null }, 'Contact Area'),
           ]),
           h(
             TabPanel,
