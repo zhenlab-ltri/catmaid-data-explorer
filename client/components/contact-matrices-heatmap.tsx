@@ -24,7 +24,7 @@ import model from '../model';
 
 class MultiTabModal extends React.Component {
   render() {
-    const { isOpen, className, onClick, neuronPairKey } = this.props;
+    const { isOpen, className, onClick, neuronPairKey, activeTab } = this.props;
     const { gapJunctions, gapJunctionsDatasets } = model.getGapJunctions(
       neuronPairKey
     );
@@ -57,7 +57,7 @@ class MultiTabModal extends React.Component {
             annotations.map((a) => h('div', a))
           ),
         ]),
-        h(Tabs, [
+        h(Tabs, { defaultIndex: activeTab }, [
           h(TabList, [
             h(Tab, 'Chemical Synapses'),
             h(Tab, 'Gap Junctions'),
@@ -68,7 +68,7 @@ class MultiTabModal extends React.Component {
             { key: '0' },
             chemicalSynapses != null
               ? h(LineChart, {
-                  id: 'cs',
+                  id: 'chemicalSynapses',
                   values: chemicalSynapses,
                   datasets: chemicalSynapsesDatasets,
                   label: `Chemical Synapses between ${neuronPairKey.replace(
@@ -89,7 +89,7 @@ class MultiTabModal extends React.Component {
             { key: '1' },
             gapJunctions != null
               ? h(LineChart, {
-                  id: 'gj',
+                  id: 'gapJunctions',
                   values: gapJunctions,
                   datasets: gapJunctionsDatasets,
                   label: `Gap junctions between ${neuronPairKey.replace(
@@ -107,7 +107,7 @@ class MultiTabModal extends React.Component {
           ),
           h(TabPanel, { key: '2' }, [
             h(LineChart, {
-              id: 'ca',
+              id: 'contactArea',
               values: contactAreas,
               datasets: contactAreaDatasets,
               label: `Contact area between ${neuronPairKey.replace(
@@ -180,6 +180,7 @@ class NeuronRowTabs extends React.PureComponent {
 
 const multiMatrixData = {
   contactArea: {
+    id: 2,
     label: 'Contact Area',
     value: 'contactArea',
     maxVal: model.stats.maxContactArea,
@@ -191,6 +192,7 @@ const multiMatrixData = {
     cellLegend: ContactMatrixCellLegend,
   },
   chemicalSynapses: {
+    id: 0,
     label: 'Chemical Synapses',
     value: 'chemicalSynapses',
     maxVal: model.stats.maxConnectivityCs,
@@ -202,6 +204,7 @@ const multiMatrixData = {
     cellLegend: ChemicalSynapseMatrixCellLegend,
   },
   gapJunctions: {
+    id: 1,
     label: 'Gap Junctions',
     value: 'gapJunctions',
     maxVal: model.stats.maxConnectivityGj,
@@ -241,7 +244,7 @@ export default class MultiMatrix extends React.Component {
     });
   }
 
-  handleSectionRendered(opts) {
+  handleSectionRendered = debounce((opts) => {
     const {
       rowStartIndex,
       rowStopIndex,
@@ -261,7 +264,7 @@ export default class MultiMatrix extends React.Component {
       neuronTypeWithMostRows,
       neuronTypeWithMostColumns,
     });
-  }
+  }, 50);
 
   handleCellClick(e, neuronKey, rowIndex, columnIndex) {
     this.setState(
@@ -330,7 +333,7 @@ export default class MultiMatrix extends React.Component {
       hoveredColumnIndex: columnIndex,
       hoveredRowIndex: rowIndex,
     });
-  }, 5);
+  }, 50);
 
   render() {
     const {
@@ -339,9 +342,13 @@ export default class MultiMatrix extends React.Component {
       selectedMatrix,
     } = this.state;
 
-    const { colorScaleFn, cellRenderer, cellLegend, maxVal } = multiMatrixData[
-      selectedMatrix
-    ];
+    const {
+      colorScaleFn,
+      cellRenderer,
+      cellLegend,
+      maxVal,
+      id,
+    } = multiMatrixData[selectedMatrix];
 
     return h('div.contact-matrix', [
       h('div.contact-matrix-header', [
@@ -375,6 +382,7 @@ export default class MultiMatrix extends React.Component {
         }),
       ]),
       h(MultiTabModal, {
+        activeTab: id,
         isOpen: this.state.showCellDetail,
         className: 'modal',
         onClick: (e) => this.setState({ showCellDetail: false }),
