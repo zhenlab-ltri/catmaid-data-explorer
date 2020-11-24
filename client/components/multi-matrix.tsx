@@ -350,24 +350,24 @@ export default class MultiMatrix extends React.Component {
       id,
     } = multiMatrixData[selectedMatrix];
 
-    return h('div.contact-matrix', [
-      h('div.contact-matrix-header', [
+    return h('div.multi-matrix', [
+      h('div.multi-matrix-header', [
         h(Dropdown, {
           onChange: (e) => this.onDropdownSelect(e),
           value: this.state.selectedMatrix,
-          className: 'contact-matrix-title',
+          className: 'multi-matrix-title',
           options: Object.values(multiMatrixData),
         }),
-        h('div.contact-matrix-controls', [
+        h('div.multi-matrix-controls', [
           h('div', [
             h('label', 'Find row neuron'),
-            h('input.contact-matrix-input', {
+            h('input.multi-matrix-input', {
               onChange: (e) => this.handleRowInputChange(e.target.value),
             }),
           ]),
           h('div', [
             h('label', 'Find column neuron'),
-            h('input.contact-matrix-input', {
+            h('input.multi-matrix-input', {
               onChange: (e) => this.handleColumnInputChange(e.target.value),
             }),
           ]),

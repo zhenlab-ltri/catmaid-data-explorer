@@ -3,7 +3,7 @@ import h from 'react-hyperscript';
 import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
-import MultiMatrix from './components/contact-matrices-heatmap';
+import MultiMatrix from './components/multi-matrix';
 
 class App extends React.Component {
   render() {

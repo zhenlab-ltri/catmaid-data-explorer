@@ -26,11 +26,11 @@ export class ContactMatrixCellLegend extends React.Component {
       {
         legendEntries: [
           {
-            className: 'contact-matrix-legend-no-contact',
+            className: 'multi-matrix-legend-no-value',
             label: 'No contact',
           },
           {
-            className: 'contact-matrix-legend-value-ignored',
+            className: 'multi-matrix-legend-value-ignored',
             label: 'Symmetric values ignored',
           },
         ],
@@ -58,7 +58,7 @@ export class ChemicalSynapseMatrixCellLegend extends React.Component {
       {
         legendEntries: [
           {
-            className: 'contact-matrix-legend-no-contact',
+            className: 'multi-matrix-legend-no-value',
             label: 'No chemical synapses',
           },
         ],
@@ -86,11 +86,11 @@ export class GapJunctionMatrixCellLegend extends React.Component {
       {
         legendEntries: [
           {
-            className: 'contact-matrix-legend-no-contact',
+            className: 'multi-matrix-legend-no-value',
             label: 'No gap junctions',
           },
           {
-            className: 'contact-matrix-legend-value-ignored',
+            className: 'multi-matrix-legend-value-ignored',
             label: 'Symmetric values ignored',
           },
         ],

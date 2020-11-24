@@ -69,4 +69,6 @@ model.getAnnotations = (neuornPairKey: string) => {
   return model.neuronPairData[neuornPairKey]?.annotations || [];
 }
 
+window.model = model;
+
 export default model;
