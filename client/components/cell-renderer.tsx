@@ -39,6 +39,45 @@ class ColumnHeaderCell extends React.PureComponent {
   }
 }
 
+class IgnoredCell extends React.PureComponent {
+  render() {
+    const { rowNeuron, colNeuron, style } = this.props;
+    return h('div', {
+      key: model.neuronPairKey(rowNeuron, colNeuron),
+      className: 'matrix-cell matrix-cell-ignored',
+      style,
+    });
+  }
+}
+
+class EmptyCell extends React.PureComponent {
+  render() {
+    const {
+      rowNeuron,
+      colNeuron,
+      style,
+      onHover,
+      onClick,
+      rowIndex,
+      columnIndex,
+    } = this.props;
+
+    return h('div', {
+      className: 'matrix-cell matrix-cell-no-value',
+      key: model.neuronPairKey(rowNeuron, colNeuron),
+      onMouseOver: (e) => onHover(rowIndex, columnIndex),
+      onClick: (e) =>
+        onClick(
+          e,
+          model.neuronPairKey(rowNeuron, colNeuron),
+          rowIndex,
+          columnIndex
+        ),
+      style,
+    });
+  }
+}
+
 export class GapJunctionMatrixCell extends React.PureComponent {
   render() {
     const {
@@ -85,17 +124,24 @@ export class GapJunctionMatrixCell extends React.PureComponent {
     // contact matrix data is symmetric
     // only render half the matrix
     if (rowIndex <= columnIndex) {
-      return h('div', {
-        key: model.neuronPairKey(rowNeuron, colNeuron),
-        className: 'matrix-cell matrix-cell-ignored',
+      return h(IgnoredCell, { rowNeuron, colNeuron, style });
+    }
+
+    if (noValue) {
+      return h(EmptyCell, {
+        rowNeuron,
+        colNeuron,
         style,
+        onHover,
+        onClick,
+        rowIndex,
+        columnIndex,
       });
     }
 
     return h(
       'div.matrix-cell',
       {
-        className: `matrix-cell ${noValue ? 'matrix-cell-no-value' : ''}`,
         key: model.neuronPairKey(rowNeuron, colNeuron),
         onMouseOver: (e) => onHover(rowIndex, columnIndex),
         onClick: (e) =>
@@ -107,21 +153,19 @@ export class GapJunctionMatrixCell extends React.PureComponent {
           ),
         style,
       },
-      noValue
-        ? []
-        : gapJunctions.map((weight) =>
-            h(
-              'div',
-              {
-                style: {
-                  width: style.width / gapJunctions.length,
-                  height: style.height,
-                  backgroundColor: colorScaleFn(weight),
-                },
-              },
-              weight
-            )
-          )
+      gapJunctions.map((weight) =>
+        h(
+          'div',
+          {
+            style: {
+              width: style.width / gapJunctions.length,
+              height: style.height,
+              backgroundColor: colorScaleFn(weight),
+            },
+          },
+          weight
+        )
+      )
     );
   }
 }
