@@ -407,10 +407,19 @@ export default class MultiMatrix extends React.Component {
             ({ width }) =>
               h(MultiGrid, {
                 ...this.state,
+                overscanColumnCount: 2,
+                overscanRowCount: 2,
                 fixedColumnCount: 1,
                 fixedRowCount: 1,
-                cellRenderer: ({ isScrolling, columnIndex, rowIndex, style }) =>
+                cellRenderer: ({
+                  isScrolling,
+                  columnIndex,
+                  rowIndex,
+                  style,
+                  isVisible,
+                }) =>
                   h(cellRenderer, {
+                    isVisible,
                     isScrolling,
                     columnIndex,
                     rowIndex,

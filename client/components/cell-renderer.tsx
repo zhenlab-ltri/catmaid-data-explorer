@@ -81,6 +81,7 @@ class EmptyCell extends React.PureComponent {
 export class GapJunctionMatrixCell extends React.PureComponent {
   render() {
     const {
+      isScrolling,
       highlighted,
       columnIndex,
       rowIndex,
@@ -139,6 +140,26 @@ export class GapJunctionMatrixCell extends React.PureComponent {
       });
     }
 
+    const gapJunctionsDiv = isScrolling
+      ? h('div', {
+          style: {
+            width: style.width,
+            height: style.height,
+            backgroundColor: colorScaleFn(
+              gapJunctions.reduce((a, b) => a + b, 0) / gapJunctions.length
+            ),
+          },
+        })
+      : gapJunctions.map((areaValue) =>
+          h('div', {
+            style: {
+              width: style.width / gapJunctions.length,
+              height: style.height,
+              backgroundColor: colorScaleFn(areaValue),
+            },
+          })
+        );
+
     return h(
       'div.matrix-cell',
       {
@@ -153,19 +174,7 @@ export class GapJunctionMatrixCell extends React.PureComponent {
           ),
         style,
       },
-      gapJunctions.map((weight) =>
-        h(
-          'div',
-          {
-            style: {
-              width: style.width / gapJunctions.length,
-              height: style.height,
-              backgroundColor: colorScaleFn(weight),
-            },
-          },
-          weight
-        )
-      )
+      gapJunctionsDiv
     );
   }
 }
@@ -173,6 +182,7 @@ export class GapJunctionMatrixCell extends React.PureComponent {
 export class ChemicalSynapseMatrixCell extends React.PureComponent {
   render() {
     const {
+      isScrolling,
       highlighted,
       columnIndex,
       rowIndex,
@@ -213,10 +223,42 @@ export class ChemicalSynapseMatrixCell extends React.PureComponent {
       });
     }
 
+    if (noValue) {
+      return h(EmptyCell, {
+        rowNeuron,
+        colNeuron,
+        style,
+        onHover,
+        onClick,
+        rowIndex,
+        columnIndex,
+      });
+    }
+
+    const chemicalSynapseDiv = isScrolling
+      ? h('div', {
+          style: {
+            width: style.width,
+            height: style.height,
+            backgroundColor: colorScaleFn(
+              chemicalSynapses.reduce((a, b) => a + b, 0) /
+                chemicalSynapses.length
+            ),
+          },
+        })
+      : chemicalSynapses.map((areaValue) =>
+          h('div', {
+            style: {
+              width: style.width / chemicalSynapses.length,
+              height: style.height,
+              backgroundColor: colorScaleFn(areaValue),
+            },
+          })
+        );
+
     return h(
       'div.matrix-cell',
       {
-        className: `matrix-cell ${noValue ? 'matrix-cell-no-value' : ''}`,
         key: model.neuronPairKey(rowNeuron, colNeuron),
         onMouseOver: (e) => onHover(rowIndex, columnIndex),
         onClick: (e) =>
@@ -228,21 +270,7 @@ export class ChemicalSynapseMatrixCell extends React.PureComponent {
           ),
         style,
       },
-      noValue
-        ? []
-        : chemicalSynapses.map((weight) =>
-            h(
-              'div',
-              {
-                style: {
-                  width: style.width / chemicalSynapses.length,
-                  height: style.height,
-                  backgroundColor: colorScaleFn(weight),
-                },
-              },
-              weight
-            )
-          )
+      chemicalSynapseDiv
     );
   }
 }
@@ -250,6 +278,7 @@ export class ChemicalSynapseMatrixCell extends React.PureComponent {
 export class ContactMatrixCell extends React.PureComponent {
   render() {
     const {
+      isScrolling,
       highlighted,
       columnIndex,
       rowIndex,
@@ -293,17 +322,44 @@ export class ContactMatrixCell extends React.PureComponent {
     // contact matrix data is symmetric
     // only render half the matrix
     if (rowIndex <= columnIndex) {
-      return h('div', {
-        key: model.neuronPairKey(rowNeuron, colNeuron),
-        className: 'matrix-cell matrix-cell-ignored',
+      return h(IgnoredCell, { rowNeuron, colNeuron, style });
+    }
+
+    if (noValue) {
+      return h(EmptyCell, {
+        rowNeuron,
+        colNeuron,
         style,
+        onHover,
+        onClick,
+        rowIndex,
+        columnIndex,
       });
     }
+
+    const contactAreaDiv = isScrolling
+      ? h('div', {
+          style: {
+            width: style.width,
+            height: style.height,
+            backgroundColor: colorScaleFn(
+              contactAreas.reduce((a, b) => a + b, 0) / contactAreas.length
+            ),
+          },
+        })
+      : contactAreas.map((areaValue) =>
+          h('div', {
+            style: {
+              width: style.width / contactAreas.length,
+              height: style.height,
+              backgroundColor: colorScaleFn(areaValue),
+            },
+          })
+        );
 
     return h(
       'div.matrix-cell',
       {
-        className: `matrix-cell ${noValue ? 'matrix-cell-no-value' : ''}`,
         key: model.neuronPairKey(rowNeuron, colNeuron),
         onMouseOver: (e) => onHover(rowIndex, columnIndex),
         onClick: (e) =>
@@ -315,17 +371,7 @@ export class ContactMatrixCell extends React.PureComponent {
           ),
         style,
       },
-      noValue
-        ? []
-        : contactAreas.map((areaValue) =>
-            h('div', {
-              style: {
-                width: style.width / contactAreas.length,
-                height: style.height,
-                backgroundColor: colorScaleFn(areaValue),
-              },
-            })
-          )
+      contactAreaDiv
     );
   }
 }
