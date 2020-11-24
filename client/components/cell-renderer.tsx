@@ -28,7 +28,7 @@ class ColumnHeaderCell extends React.PureComponent {
     return h(
       'div',
       {
-        key: `${label}$0`,
+        key: `0$${label}`,
         className: `${className} matrix-cell-header ${
           highlighted ? 'matrix-cell-highlighted' : 'matrix-cell-unhighlighted'
         }`,
@@ -77,6 +77,20 @@ class EmptyCell extends React.PureComponent {
     });
   }
 }
+
+const ColoredCell = React.memo(function coloredCellInner(props) {
+  const { width, height, colorScaleFn, collection } = props;
+
+  return collection.map((val) =>
+    h('div', {
+      style: {
+        width: width / collection.length,
+        height: height,
+        backgroundColor: colorScaleFn(val),
+      },
+    })
+  );
+});
 
 export class GapJunctionMatrixCell extends React.PureComponent {
   render() {
@@ -141,24 +155,20 @@ export class GapJunctionMatrixCell extends React.PureComponent {
     }
 
     const gapJunctionsDiv = isScrolling
-      ? h('div', {
-          style: {
-            width: style.width,
-            height: style.height,
-            backgroundColor: colorScaleFn(
-              gapJunctions.reduce((a, b) => a + b, 0) / gapJunctions.length
-            ),
-          },
+      ? h(ColoredCell, {
+          width: style.width,
+          height: style.height,
+          colorScaleFn,
+          collection: [
+            gapJunctions.reduce((a, b) => a + b, 0) / gapJunctions.length,
+          ],
         })
-      : gapJunctions.map((areaValue) =>
-          h('div', {
-            style: {
-              width: style.width / gapJunctions.length,
-              height: style.height,
-              backgroundColor: colorScaleFn(areaValue),
-            },
-          })
-        );
+      : h(ColoredCell, {
+          collection: gapJunctions,
+          width: style.width,
+          height: style.height,
+          colorScaleFn,
+        });
 
     return h(
       'div.matrix-cell',
@@ -236,25 +246,21 @@ export class ChemicalSynapseMatrixCell extends React.PureComponent {
     }
 
     const chemicalSynapseDiv = isScrolling
-      ? h('div', {
-          style: {
-            width: style.width,
-            height: style.height,
-            backgroundColor: colorScaleFn(
-              chemicalSynapses.reduce((a, b) => a + b, 0) /
-                chemicalSynapses.length
-            ),
-          },
+      ? h(ColoredCell, {
+          width: style.width,
+          height: style.height,
+          colorScaleFn,
+          collection: [
+            chemicalSynapses.reduce((a, b) => a + b, 0) /
+              chemicalSynapses.length,
+          ],
         })
-      : chemicalSynapses.map((areaValue) =>
-          h('div', {
-            style: {
-              width: style.width / chemicalSynapses.length,
-              height: style.height,
-              backgroundColor: colorScaleFn(areaValue),
-            },
-          })
-        );
+      : h(ColoredCell, {
+          collection: chemicalSynapses,
+          width: style.width,
+          height: style.height,
+          colorScaleFn,
+        });
 
     return h(
       'div.matrix-cell',
@@ -338,24 +344,27 @@ export class ContactMatrixCell extends React.PureComponent {
     }
 
     const contactAreaDiv = isScrolling
-      ? h('div', {
-          style: {
-            width: style.width,
-            height: style.height,
-            backgroundColor: colorScaleFn(
-              contactAreas.reduce((a, b) => a + b, 0) / contactAreas.length
-            ),
-          },
+      ? h(ColoredCell, {
+          width: style.width,
+          height: style.height,
+          colorScaleFn,
+          collection: [
+            contactAreas.reduce((a, b) => a + b, 0) / contactAreas.length,
+          ],
         })
-      : contactAreas.map((areaValue) =>
-          h('div', {
-            style: {
-              width: style.width / contactAreas.length,
-              height: style.height,
-              backgroundColor: colorScaleFn(areaValue),
-            },
-          })
-        );
+      : h(ColoredCell, {
+          collection: contactAreas,
+          width: style.width,
+          height: style.height,
+          colorScaleFn,
+        });
+
+    // const contactAreaDiv = h(ColoredCell, {
+    //   collection: contactAreas,
+    //   width: style.width,
+    //   height: style.height,
+    //   colorScaleFn,
+    // });
 
     return h(
       'div.matrix-cell',
