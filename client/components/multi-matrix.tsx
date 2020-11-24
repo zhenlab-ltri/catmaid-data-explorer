@@ -37,6 +37,9 @@ class MultiTabModal extends React.Component {
     );
 
     const annotations = model.getAnnotations(neuronPairKey);
+    const hasAnnotations = annotations.length > 0;
+
+    const neuronPairText = `${neuronPairKey.replace('$', ' and ')}`;
 
     return h(
       Modal,
@@ -52,10 +55,6 @@ class MultiTabModal extends React.Component {
       [
         h('div.modal-header', [
           h('button', { onClick: (e) => this.props.onClick(e) }, 'close'),
-          h(
-            'div',
-            annotations.map((a) => h('div', a))
-          ),
         ]),
         h(Tabs, { defaultIndex: activeTab }, [
           h(TabList, [
@@ -63,27 +62,26 @@ class MultiTabModal extends React.Component {
             h(Tab, { disabled: gapJunctions == null }, 'Gap Junctions'),
             h(Tab, { disabled: contactAreas == null }, 'Contact Area'),
           ]),
-          h(
-            TabPanel,
-            { key: '0' },
+          h(TabPanel, { key: '0' }, [
+            hasAnnotations
+              ? h(
+                  'div',
+                  `Synapses between ${neuronPairText} are ${annotations[0]}`
+                )
+              : null,
             chemicalSynapses != null
               ? h(LineChart, {
                   id: 'chemicalSynapses',
+                  stepSize: 1,
                   values: chemicalSynapses,
                   datasets: chemicalSynapsesDatasets,
-                  label: `Chemical Synapses between ${neuronPairKey.replace(
-                    '$',
-                    ' and '
-                  )}`,
+                  label: `Chemical Synapses between ${neuronPairText}`,
                 })
               : h(
                   'div',
-                  `No chemical synapses found between ${neuronPairKey.replace(
-                    '$',
-                    ' and '
-                  )}`
-                )
-          ),
+                  `No chemical synapses found between ${neuronPairText}`
+                ),
+          ]),
           h(
             TabPanel,
             { key: '1' },
@@ -91,29 +89,20 @@ class MultiTabModal extends React.Component {
               ? h(LineChart, {
                   id: 'gapJunctions',
                   values: gapJunctions,
+                  stepSize: 1,
                   datasets: gapJunctionsDatasets,
-                  label: `Gap junctions between ${neuronPairKey.replace(
-                    '$',
-                    ' and '
-                  )}`,
+                  label: `Gap junctions between ${neuronPairText}`,
                 })
-              : h(
-                  'div',
-                  `No gap junctions found between ${neuronPairKey.replace(
-                    '$',
-                    ' and '
-                  )}`
-                )
+              : h('div', `No gap junctions found between ${neuronPairText}`)
           ),
           h(TabPanel, { key: '2' }, [
             h(LineChart, {
               id: 'contactArea',
               values: contactAreas,
               datasets: contactAreaDatasets,
-              label: `Contact area between ${neuronPairKey.replace(
-                '$',
-                ' and '
-              )} (${String.fromCharCode(181)}m^2)`,
+              label: `Contact area between ${neuronPairText} (${String.fromCharCode(
+                181
+              )}m^2)`,
             }),
           ]),
         ]),

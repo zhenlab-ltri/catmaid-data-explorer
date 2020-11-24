@@ -5,8 +5,15 @@ import { Line } from 'react-chartjs-2';
 
 export class LineChart extends React.Component {
   render() {
-    const { id, label, datasets, values } = this.props;
+    const { id, label, datasets, values, stepSize } = this.props;
 
+    const yAxesTicks = {
+      ticks: {
+        beginAtZero: true,
+      },
+    };
+
+    stepSize != null ? (yAxesTicks.ticks.stepSize = stepSize) : null;
     return h(Line, {
       id,
       data: {
@@ -23,13 +30,7 @@ export class LineChart extends React.Component {
       },
       options: {
         scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
+          yAxes: [yAxesTicks],
         },
       },
     });
