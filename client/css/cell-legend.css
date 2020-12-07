@@ -1,11 +1,11 @@
 .cell-legend {
   position: absolute;
-  right: 30px;
-  top: 120px;
+  right: 60px;
+  top: 600px;
   z-index: 1;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 1em;
-  border: 1px solid black;
+  box-shadow: 3px 3px 5px 6px #ccc;
 }
 
 .cell-legend-entry {
