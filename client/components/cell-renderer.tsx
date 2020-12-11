@@ -1,5 +1,6 @@
 import React from 'react';
 import h from 'react-hyperscript';
+import ReactHover, { Hover, Trigger } from 'react-hover';
 
 import model from '../model';
 
@@ -92,7 +93,7 @@ const ColoredCell = React.memo(function coloredCellInner(props) {
   );
 });
 
-export class GapJunctionMatrixCell extends React.PureComponent {
+export class NestedMultiMatrixCell extends React.PureComponent {
   render() {
     const {
       isScrolling,
@@ -103,14 +104,17 @@ export class GapJunctionMatrixCell extends React.PureComponent {
       onHover,
       onClick,
       colorScaleFn,
+
+      dataFn,
+      symmetric,
     } = this.props;
     const rowNeuron = model.neurons[rowIndex].id;
     const colNeuron = model.neurons[columnIndex].id;
     const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
     const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
     const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { data: gapJunctions } = model.getGapJunctions(neuronKey);
-    const noValue = gapJunctions == null;
+    const { data, datasets } = dataFn(neuronKey);
+    const noValue = data == null;
 
     if (columnIndex === 0 && rowIndex === 0) {
       return h('div.matrix-cell', { key: '0-0', style });
@@ -138,8 +142,10 @@ export class GapJunctionMatrixCell extends React.PureComponent {
 
     // contact matrix data is symmetric
     // only render half the matrix
-    if (rowIndex <= columnIndex) {
-      return h(IgnoredCell, { rowNeuron, colNeuron, style });
+    if (symmetric) {
+      if (rowIndex <= columnIndex) {
+        return h(IgnoredCell, { rowNeuron, colNeuron, style });
+      }
     }
 
     if (noValue) {
@@ -154,17 +160,15 @@ export class GapJunctionMatrixCell extends React.PureComponent {
       });
     }
 
-    const gapJunctionsDiv = isScrolling
+    const nestedColoredDataDiv = isScrolling
       ? h(ColoredCell, {
           width: style.width,
           height: style.height,
           colorScaleFn,
-          collection: [
-            gapJunctions.reduce((a, b) => a + b, 0) / gapJunctions.length,
-          ],
+          collection: [data.reduce((a, b) => a + b, 0) / data.length],
         })
       : h(ColoredCell, {
-          collection: gapJunctions,
+          collection: data,
           width: style.width,
           height: style.height,
           colorScaleFn,
@@ -184,203 +188,7 @@ export class GapJunctionMatrixCell extends React.PureComponent {
           ),
         style,
       },
-      gapJunctionsDiv
-    );
-  }
-}
-
-export class ChemicalSynapseMatrixCell extends React.PureComponent {
-  render() {
-    const {
-      isScrolling,
-      highlighted,
-      columnIndex,
-      rowIndex,
-      style,
-      onHover,
-      onClick,
-      colorScaleFn,
-    } = this.props;
-    const rowNeuron = model.neurons[rowIndex].id;
-    const colNeuron = model.neurons[columnIndex].id;
-    const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
-    const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
-    const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { data: chemicalSynapses } = model.getChemicalSynapses(neuronKey);
-    const noValue = chemicalSynapses == null;
-
-    if (columnIndex === 0 && rowIndex === 0) {
-      return h('div.matrix-cell', { key: '0-0', style });
-    }
-
-    // cell is in the row header
-    if (columnIndex === 0 && rowIndex > 0) {
-      return h(RowHeaderCell, {
-        highlighted,
-        className: rowNeuronCanonicalType,
-        style,
-        label: rowNeuron,
-      });
-    }
-
-    // cell is in the column header
-    if (rowIndex === 0 && columnIndex > 0) {
-      return h(ColumnHeaderCell, {
-        highlighted,
-        className: colNeuronCanonicalType,
-        style,
-        label: colNeuron,
-      });
-    }
-
-    if (noValue) {
-      return h(EmptyCell, {
-        rowNeuron,
-        colNeuron,
-        style,
-        onHover,
-        onClick,
-        rowIndex,
-        columnIndex,
-      });
-    }
-
-    const chemicalSynapseDiv = isScrolling
-      ? h(ColoredCell, {
-          width: style.width,
-          height: style.height,
-          colorScaleFn,
-          collection: [
-            chemicalSynapses.reduce((a, b) => a + b, 0) /
-              chemicalSynapses.length,
-          ],
-        })
-      : h(ColoredCell, {
-          collection: chemicalSynapses,
-          width: style.width,
-          height: style.height,
-          colorScaleFn,
-        });
-
-    return h(
-      'div.matrix-cell',
-      {
-        key: model.neuronPairKey(rowNeuron, colNeuron),
-        onMouseOver: (e) => onHover(rowIndex, columnIndex),
-        onClick: (e) =>
-          this.props.onClick(
-            e,
-            model.neuronPairKey(rowNeuron, colNeuron),
-            rowIndex,
-            columnIndex
-          ),
-        style,
-      },
-      chemicalSynapseDiv
-    );
-  }
-}
-
-export class ContactMatrixCell extends React.PureComponent {
-  render() {
-    const {
-      isScrolling,
-      highlighted,
-      columnIndex,
-      rowIndex,
-      style,
-      onHover,
-      onClick,
-      colorScaleFn,
-    } = this.props;
-    const rowNeuron = model.neurons[rowIndex].id;
-    const colNeuron = model.neurons[columnIndex].id;
-    const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
-    const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
-    const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { data: contactAreas } = model.getContactArea(neuronKey);
-    const noValue = contactAreas == null;
-
-    if (columnIndex === 0 && rowIndex === 0) {
-      return h('div.matrix-cell', { key: '0-0', style });
-    }
-
-    // cell is in the row header
-    if (columnIndex === 0 && rowIndex > 0) {
-      return h(RowHeaderCell, {
-        highlighted,
-        className: rowNeuronCanonicalType,
-        style,
-        label: rowNeuron,
-      });
-    }
-
-    // cell is in the column header
-    if (rowIndex === 0 && columnIndex > 0) {
-      return h(ColumnHeaderCell, {
-        highlighted,
-        className: colNeuronCanonicalType,
-        style,
-        label: colNeuron,
-      });
-    }
-
-    // contact matrix data is symmetric
-    // only render half the matrix
-    if (rowIndex <= columnIndex) {
-      return h(IgnoredCell, { rowNeuron, colNeuron, style });
-    }
-
-    if (noValue) {
-      return h(EmptyCell, {
-        rowNeuron,
-        colNeuron,
-        style,
-        onHover,
-        onClick,
-        rowIndex,
-        columnIndex,
-      });
-    }
-
-    const contactAreaDiv = isScrolling
-      ? h(ColoredCell, {
-          width: style.width,
-          height: style.height,
-          colorScaleFn,
-          collection: [
-            contactAreas.reduce((a, b) => a + b, 0) / contactAreas.length,
-          ],
-        })
-      : h(ColoredCell, {
-          collection: contactAreas,
-          width: style.width,
-          height: style.height,
-          colorScaleFn,
-        });
-
-    // const contactAreaDiv = h(ColoredCell, {
-    //   collection: contactAreas,
-    //   width: style.width,
-    //   height: style.height,
-    //   colorScaleFn,
-    // });
-
-    return h(
-      'div.matrix-cell',
-      {
-        key: model.neuronPairKey(rowNeuron, colNeuron),
-        onMouseOver: (e) => onHover(rowIndex, columnIndex),
-        onClick: (e) =>
-          this.props.onClick(
-            e,
-            model.neuronPairKey(rowNeuron, colNeuron),
-            rowIndex,
-            columnIndex
-          ),
-        style,
-      },
-      contactAreaDiv
+      nestedColoredDataDiv
     );
   }
 }

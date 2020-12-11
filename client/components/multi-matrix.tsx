@@ -4,22 +4,16 @@ import chroma from 'chroma-js';
 import MultiGrid from 'react-virtualized/dist/es/MultiGrid';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import debounce from 'lodash.debounce';
-import Modal from 'react-modal';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Dropdown from 'react-dropdown';
 import ReactHover, { Trigger, Hover } from 'react-hover';
 
-import {
-  ContactMatrixCell,
-  ChemicalSynapseMatrixCell,
-  GapJunctionMatrixCell,
-} from './cell-renderer';
+import { MultiTabModal } from './multi-tab-modal';
+import { NestedMultiMatrixCell } from './cell-renderer';
 import {
   ContactMatrixCellLegend,
   ChemicalSynapseMatrixCellLegend,
   GapJunctionMatrixCellLegend,
 } from './cell-legend';
-import { LineChart } from './charts';
 
 import model from '../model';
 
@@ -34,8 +28,8 @@ const multiMatrixData = {
       .domain([0, model.stats.maxContactArea])
       .gamma(0.6),
     dataFn: model.getContactArea,
-    cellRenderer: ContactMatrixCell,
     cellLegend: ContactMatrixCellLegend,
+    symmetric: true,
   },
   chemicalSynapses: {
     id: 0,
@@ -47,8 +41,8 @@ const multiMatrixData = {
       .domain([0, model.stats.maxConnectivityCs])
       .gamma(0.6),
     dataFn: model.getChemicalSynapses,
-    cellRenderer: ChemicalSynapseMatrixCell,
     cellLegend: ChemicalSynapseMatrixCellLegend,
+    symmetric: false,
   },
   gapJunctions: {
     id: 1,
@@ -60,102 +54,10 @@ const multiMatrixData = {
       .domain([0, model.stats.maxConnectivityGj])
       .gamma(0.6),
     dataFn: model.getGapJunctions,
-    cellRenderer: GapJunctionMatrixCell,
     cellLegend: GapJunctionMatrixCellLegend,
+    symmetric: true,
   },
 };
-
-class MultiTabModal extends React.Component {
-  render() {
-    const { isOpen, className, onClick, neuronPairKey, activeTab } = this.props;
-    const {
-      data: gapJunctions,
-      datasets: gapJunctionsDatasets,
-    } = model.getGapJunctions(neuronPairKey);
-    const {
-      data: chemicalSynapses,
-      datasets: chemicalSynapsesDatasets,
-    } = model.getChemicalSynapses(neuronPairKey);
-    const {
-      data: contactAreas,
-      datasets: contactAreaDatasets,
-    } = model.getContactArea(neuronPairKey);
-
-    const annotations = model.getAnnotations(neuronPairKey);
-    const hasAnnotations = annotations.length > 0;
-
-    const neuronPairText = `${neuronPairKey.replace('$', ' and ')}`;
-
-    return h(
-      Modal,
-      {
-        style: {
-          overlay: {
-            zIndex: 1,
-          },
-        },
-        isOpen,
-        className,
-      },
-      [
-        h('div.modal-header', [
-          h('button', { onClick: (e) => this.props.onClick(e) }, 'close'),
-        ]),
-        h(Tabs, { defaultIndex: activeTab }, [
-          h(TabList, [
-            h(Tab, { disabled: chemicalSynapses == null }, 'Chemical Synapses'),
-            h(Tab, { disabled: gapJunctions == null }, 'Gap Junctions'),
-            h(Tab, { disabled: contactAreas == null }, 'Contact Area'),
-          ]),
-          h(TabPanel, { key: '0' }, [
-            hasAnnotations
-              ? h(
-                  'div',
-                  `Synapses between ${neuronPairText} are ${annotations[0]}`
-                )
-              : null,
-            chemicalSynapses != null
-              ? h(LineChart, {
-                  id: 'chemicalSynapses',
-                  stepSize: 1,
-                  values: chemicalSynapses,
-                  datasets: chemicalSynapsesDatasets,
-                  label: `Chemical Synapses between ${neuronPairText}`,
-                })
-              : h(
-                  'div',
-                  `No chemical synapses found between ${neuronPairText}`
-                ),
-          ]),
-          h(
-            TabPanel,
-            { key: '1' },
-            gapJunctions != null
-              ? h(LineChart, {
-                  id: 'gapJunctions',
-                  values: gapJunctions,
-                  stepSize: 1,
-                  datasets: gapJunctionsDatasets,
-                  label: `Gap junctions between ${neuronPairText}`,
-                })
-              : h('div', `No gap junctions found between ${neuronPairText}`)
-          ),
-          h(TabPanel, { key: '2' }, [
-            h(LineChart, {
-              id: 'contactArea',
-              values: contactAreas,
-              datasets: contactAreaDatasets,
-              label: `Contact area between ${neuronPairText} (${String.fromCharCode(
-                181
-              )}m^2)`,
-            }),
-          ]),
-        ]),
-      ]
-    );
-  }
-}
-
 class NeuronColumnTabs extends React.PureComponent {
   render() {
     const { neuronTypeWithMostColumns, onNeuronTabClick } = this.props;
@@ -364,19 +266,15 @@ export default class MultiMatrix extends React.Component {
   }, 50);
 
   render() {
+    const matrixConfig = multiMatrixData[this.state.selectedMatrix];
     const {
-      neuronTypeWithMostColumns,
-      neuronTypeWithMostRows,
-      selectedMatrix,
-    } = this.state;
-
-    const {
-      colorScaleFn,
-      cellRenderer,
-      cellLegend,
-      maxVal,
       id,
-    } = multiMatrixData[selectedMatrix];
+      cellLegend,
+      colorScaleFn,
+      maxVal,
+      dataFn,
+      symmetric,
+    } = matrixConfig;
 
     return h('div.multi-matrix', [
       h('div.multi-matrix-header', [
@@ -401,7 +299,7 @@ export default class MultiMatrix extends React.Component {
           ]),
         ]),
         h(NeuronColumnTabs, {
-          neuronTypeWithMostColumns,
+          neuronTypeWithMostColumns: this.state.neuronTypeWithMostColumns,
           onNeuronTabClick: (firstNeuronIndexOfType) => {
             if (firstNeuronIndexOfType >= 0) {
               this.scrollToColumnNeuron(firstNeuronIndexOfType);
@@ -436,7 +334,7 @@ export default class MultiMatrix extends React.Component {
           h(Trigger, { type: 'trigger' }, [
             h('div.row', [
               h(NeuronRowTabs, {
-                neuronTypeWithMostRows,
+                neuronTypeWithMostRows: this.state.neuronTypeWithMostRows,
                 onNeuronTabClick: (firstNeuronIndexOfType) => {
                   if (firstNeuronIndexOfType >= 0) {
                     this.scrollToRowNeuron(firstNeuronIndexOfType);
@@ -458,7 +356,9 @@ export default class MultiMatrix extends React.Component {
                       style,
                       isVisible,
                     }) =>
-                      h(cellRenderer, {
+                      h(NestedMultiMatrixCell, {
+                        dataFn,
+                        symmetric,
                         isVisible,
                         isScrolling,
                         columnIndex,
@@ -511,7 +411,7 @@ export default class MultiMatrix extends React.Component {
           ]),
           h(Hover, { type: 'hover' }, [
             h(CellHoverDetail, {
-              selectedMatrix,
+              selectedMatrix: this.state.selectedMatrix,
               hoveredRowIndex: this.state.hoveredRowIndex,
               hoveredColumnIndex: this.state.hoveredColumnIndex,
             }),
