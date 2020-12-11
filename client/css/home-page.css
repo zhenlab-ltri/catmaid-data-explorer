@@ -1,0 +1,36 @@
+.header {
+  background-color: black;
+  color: white;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.link-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.link-list > * {
+  margin: 10px;
+  width: 300px;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  padding: 10px;
+}
+
+.card-disabled {
+  display: flex;
+  justify-content: center;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  padding: 10px;
+  background-color: gray;
+  opacity: 0.5;
+}

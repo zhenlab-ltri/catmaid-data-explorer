@@ -5,22 +5,38 @@ import ReactDOM from 'react-dom';
 
 import MultiMatrix from './components/multi-matrix';
 
+class HomePage extends React.Component {
+  render() {
+    return h('div.home-page', [
+      h('div.header', [h('h1', 'Zhen Lab Tools')]),
+      h('div.link-list', [
+        h('div.card', [h(Link, { to: '/multi-matrix' }, 'Adjacency Matrix')]),
+        h('div.card', [
+          h('a', { href: 'http://nemanode.zhen-tools.com' }, 'Nemanode'),
+        ]),
+        h('div.card-disabled', [h('div', 'Dauer')]),
+        h('div.card-disabled', [h('div', 'Gap Junctions')]),
+      ]),
+    ]);
+  }
+}
+
 class App extends React.Component {
   render() {
-    return h(Router, [
-      h(Switch, [
-        h(Route, {
-          exact: true,
-          path: '/',
-          render: () => {
-            return h('div', [h(Link, { to: '/multi-matrix' }, 'Multi Matrix')]);
-          },
-        }),
-        h(Route, {
-          exact: true,
-          path: '/multi-matrix',
-          component: MultiMatrix,
-        }),
+    return h('div', [
+      h(Router, [
+        h(Switch, [
+          h(Route, {
+            exact: true,
+            path: '/',
+            component: HomePage,
+          }),
+          h(Route, {
+            exact: true,
+            path: '/multi-matrix',
+            component: MultiMatrix,
+          }),
+        ]),
       ]),
     ]);
   }
