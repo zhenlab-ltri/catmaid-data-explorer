@@ -46,22 +46,22 @@ model.getContactArea = (neuronPairKey: string) => {
   );
 
   return {
-    contactAreas: contactAreaDataWithoutTEMAdult,
-    contactAreaDatasets: datasetsWithoutTEMAdult,
+    data: contactAreaDataWithoutTEMAdult,
+    datasets: datasetsWithoutTEMAdult,
   };
 };
 
 model.getChemicalSynapses = (neuronPairKey: string) => {
   return {
-    chemicalSynapses: model.neuronPairData[neuronPairKey]?.chemicalSynapses,
-    chemicalSynapsesDatasets: model.datasets.map(d => d.id),
+    data: model.neuronPairData[neuronPairKey]?.chemicalSynapses,
+    datasets: model.datasets.map(d => d.id),
   };
 }
 
 model.getGapJunctions = (neuronPairKey: string) => {
   return {
-    gapJunctions: model.neuronPairData[neuronPairKey]?.gapJunctions,
-    gapJunctionsDatasets: model.datasets.map(d => d.id),
+    data: model.neuronPairData[neuronPairKey]?.gapJunctions,
+    datasets: model.datasets.map(d => d.id),
   };
 }
 

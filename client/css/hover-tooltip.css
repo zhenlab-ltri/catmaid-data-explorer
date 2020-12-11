@@ -1,0 +1,13 @@
+.hover-tooltip {
+  z-index: 3;
+  background-color: white;
+  box-shadow: 3px 3px 5px 6px #ccc;
+  width: 200px;
+}
+
+.hover-data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}

@@ -6,6 +6,7 @@
 @import './tabs.css';
 @import './dropdown.css';
 @import './matrix-cell.css';
+@import './hover-tooltip.css';
 @import './fonts/open-sans.css';
 
 body {

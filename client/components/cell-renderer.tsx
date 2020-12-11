@@ -109,7 +109,7 @@ export class GapJunctionMatrixCell extends React.PureComponent {
     const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
     const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
     const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { gapJunctions } = model.getGapJunctions(neuronKey);
+    const { data: gapJunctions } = model.getGapJunctions(neuronKey);
     const noValue = gapJunctions == null;
 
     if (columnIndex === 0 && rowIndex === 0) {
@@ -206,7 +206,7 @@ export class ChemicalSynapseMatrixCell extends React.PureComponent {
     const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
     const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
     const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { chemicalSynapses } = model.getChemicalSynapses(neuronKey);
+    const { data: chemicalSynapses } = model.getChemicalSynapses(neuronKey);
     const noValue = chemicalSynapses == null;
 
     if (columnIndex === 0 && rowIndex === 0) {
@@ -298,7 +298,7 @@ export class ContactMatrixCell extends React.PureComponent {
     const rowNeuronCanonicalType = model.neurons[rowIndex].canonicalType;
     const colNeuronCanonicalType = model.neurons[columnIndex].canonicalType;
     const neuronKey = model.neuronPairKey(rowNeuron, colNeuron);
-    const { contactAreas } = model.getContactArea(neuronKey);
+    const { data: contactAreas } = model.getContactArea(neuronKey);
     const noValue = contactAreas == null;
 
     if (columnIndex === 0 && rowIndex === 0) {

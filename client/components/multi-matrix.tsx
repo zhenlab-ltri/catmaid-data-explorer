@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce';
 import Modal from 'react-modal';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Dropdown from 'react-dropdown';
+import ReactHover, { Trigger, Hover } from 'react-hover';
 
 import {
   ContactMatrixCell,
@@ -22,19 +23,63 @@ import { LineChart } from './charts';
 
 import model from '../model';
 
+const multiMatrixData = {
+  contactArea: {
+    id: 2,
+    label: 'Contact Area',
+    value: 'contactArea',
+    maxVal: model.stats.maxContactArea,
+    colorScaleFn: chroma
+      .scale(['white', 'red'])
+      .domain([0, model.stats.maxContactArea])
+      .gamma(0.6),
+    dataFn: model.getContactArea,
+    cellRenderer: ContactMatrixCell,
+    cellLegend: ContactMatrixCellLegend,
+  },
+  chemicalSynapses: {
+    id: 0,
+    label: 'Chemical Synapses',
+    value: 'chemicalSynapses',
+    maxVal: model.stats.maxConnectivityCs,
+    colorScaleFn: chroma
+      .scale(['white', 'red'])
+      .domain([0, model.stats.maxConnectivityCs])
+      .gamma(0.6),
+    dataFn: model.getChemicalSynapses,
+    cellRenderer: ChemicalSynapseMatrixCell,
+    cellLegend: ChemicalSynapseMatrixCellLegend,
+  },
+  gapJunctions: {
+    id: 1,
+    label: 'Gap Junctions',
+    value: 'gapJunctions',
+    maxVal: model.stats.maxConnectivityGj,
+    colorScaleFn: chroma
+      .scale(['white', 'red'])
+      .domain([0, model.stats.maxConnectivityGj])
+      .gamma(0.6),
+    dataFn: model.getGapJunctions,
+    cellRenderer: GapJunctionMatrixCell,
+    cellLegend: GapJunctionMatrixCellLegend,
+  },
+};
+
 class MultiTabModal extends React.Component {
   render() {
     const { isOpen, className, onClick, neuronPairKey, activeTab } = this.props;
-    const { gapJunctions, gapJunctionsDatasets } = model.getGapJunctions(
-      neuronPairKey
-    );
     const {
-      chemicalSynapses,
-      chemicalSynapsesDatasets,
+      data: gapJunctions,
+      datasets: gapJunctionsDatasets,
+    } = model.getGapJunctions(neuronPairKey);
+    const {
+      data: chemicalSynapses,
+      datasets: chemicalSynapsesDatasets,
     } = model.getChemicalSynapses(neuronPairKey);
-    const { contactAreas, contactAreaDatasets } = model.getContactArea(
-      neuronPairKey
-    );
+    const {
+      data: contactAreas,
+      datasets: contactAreaDatasets,
+    } = model.getContactArea(neuronPairKey);
 
     const annotations = model.getAnnotations(neuronPairKey);
     const hasAnnotations = annotations.length > 0;
@@ -167,44 +212,38 @@ class NeuronRowTabs extends React.PureComponent {
   }
 }
 
-const multiMatrixData = {
-  contactArea: {
-    id: 2,
-    label: 'Contact Area',
-    value: 'contactArea',
-    maxVal: model.stats.maxContactArea,
-    colorScaleFn: chroma
-      .scale(['white', 'red'])
-      .domain([0, model.stats.maxContactArea])
-      .gamma(0.6),
-    cellRenderer: ContactMatrixCell,
-    cellLegend: ContactMatrixCellLegend,
-  },
-  chemicalSynapses: {
-    id: 0,
-    label: 'Chemical Synapses',
-    value: 'chemicalSynapses',
-    maxVal: model.stats.maxConnectivityCs,
-    colorScaleFn: chroma
-      .scale(['white', 'red'])
-      .domain([0, model.stats.maxConnectivityCs])
-      .gamma(0.6),
-    cellRenderer: ChemicalSynapseMatrixCell,
-    cellLegend: ChemicalSynapseMatrixCellLegend,
-  },
-  gapJunctions: {
-    id: 1,
-    label: 'Gap Junctions',
-    value: 'gapJunctions',
-    maxVal: model.stats.maxConnectivityGj,
-    colorScaleFn: chroma
-      .scale(['white', 'red'])
-      .domain([0, model.stats.maxConnectivityGj])
-      .gamma(0.6),
-    cellRenderer: GapJunctionMatrixCell,
-    cellLegend: GapJunctionMatrixCellLegend,
-  },
-};
+class CellHoverDetail extends React.PureComponent {
+  render() {
+    const { selectedMatrix, hoveredRowIndex, hoveredColumnIndex } = this.props;
+    if (hoveredRowIndex < 0 && hoveredColumnIndex < 0) {
+      return h('div');
+    }
+
+    const rowNeuron = model.neurons[hoveredRowIndex].id;
+    const columnNeuron = model.neurons[hoveredColumnIndex].id;
+    const neuronPairKey = model.neuronPairKey(rowNeuron, columnNeuron);
+    const annotations = model.getAnnotations(neuronPairKey);
+    const { label } = multiMatrixData[selectedMatrix];
+    const { data, datasets } = multiMatrixData[selectedMatrix].dataFn(
+      neuronPairKey
+    );
+
+    if (data == null) {
+      return h('div');
+    }
+
+    const dataPointDivs = datasets.map((datasetId, index) => {
+      return h('div.hover-data-row', [
+        h('div', datasetId),
+        h('div', data[index]),
+      ]);
+    });
+    return h('div.hover-tooltip', [
+      h('div', `${label}:`),
+      h('div', dataPointDivs),
+    ]);
+  }
+}
 
 export default class MultiMatrix extends React.Component {
   constructor(props) {
@@ -378,80 +417,107 @@ export default class MultiMatrix extends React.Component {
         neuronPairKey: this.state.cellDetailKey,
       }),
       h(cellLegend, { maxVal, colorScaleFn }),
-      h('div.row', [
-        h(NeuronRowTabs, {
-          neuronTypeWithMostRows,
-          onNeuronTabClick: (firstNeuronIndexOfType) => {
-            if (firstNeuronIndexOfType >= 0) {
-              this.scrollToRowNeuron(firstNeuronIndexOfType);
-            }
+      h(
+        ReactHover,
+        {
+          options: {
+            followCursor: true,
+            shiftX:
+              this.state.hoveredColumnIndex >= model.neurons.length - 4 // shift tooltip to left side when near right side of page
+                ? -200
+                : 20,
+            shiftY:
+              this.state.hoveredRowIndex >= model.neurons.length - 7 // shift the tooltip up when it is near the bottom of the page
+                ? -300
+                : 0,
           },
-        }),
-        h(
-          AutoSizer,
-          {
-            // disableHeight: true,
-          },
-          [
-            ({ width }) =>
-              h(MultiGrid, {
-                ...this.state,
-                overscanColumnCount: 2,
-                overscanRowCount: 2,
-                fixedColumnCount: 1,
-                fixedRowCount: 1,
-                cellRenderer: ({
-                  isScrolling,
-                  columnIndex,
-                  rowIndex,
-                  style,
-                  isVisible,
-                }) =>
-                  h(cellRenderer, {
-                    isVisible,
-                    isScrolling,
-                    columnIndex,
-                    rowIndex,
-                    colorScaleFn,
-                    key: `${rowIndex}$${columnIndex}`,
-                    style,
-                    highlighted:
-                      columnIndex === this.state.hoveredColumnIndex ||
-                      rowIndex === this.state.hoveredRowIndex,
-                    onHover: this.handleCellHover,
-                    onClick: (e, neuronKey, rowIndex, columnIndex) =>
-                      this.handleCellClick(e, neuronKey, rowIndex, columnIndex),
-                  }),
-                rowHeight: 40,
-                rowWidth: 80,
-                columnWidth: 80,
-                columnHeight: 40,
-                enableFixedColumnScroll: true,
-                enableFixedRowScroll: true,
-                height: 720,
-                width: width - 80,
-                onSectionRendered: (opts) => this.handleSectionRendered(opts),
-                rowCount: model.neurons.length,
-                columnCount: model.neurons.length,
-                styleBottomLeftGrid: {
-                  borderRight: '2px solid #aaa',
-                  backgroundColor: '#f7f7f7',
+        },
+        [
+          h(Trigger, { type: 'trigger' }, [
+            h('div.row', [
+              h(NeuronRowTabs, {
+                neuronTypeWithMostRows,
+                onNeuronTabClick: (firstNeuronIndexOfType) => {
+                  if (firstNeuronIndexOfType >= 0) {
+                    this.scrollToRowNeuron(firstNeuronIndexOfType);
+                  }
                 },
-                styleTopLeftGrid: {
-                  borderBottom: '2px solid #aaa',
-                  borderRight: '2px solid #aaa',
-                  backgroundColor: '#f7f7f7',
-                },
-                styleTopRightGrid: {
-                  borderBottom: '2px solid #aaa',
-                  backgroundColor: '#f7f7f7',
-                },
-                hideTopRightGridScrollbar: true,
-                hideBottomLeftGridScrollbar: true,
               }),
-          ]
-        ),
-      ]),
+              h(AutoSizer, [
+                ({ width }) =>
+                  h(MultiGrid, {
+                    ...this.state,
+                    overscanColumnCount: 2,
+                    overscanRowCount: 2,
+                    fixedColumnCount: 1,
+                    fixedRowCount: 1,
+                    cellRenderer: ({
+                      isScrolling,
+                      columnIndex,
+                      rowIndex,
+                      style,
+                      isVisible,
+                    }) =>
+                      h(cellRenderer, {
+                        isVisible,
+                        isScrolling,
+                        columnIndex,
+                        rowIndex,
+                        colorScaleFn,
+                        key: `${rowIndex}$${columnIndex}`,
+                        style,
+                        highlighted:
+                          columnIndex === this.state.hoveredColumnIndex ||
+                          rowIndex === this.state.hoveredRowIndex,
+                        onHover: this.handleCellHover,
+                        onClick: (e, neuronKey, rowIndex, columnIndex) =>
+                          this.handleCellClick(
+                            e,
+                            neuronKey,
+                            rowIndex,
+                            columnIndex
+                          ),
+                      }),
+                    rowHeight: 40,
+                    rowWidth: 80,
+                    columnWidth: 80,
+                    columnHeight: 40,
+                    enableFixedColumnScroll: true,
+                    enableFixedRowScroll: true,
+                    height: 720,
+                    width: width - 80,
+                    onSectionRendered: (opts) =>
+                      this.handleSectionRendered(opts),
+                    rowCount: model.neurons.length,
+                    columnCount: model.neurons.length,
+                    styleBottomLeftGrid: {
+                      borderRight: '2px solid #aaa',
+                      backgroundColor: '#f7f7f7',
+                    },
+                    styleTopLeftGrid: {
+                      borderBottom: '2px solid #aaa',
+                      borderRight: '2px solid #aaa',
+                      backgroundColor: '#f7f7f7',
+                    },
+                    styleTopRightGrid: {
+                      borderBottom: '2px solid #aaa',
+                      backgroundColor: '#f7f7f7',
+                    },
+                    hideTopRightGridScrollbar: true,
+                    hideBottomLeftGridScrollbar: true,
+                  }),
+              ]),
+            ]),
+          ]),
+          h(Hover, { type: 'hover' }, [
+            h(CellHoverDetail, {
+              selectedMatrix,
+              hoveredRowIndex: this.state.hoveredRowIndex,
+              hoveredColumnIndex: this.state.hoveredColumnIndex,
+            }),
+          ]),
+        ]
+      ),
     ]);
   }
 }
