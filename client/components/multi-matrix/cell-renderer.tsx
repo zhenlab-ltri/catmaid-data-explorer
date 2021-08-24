@@ -2,7 +2,7 @@ import React from 'react';
 import h from 'react-hyperscript';
 import ReactHover, { Hover, Trigger } from 'react-hover';
 
-import model from '../model';
+import model from '../../model';
 
 class RowHeaderCell extends React.PureComponent {
   render() {

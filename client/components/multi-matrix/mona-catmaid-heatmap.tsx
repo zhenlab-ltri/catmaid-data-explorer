@@ -1,4 +1,4 @@
-import data from '../data/mona-catmaid-data.json';
+import data from '../../model/mona-catmaid-data.json';
 import React from 'react';
 import chroma from 'chroma-js';
 

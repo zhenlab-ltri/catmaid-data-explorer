@@ -15,7 +15,7 @@ import {
   GapJunctionMatrixCellLegend,
 } from './cell-legend';
 
-import model from '../model';
+import model from '../../model';
 
 const multiMatrixData = {
   contactArea: {
@@ -126,9 +126,8 @@ class CellHoverDetail extends React.PureComponent {
     const neuronPairKey = model.neuronPairKey(rowNeuron, columnNeuron);
     const annotations = model.getAnnotations(neuronPairKey);
     const { label } = multiMatrixData[selectedMatrix];
-    const { data, datasets } = multiMatrixData[selectedMatrix].dataFn(
-      neuronPairKey
-    );
+    const { data, datasets } =
+      multiMatrixData[selectedMatrix].dataFn(neuronPairKey);
 
     if (data == null) {
       return h('div');
@@ -175,12 +174,8 @@ export default class MultiMatrix extends React.Component {
   }
 
   handleSectionRendered = debounce((opts) => {
-    const {
-      rowStartIndex,
-      rowStopIndex,
-      columnStartIndex,
-      columnStopIndex,
-    } = opts;
+    const { rowStartIndex, rowStopIndex, columnStartIndex, columnStopIndex } =
+      opts;
 
     const numVisibleRows = rowStopIndex - rowStartIndex;
     const numVisibleColumns = columnStopIndex - columnStartIndex;
@@ -267,14 +262,8 @@ export default class MultiMatrix extends React.Component {
 
   render() {
     const matrixConfig = multiMatrixData[this.state.selectedMatrix];
-    const {
-      id,
-      cellLegend,
-      colorScaleFn,
-      maxVal,
-      dataFn,
-      symmetric,
-    } = matrixConfig;
+    const { id, cellLegend, colorScaleFn, maxVal, dataFn, symmetric } =
+      matrixConfig;
 
     return h('div.multi-matrix', [
       h('div.multi-matrix-header', [
