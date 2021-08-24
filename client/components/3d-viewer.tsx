@@ -46,23 +46,10 @@ export default class StlViewer extends React.Component {
       10,
       100000
     );
-
     const renderer = new THREE.WebGLRenderer();
-
     const controls = new OrbitControls(camera, renderer.domElement);
-
     controls.maxDistance = 100;
     controls.minDistance = 10;
-
-    // const geometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // const cube = new THREE.Mesh(geometry, material);
-    // const [x, y, z] = [13130, 7657, 388];
-    // cube.position.x = x / 4000;
-    // cube.position.y = y / 4000;
-    // cube.position.z = z / 1000;
-
-    // scene.add(cube);
 
     /**
      * Light setup

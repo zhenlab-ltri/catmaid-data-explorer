@@ -9,5 +9,5 @@ Run:
 `npm run build-css`
 `npm run start`
 
-Go to:
+In your browser, go to:
 `localhost:3000`
