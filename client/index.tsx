@@ -11,6 +11,7 @@ class HomePage extends React.Component {
       h('div.header', [h('h1', 'Zhen Lab Tools')]),
       h('div.link-list', [
         h('div.card', [h(Link, { to: '/multi-matrix' }, 'Adjacency Matrix')]),
+        h('div.card', [h(Link, { to: '/3d-viewer' }, '3D Neuron Viewer')]),
         h('div.card', [
           h('a', { href: 'http://nemanode.zhen-tools.com' }, 'Nemanode'),
         ]),
