@@ -4,7 +4,7 @@ import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
 import MultiMatrix from './components/multi-matrix';
-
+import StlViewer from './components/3d-viewer';
 class HomePage extends React.Component {
   render() {
     return h('div.home-page', [
@@ -36,6 +36,11 @@ class App extends React.Component {
             exact: true,
             path: '/multi-matrix',
             component: MultiMatrix,
+          }),
+          h(Route, {
+            exact: true,
+            path: '/3d-viewer',
+            component: StlViewer,
           }),
         ]),
       ]),
