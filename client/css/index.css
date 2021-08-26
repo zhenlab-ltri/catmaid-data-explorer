@@ -9,6 +9,7 @@
 @import './hover-tooltip.css';
 @import './home-page.css';
 @import './fonts/open-sans.css';
+@import './tailwind.css';
 
 body {
   margin: 0;

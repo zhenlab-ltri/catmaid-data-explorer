@@ -35,7 +35,6 @@
     "react-router-dom": "^5.2.0",
     "react-tabs": "^3.1.1",
     "react-virtualized": "^9.22.2",
-    "three": "0.126.1",
-    "three-stl-loader": "1.0.6"
+    "three": "0.126.1"
   }
 }

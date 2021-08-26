@@ -1,11 +1,13 @@
 import React from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import TreeSTLLoader from 'three-stl-loader';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import h from 'react-hyperscript';
 
-const STLLoader = TreeSTLLoader(THREE);
+import { getNeuronModel } from 'services';
+
+// const STLLoader = TreeSTLLoader(THREE);
 const loader = new STLLoader();
-
 function createAnimate({ scene, camera, renderer }) {
   const triggers = [];
 
@@ -73,23 +75,41 @@ export default class StlViewer extends React.Component {
     camera.position.z = 100;
     const animate = createAnimate({ scene, camera, renderer });
 
-    const loadStlPath = (pathToStl) => {
-      loader.load(pathToStl, (geometry) => {
-        const material = new THREE.MeshDepthMaterial();
-        const mesh = new THREE.Mesh(geometry, material);
-
-        mesh.geometry.computeVertexNormals(true);
-        scene.add(mesh);
-
-        mesh.rotation.x = Math.PI / -2;
-
-        animate.addTrigger(() => {});
-      });
-    };
-
-    animate.animate();
+    this.scene = scene;
+    this.renderer = renderer;
+    this.camera = camera;
+    this.controls = controls;
+    this.secondaryLight = secondaryLight;
+    this.animate = animate;
   }
+
+  viewNeuron() {
+    getNeuronModel('ADAL').then((res) => {
+      const geometry = loader.parse(res);
+      const material = new THREE.MeshDepthMaterial();
+      const mesh = new THREE.Mesh(geometry, material);
+
+      mesh.geometry.computeVertexNormals(true);
+      this.scene.add(mesh);
+
+      mesh.rotation.x = Math.PI / -2;
+
+      this.animate.addTrigger(() => {});
+      this.animate.animate();
+    });
+  }
+
   render() {
-    return <div ref={(ref) => (this.mount = ref)} />;
+    return h('div', { className: 'container', ref: (r) => (this.mount = r) }, [
+      h(
+        'button',
+        {
+          className:
+            'absolute rounded bg-blue-500 hover:bg-blue-800 focus:ring-blue-700',
+          onClick: (e) => this.viewNeuron(),
+        },
+        'Click me'
+      ),
+    ]);
   }
 }
