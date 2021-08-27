@@ -1,15 +1,11 @@
-@import './multi-matrix.css';
-@import './color-scale.css';
-@import './cell-legend.css';
-@import './modal.css';
-@import './mona-heatmap.css';
-@import './tabs.css';
-@import './dropdown.css';
-@import './matrix-cell.css';
-@import './hover-tooltip.css';
+@import './multi-matrix/index.css';
 @import './home-page.css';
 @import './fonts/open-sans.css';
 @import './tailwind.css';
+
+:root {
+  --test: #1e90ff;
+}
 
 body {
   margin: 0;

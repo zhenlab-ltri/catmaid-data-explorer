@@ -5,18 +5,22 @@ import ReactDOM from 'react-dom';
 
 import MultiMatrix from './components/multi-matrix';
 import StlViewer from './components/3d-viewer';
+import Sandbox from './components/sandbox';
+
 class HomePage extends React.Component {
   render() {
-    return h('div.home-page', [
-      h('div.header', [h('h1', 'Zhen Lab Tools')]),
-      h('div.link-list', [
-        h('div.card', [h(Link, { to: '/multi-matrix' }, 'Adjacency Matrix')]),
-        h('div.card', [h(Link, { to: '/3d-viewer' }, '3D Neuron Viewer')]),
-        h('div.card', [
+    return h('div.container.w-screen.m-0', [
+      h('h1.text-lg.text-center', 'Zhen Lab Tools'),
+      h('div.container.flex', [
+        h('div.shadow.p-1', [
+          h(Link, { to: '/multi-matrix' }, 'Adjacency Matrix'),
+        ]),
+        h('div.shadow', [h(Link, { to: '/3d-viewer' }, '3D Neuron Viewer')]),
+        h('div.shadow', [
           h('a', { href: 'http://nemanode.zhen-tools.com' }, 'Nemanode'),
         ]),
-        h('div.card-disabled', [h('div', 'Dauer')]),
-        h('div.card-disabled', [h('div', 'Gap Junctions')]),
+        h('div.shadow', [h('div', 'Dauer Branch Analysis')]),
+        h('div.shadow', [h('div', 'Gap Junctions')]),
       ]),
     ]);
   }
@@ -41,6 +45,11 @@ class App extends React.Component {
             exact: true,
             path: '/3d-viewer',
             component: StlViewer,
+          }),
+          h(Route, {
+            exact: true,
+            path: '/sandbox',
+            component: Sandbox,
           }),
         ]),
       ]),
