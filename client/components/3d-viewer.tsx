@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import h from 'react-hyperscript';
 
-import { getNeuronModel } from 'services';
+import { getNeuronModels } from 'services';
 
 // const STLLoader = TreeSTLLoader(THREE);
 const loader = new STLLoader();
@@ -39,8 +39,6 @@ function createAnimate({ scene, camera, renderer }) {
 
 export default class StlViewer extends React.Component {
   componentDidMount() {
-    const neurons = ['ALA', 'SIAVL', 'RMEV'];
-
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       750,
@@ -84,19 +82,23 @@ export default class StlViewer extends React.Component {
   }
 
   viewNeuron() {
-    getNeuronModel('ADAL').then((res) => {
-      const geometry = loader.parse(res);
-      const material = new THREE.MeshDepthMaterial();
-      const mesh = new THREE.Mesh(geometry, material);
+    getNeuronModels(['ADAL', 'ADAR', 'ALA', 'SIAVL', 'RMEV']).then(
+      (neuronModelBuffers) => {
+        neuronModelBuffers.forEach((buffer) => {
+          const geometry = loader.parse(buffer);
+          const material = new THREE.MeshDepthMaterial();
+          const mesh = new THREE.Mesh(geometry, material);
 
-      mesh.geometry.computeVertexNormals(true);
-      this.scene.add(mesh);
+          mesh.geometry.computeVertexNormals(true);
+          this.scene.add(mesh);
 
-      mesh.rotation.x = Math.PI / -2;
-
-      this.animate.addTrigger(() => {});
-      this.animate.animate();
-    });
+          mesh.rotation.x = Math.PI / -2;
+        });
+        // not sure what this is used for
+        // this.animate.addTrigger(() => {});
+        this.animate.animate();
+      }
+    );
   }
 
   render() {

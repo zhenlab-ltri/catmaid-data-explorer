@@ -4,9 +4,9 @@
 
 # Running locally
 
-Run:
-`npm run build-js`
-`npm run build-css`
+Run in three different terminals:
+`npm run watch-js`
+`npm run watch-css`
 `npm run start`
 
 In your browser, go to:
