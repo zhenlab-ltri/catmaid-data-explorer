@@ -1,3 +1,4 @@
+@import './fonts.css';
 @import './multi-matrix/index.css';
 @import './home-page.css';
 @import './fonts/open-sans.css';
@@ -7,7 +8,10 @@
   --test: #1e90ff;
 }
 
+.logo {
+  font-family: 'PT Sans Narrow';
+}
+
 body {
   margin: 0;
-  font-family: 'Open Sans', sans-serif;
 }

@@ -9,18 +9,35 @@ import Sandbox from './components/sandbox';
 
 class HomePage extends React.Component {
   render() {
-    return h('div.container.w-screen.m-0', [
-      h('h1.text-lg.text-center', 'Zhen Lab Tools'),
-      h('div.container.flex', [
-        h('div.shadow.p-1', [
-          h(Link, { to: '/multi-matrix' }, 'Adjacency Matrix'),
+    const styles = {
+      container: 'w-screen h-screen bg-gray-50',
+      header: 'h-96 bg-gray-600 text-white flex items-center justify-center ',
+      contentLinks: 'flex items-stretch',
+      cardContainer: 'container mx-auto flex items-stretch justify-center',
+      card: 'w-60 h-80 shadow-lg hover:shadow-xl ml-10 mr-10',
+      cardContent:
+        'w-60 h-80 relative bottom-20 shadow-lg z-10 bg-gray-50 rounded-md',
+    };
+
+    return h('div', { className: styles.container }, [
+      h('div', { className: styles.header }, [
+        h('div', [
+          h('h1', { className: 'mt-30 text-5xl logo' }, 'Zhen Lab Tools'),
+          h('span', { className: '' }, 'Explore the '),
+          h('span', { className: ' italic' }, 'C. Elegans '),
+          h('span', { className: '' }, 'Connectome'),
         ]),
-        h('div.shadow', [h(Link, { to: '/3d-viewer' }, '3D Neuron Viewer')]),
-        h('div.shadow', [
-          h('a', { href: 'http://nemanode.zhen-tools.com' }, 'Nemanode'),
+      ]),
+      h('div', { className: styles.cardContainer }, [
+        h('div', { className: styles.card }, [
+          h('div', { className: styles.cardContent }, 'NemaNode'),
         ]),
-        h('div.shadow', [h('div', 'Dauer Branch Analysis')]),
-        h('div.shadow', [h('div', 'Gap Junctions')]),
+        h('div', { className: styles.card }, [
+          h('div', { className: styles.cardContent }, '3D Neuron Viewer'),
+        ]),
+        h('div', { className: styles.card }, [
+          h('div', { className: styles.cardContent }, 'Dauer Branch Analysis'),
+        ]),
       ]),
     ]);
   }
