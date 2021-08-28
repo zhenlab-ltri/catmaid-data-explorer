@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build-js": "esbuild client/index.tsx --bundle --outfile=dist/index.js '--define:process.env.NODE_ENV=\"development\"'",
+    "build-js": "esbuild client/index.tsx --bundle --loader:.png=dataurl --outfile=dist/index.js '--define:process.env.NODE_ENV=\"development\"'",
     "build-css": "esbuild client/css/index.css --bundle --loader:.woff2=dataurl --outfile=dist/index.css",
-    "watch-js": "esbuild client/index.tsx --watch --bundle --outfile=dist/index.js '--define:process.env.NODE_ENV=\"development\"'",
+    "watch-js": "esbuild client/index.tsx --watch --bundle --loader:.png=dataurl --outfile=dist/index.js '--define:process.env.NODE_ENV=\"development\"'",
     "watch-css": "esbuild client/css/index.css --watch --bundle --loader:.woff2=dataurl --outfile=dist/index.css",
     "build-dev": "concurrently --kill-others \"npm run build-js\" \"npm run build-css\"",
     "build-prod": "esbuild client/index.tsx --bundle --outfile=dist/index.js --minify '--define:process.env.NODE_ENV=\"production\"'",
