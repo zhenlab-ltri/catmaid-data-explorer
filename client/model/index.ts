@@ -6,6 +6,12 @@ model.neurons.forEach((neuron, index: number): void => {
   neuronsIndexMap[neuron.id] = index;
 });
 
+const neuronInfoMap = {};
+model.neurons.forEach(neuron => {
+  neuronInfoMap[neuron.id] = neuron;
+});
+model.neuronInfo = neuronInfoMap;
+
 const datasetsIndexMap = {};
 model.datasets.forEach((dataset, index: number): void => {
   datasetsIndexMap[dataset] = index;

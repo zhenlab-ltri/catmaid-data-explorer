@@ -5,6 +5,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import h from 'react-hyperscript';
 
 import { getNeuronModels } from 'services';
+import model from '../model';
 
 // const STLLoader = TreeSTLLoader(THREE);
 const loader = new STLLoader();
@@ -38,6 +39,14 @@ function createAnimate({ scene, camera, renderer }) {
 }
 
 export default class StlViewer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchInput: '',
+      recognizedNeurons: [],
+    };
+  }
+
   componentDidMount() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
@@ -82,36 +91,72 @@ export default class StlViewer extends React.Component {
   }
 
   viewNeuron() {
-    getNeuronModels(['ADAL', 'ADAR', 'ALA', 'SIAVL', 'RMEV']).then(
-      (neuronModelBuffers) => {
-        neuronModelBuffers.forEach((buffer) => {
-          const geometry = loader.parse(buffer);
-          const material = new THREE.MeshDepthMaterial();
-          const mesh = new THREE.Mesh(geometry, material);
+    const { recognizedNeurons } = this.state;
 
-          mesh.geometry.computeVertexNormals(true);
-          this.scene.add(mesh);
-
-          mesh.rotation.x = Math.PI / -2;
+    getNeuronModels(recognizedNeurons).then((neuronModelBuffers) => {
+      let currentNeuronGroup = this.scene.getObjectByName('currentNeurons');
+      this.scene.remove(currentNeuronGroup);
+      if (currentNeuronGroup != null) {
+        currentNeuronGroup.children.forEach((child) => {
+          child.geometry.dispose();
+          child.material.dispose();
         });
-        // not sure what this is used for
-        // this.animate.addTrigger(() => {});
-        this.animate.animate();
+        currentNeuronGroup = null;
       }
+
+      let currentNeurons = new THREE.Group();
+      currentNeurons.name = 'currentNeurons';
+      neuronModelBuffers.forEach((buffer) => {
+        const geometry = loader.parse(buffer);
+        const material = new THREE.MeshDepthMaterial();
+        const mesh = new THREE.Mesh(geometry, material);
+
+        mesh.geometry.computeVertexNormals(true);
+        mesh.rotation.x = Math.PI / -2;
+
+        currentNeurons.add(mesh);
+      });
+
+      this.scene.add(currentNeurons);
+      // not sure what this is used for
+      // this.animate.addTrigger(() => {});
+      this.animate.animate();
+    });
+  }
+
+  handleSearchBarChange(e) {
+    let value = e.target.value;
+    let isNeuron = (token) => model.neuronInfo[token] != null;
+    let neurons = Array.from(
+      new Set(value.split(' ').filter((token) => isNeuron(token)))
+    );
+
+    this.setState(
+      {
+        recognizedNeurons: neurons,
+        searchInput: value,
+      },
+      () => this.viewNeuron()
     );
   }
 
   render() {
-    return h('div', { className: 'container', ref: (r) => (this.mount = r) }, [
-      h(
-        'button',
-        {
-          className:
-            'absolute rounded bg-blue-500 hover:bg-blue-800 focus:ring-blue-700',
-          onClick: (e) => this.viewNeuron(),
-        },
-        'Click me'
-      ),
+    const styles = {
+      page: 'w-screen h-screen',
+      searchbar:
+        'absolute top-4 left-4 w-80 h-10 shadow-lg bg-white rounded z-10',
+      searchbarInput: 'w-full h-full rounded',
+    };
+    return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
+      h('div', { className: styles.searchbar }, [
+        h('input', {
+          type: 'text',
+          className: styles.searchbarInput,
+          onChange: (e) => this.handleSearchBarChange(e),
+          value: this.state.searchInput,
+          placeholder: 'Search neurons',
+        }),
+      ]),
     ]);
   }
 }

@@ -59,7 +59,7 @@ class HomePage extends React.Component {
           ]),
           // h(Link, { to: '/3d-viewer' }, [
           h('div', { className: styles.cardContentDisabled }, [
-            h('img', { className: styles.cardImage, src: '' }),
+            h('img', { className: styles.cardImage, src: nemanodeImage }),
             h('div', { className: 'text-center text-gray-700 font-bold' }, [
               'Dauer Branch Analysis',
             ]),
