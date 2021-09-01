@@ -100,7 +100,13 @@ export default class StlViewer extends React.Component {
         currentNeurons.add(mesh);
       });
 
+      // center the current neurons group
+      const box = new THREE.Box3().setFromObject(currentNeurons);
+      const c = box.getCenter(new THREE.Vector3());
+      currentNeurons.position.set(-c.x, -c.y, -c.z);
+
       this.scene.add(currentNeurons);
+      this.renderer.render(this.scene, this.camera);
     });
   }
 
