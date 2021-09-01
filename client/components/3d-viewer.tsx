@@ -6,37 +6,9 @@ import h from 'react-hyperscript';
 
 import { getNeuronModels } from 'services';
 import model from '../model';
+import texture from '../images/texture.jpg';
 
-// const STLLoader = TreeSTLLoader(THREE);
 const loader = new STLLoader();
-function createAnimate({ scene, camera, renderer }) {
-  const triggers = [];
-
-  function animate() {
-    requestAnimationFrame(animate);
-
-    triggers.forEach((trigger) => {
-      trigger();
-    });
-
-    renderer.render(scene, camera);
-  }
-  function addTrigger(cb) {
-    if (typeof cb === 'function') triggers.push(cb);
-  }
-  function offTrigger(cb) {
-    const triggerIndex = triggers.indexOf(cb);
-    if (triggerIndex !== -1) {
-      triggers.splice(triggerIndex, 1);
-    }
-  }
-
-  return {
-    animate,
-    addTrigger,
-    offTrigger,
-  };
-}
 
 export default class StlViewer extends React.Component {
   constructor(props) {
@@ -55,7 +27,7 @@ export default class StlViewer extends React.Component {
       10,
       100000
     );
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 100;
     controls.minDistance = 10;
@@ -63,7 +35,7 @@ export default class StlViewer extends React.Component {
     /**
      * Light setup
      */
-    const secondaryLight = new THREE.PointLight(0xff0000, 1, 100);
+    const secondaryLight = new THREE.AmbientLight(0x404040);
     secondaryLight.position.set(5, 5, 5);
     scene.add(secondaryLight);
 
@@ -80,14 +52,23 @@ export default class StlViewer extends React.Component {
     window.addEventListener('resize', onWindowResize, false);
 
     camera.position.z = 100;
-    const animate = createAnimate({ scene, camera, renderer });
+
+    scene.background = new THREE.Color(0xd9d8d4);
+
+    const textureLoader = new THREE.TextureLoader();
 
     this.scene = scene;
     this.renderer = renderer;
     this.camera = camera;
     this.controls = controls;
     this.secondaryLight = secondaryLight;
-    this.animate = animate;
+
+    this.renderer.render(this.scene, this.camera);
+    this.controls.addEventListener('change', () =>
+      this.renderer.render(this.scene, this.camera)
+    );
+
+    this.textures = [textureLoader.load(texture)];
   }
 
   viewNeuron() {
@@ -108,19 +89,18 @@ export default class StlViewer extends React.Component {
       currentNeurons.name = 'currentNeurons';
       neuronModelBuffers.forEach((buffer) => {
         const geometry = loader.parse(buffer);
-        const material = new THREE.MeshDepthMaterial();
+        const material = new THREE.MeshMatcapMaterial({
+          color: new THREE.Color(0x49ef4),
+          matcap: this.textures[0],
+        });
         const mesh = new THREE.Mesh(geometry, material);
 
         mesh.geometry.computeVertexNormals(true);
         mesh.rotation.x = Math.PI / -2;
-
         currentNeurons.add(mesh);
       });
 
       this.scene.add(currentNeurons);
-      // not sure what this is used for
-      // this.animate.addTrigger(() => {});
-      this.animate.animate();
     });
   }
 
