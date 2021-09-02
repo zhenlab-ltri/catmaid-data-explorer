@@ -29,7 +29,7 @@ export default class StlViewer extends React.Component {
     );
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 100;
+    controls.maxDistance = 500;
     controls.minDistance = 10;
 
     /**
@@ -100,6 +100,9 @@ export default class StlViewer extends React.Component {
         currentNeurons.add(mesh);
       });
 
+      const bbox = new THREE.BoxHelper(currentNeurons, 0xffff00);
+      currentNeurons.add(bbox);
+
       // center the current neurons group
       const box = new THREE.Box3().setFromObject(currentNeurons);
       const c = box.getCenter(new THREE.Vector3());
@@ -108,6 +111,21 @@ export default class StlViewer extends React.Component {
       this.scene.add(currentNeurons);
       this.renderer.render(this.scene, this.camera);
     });
+  }
+
+  runAnimationLoop() {
+    this.controls.autoRotate = true;
+    this.controls.autoRotateSpeed = 10;
+    this.renderer.setAnimationLoop(() => {
+      this.renderer.render(this.scene, this.camera);
+      this.controls.update();
+    });
+  }
+
+  stopAnimationLoop() {
+    this.renderer.setAnimationLoop(null);
+    this.controls.autoRotate = false;
+    this.controls.update();
   }
 
   handleSearchBarChange(e) {
@@ -132,6 +150,10 @@ export default class StlViewer extends React.Component {
       searchbar:
         'absolute top-4 left-4 w-80 h-10 shadow-lg bg-white rounded z-10',
       searchbarInput: 'w-full h-full rounded',
+      animateButtons:
+        'absolute right-20 top-4 shadow-lg flex bg-white  z-10 rounded',
+      animateButton:
+        'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
     };
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
       h('div', { className: styles.searchbar }, [
@@ -142,6 +164,24 @@ export default class StlViewer extends React.Component {
           value: this.state.searchInput,
           placeholder: 'Search neurons',
         }),
+      ]),
+      h('div', { className: styles.animateButtons }, [
+        h(
+          'button',
+          {
+            className: styles.animateButton,
+            onClick: () => this.runAnimationLoop(),
+          },
+          'Start animation'
+        ),
+        h(
+          'button',
+          {
+            className: styles.animateButton,
+            onClick: () => this.stopAnimationLoop(),
+          },
+          'Stop animation'
+        ),
       ]),
     ]);
   }
