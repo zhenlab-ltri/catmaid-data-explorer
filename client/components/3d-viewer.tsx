@@ -2,6 +2,10 @@ import React from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
+
 import h from 'react-hyperscript';
 
 import { getNeuronModels } from 'services';
@@ -63,12 +67,43 @@ export default class StlViewer extends React.Component {
     this.controls = controls;
     this.secondaryLight = secondaryLight;
 
-    this.renderer.render(this.scene, this.camera);
-    this.controls.addEventListener('change', () =>
-      this.renderer.render(this.scene, this.camera)
-    );
-
     this.textures = [textureLoader.load(texture)];
+    this.raycaster = new THREE.Raycaster();
+    this.mousePosition = new THREE.Vector2();
+    this.composer = new EffectComposer(this.renderer);
+
+    const renderPass = new RenderPass( this.scene, this.camera );
+    this.composer.addPass(renderPass);
+    const outlinePass = new OutlinePass( new THREE.Vector2( window.innerWidth, window.innerHeight ), scene, camera );
+    this.composer.addPass(outlinePass);
+    this.controls.addEventListener('change', () => {
+      this.composer.render();
+    });
+
+    // hover outline
+    this.selectedOjbect = null;
+    this.renderer.domElement.addEventListener('pointermove', e => {
+      if (e.isPrimary === false) return;
+      this.mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
+      this.mousePosition.y = - (e.clientY / window.innerHeight) * 2 + 1;
+
+      this.raycaster.setFromCamera(this.mousePosition, this.camera);
+      const intersects = this.raycaster.intersectObject(this.scene, true);
+
+      if (intersects.length > 0) {
+        this.selectedObject = intersects[ 0 ].object;
+        outlinePass.selectedObjects = [this.selectedObject];
+      } else {
+        if(this.selectedObject != null){
+        }
+        this.selectedObject = null;
+        outlinePass.selectedObjects = [];
+      }
+
+      this.composer.render();      
+    });
+    this.composer.render();
+
   }
 
   viewNeuron() {
@@ -100,16 +135,13 @@ export default class StlViewer extends React.Component {
         currentNeurons.add(mesh);
       });
 
-      const bbox = new THREE.BoxHelper(currentNeurons, 0xffff00);
-      currentNeurons.add(bbox);
-
       // center the current neurons group
       const box = new THREE.Box3().setFromObject(currentNeurons);
       const c = box.getCenter(new THREE.Vector3());
       currentNeurons.position.set(-c.x, -c.y, -c.z);
 
       this.scene.add(currentNeurons);
-      this.renderer.render(this.scene, this.camera);
+      this.composer.render();      
     });
   }
 
@@ -117,13 +149,14 @@ export default class StlViewer extends React.Component {
     this.controls.autoRotate = true;
     this.controls.autoRotateSpeed = 10;
     this.renderer.setAnimationLoop(() => {
-      this.renderer.render(this.scene, this.camera);
+      this.composer.render();      
       this.controls.update();
     });
   }
 
   stopAnimationLoop() {
     this.renderer.setAnimationLoop(null);
+    this.composer.render();
     this.controls.autoRotate = false;
     this.controls.update();
   }
