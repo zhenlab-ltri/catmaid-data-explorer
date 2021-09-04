@@ -7,6 +7,8 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
 
+import MouseTooltip from 'react-sticky-mouse-tooltip';
+
 import h from 'react-hyperscript';
 
 import { getNeuronModels } from 'services';
@@ -20,7 +22,7 @@ const NeuronListItem = props => {
     NeuronListItem: 'cursor-pointer flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300',
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
-    neuronColorPicker: 'w-5 h-5 border-2 border-gray-700 hover:w-8 hover:h-8'
+    neuronColorPicker: 'w-5 h-5 shadow-inner rounded hover:w-8 hover:h-8'
   };
 
   return h('div', {className: styles.NeuronListItem, onClick: () => controller.toggleNeuron(neuronName, !selected)}, [
@@ -43,7 +45,9 @@ export default class StlViewer extends React.Component {
 
     this.state = {
       searchInput: '',
-      selectedNeurons: new Set()
+      selectedNeurons: new Set(),
+      showNeuronNameTooltip: false,
+      hoveredNeuron: null
     };
 
     neuronsSorted.forEach(n => {
@@ -115,7 +119,7 @@ export default class StlViewer extends React.Component {
     });
 
     // hover outline
-    this.selectedOjbect = null;
+    this.selectedObject = null;
     this.renderer.domElement.addEventListener('pointermove', e => {
       if (e.isPrimary === false) return;
       this.mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -127,11 +131,17 @@ export default class StlViewer extends React.Component {
       if (intersects.length > 0) {
         this.selectedObject = intersects[ 0 ].object;
         outlinePass.selectedObjects = [this.selectedObject];
+        this.setState({
+          showNeuronNameTooltip: true,
+          selectedObject: this.selectedObject
+        })
       } else {
-        if(this.selectedObject != null){
-        }
         this.selectedObject = null;
         outlinePass.selectedObjects = [];
+        this.setState({
+          showNeuronNameTooltip: false,
+          selectedObject: null
+        })
       }
 
       this.composer.render();      
@@ -227,6 +237,7 @@ export default class StlViewer extends React.Component {
   render() {
     const selectedNeurons = [];
     const unselectedNeurons = [];
+    const { showNeuronNameTooltip, selectedObject } = this.state;
 
     neuronsSorted.forEach(n => {
       const neuronInfo = Object.assign(this.state[n], {neuronName: n});
@@ -246,7 +257,8 @@ export default class StlViewer extends React.Component {
       animateButton:
         'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
         selectedNeuronsContainer: ' sticky top-0 border-2 border-gray-300 bg-gray-300 font-bold text-gray-700',
-        unselectedNeuronsContainer: 'text-gray-400'
+        unselectedNeuronsContainer: 'text-gray-400',
+        neuronNameTooltip: 'bg-white text-gray-400 shadow-lg p-4 rounded'
     };
     
 
@@ -262,6 +274,9 @@ export default class StlViewer extends React.Component {
         h('div', { className: styles.selectedNeuronsContainer}, Array.from(selectedNeurons).map(n => h(NeuronListItem, { ...n, controller: this} ) )),
         h('div', { className: styles.unselectedNeuronsContainer}, unselectedNeurons.map(n => h(NeuronListItem, { ...n, controller: this})))
       ]),
+      h(MouseTooltip, { visible: this.state.showNeuronNameTooltip, offsetX: 15, offsetY: 10}, [
+        h('div', { className: styles.neuronNameTooltip},  selectedObject != null ? selectedObject.name : null)
+      ]), 
       h('div', { className: styles.animateButtons }, [
         h(
           'button',
