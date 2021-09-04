@@ -17,16 +17,19 @@ const loader = new STLLoader();
 const NeuronListItem = props => {
   const { neuronName, color, selected, controller } = props;
   const styles = {
-    NeuronListItem: 'cursor-pointer flex row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300',
+    NeuronListItem: 'cursor-pointer flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300',
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
-    neuronColorPicker: ''
+    neuronColorPicker: 'w-5 h-5 border-2 border-gray-700 hover:w-8 hover:h-8'
   };
 
   return h('div', {className: styles.NeuronListItem, onClick: () => controller.toggleNeuron(neuronName, !selected)}, [
-    h('input', { className: styles.neuronChecked, type: 'checkbox', checked: selected, onChange: () => controller.toggleNeuron(neuronName, !selected)}),
-    h('div', {className: styles.neuronName}, neuronName),
-    h('div', {className: styles.neuronColorPicker}, '')
+    h('div', {className: 'w-20 flex items-center'}, [
+      h('input', { className: styles.neuronChecked, type: 'checkbox', checked: selected, onChange: () => controller.toggleNeuron(neuronName, !selected)}),
+      h('div', {className: styles.neuronName}, neuronName),  
+    ]),
+    selected ? 
+      h('div', { style: {backgroundColor: color}, className: styles.neuronColorPicker}, '') : null
   ]);
 };
 
@@ -42,6 +45,13 @@ export default class StlViewer extends React.Component {
       searchInput: '',
       selectedNeurons: new Set()
     };
+
+    neuronsSorted.forEach(n => {
+      this.state[n] = {
+        selected: false,
+        color: chroma.random().hex()
+      };
+    });
   }
 
   componentDidMount() {
@@ -131,7 +141,7 @@ export default class StlViewer extends React.Component {
   }
 
   viewNeuron() {
-    const { selectedNeurons } = this.state;
+    const selectedNeurons = neuronsSorted.filter(n => this.state[n].selected);
 
     getNeuronModels(Array.from(selectedNeurons)).then((neuronModelBuffers) => {
       let currentNeuronGroup = this.scene.getObjectByName('currentNeurons');
@@ -146,13 +156,16 @@ export default class StlViewer extends React.Component {
 
       let currentNeurons = new THREE.Group();
       currentNeurons.name = 'currentNeurons';
-      neuronModelBuffers.forEach((buffer) => {
+
+      neuronModelBuffers.forEach((buffer, index) => {
+        const {neuronName, color } = this.state[selectedNeurons[index]];
         const geometry = loader.parse(buffer);
         const material = new THREE.MeshMatcapMaterial({
-          color: new THREE.Color(0x49ef4),
+          color: new THREE.Color(color),
           matcap: this.textures[0],
         });
         const mesh = new THREE.Mesh(geometry, material);
+        mesh.name = neuronName;
 
         mesh.geometry.computeVertexNormals(true);
         mesh.rotation.x = Math.PI / -2;
@@ -190,38 +203,39 @@ export default class StlViewer extends React.Component {
     let isNeuron = (token) => model.neuronInfo[token] != null;
     let neurons = new Set(value.split(' ').filter((token) => isNeuron(token)))
 
-    this.state.selectedNeurons.forEach(n => neurons.add(n));
+    let nextState = {
+      selectedNeurons: neurons,
 
-    this.setState(
-      {
-        selectedNeurons: neurons,
-        searchInput: value,
-      },
-      () => this.viewNeuron()
-    );
+    };
+
+    neurons.forEach(n => nextState[n] = Object.assign(this.state[n], {selected: true}));
+
+    this.setState(nextState, () => this.viewNeuron());
   }
 
   toggleNeuron(neuronName, selected){
-    if(selected){
-      const nextSelectedNeurons = new Set(this.state.selectedNeurons);
-      nextSelectedNeurons.add(neuronName);
+    const nextState = {
 
-      this.setState({
-        selectedNeurons: nextSelectedNeurons
-      }, () => this.viewNeuron());  
-    } else {
-      const nextSelectedNeurons = new Set(this.state.selectedNeurons);
-      nextSelectedNeurons.delete(neuronName);
+    };
+    nextState[neuronName] = Object.assign(this.state[neuronName], {
+      selected
+    });
 
-      this.setState({
-        selectedNeurons: nextSelectedNeurons
-      }, () => this.viewNeuron());
-    }
+    this.setState(nextState, () => this.viewNeuron());
   }
 
   render() {
-    const { selectedNeurons } = this.state;
-    const unselectedNeurons = neuronsSorted.filter(n => !selectedNeurons.has(n));
+    const selectedNeurons = [];
+    const unselectedNeurons = [];
+
+    neuronsSorted.forEach(n => {
+      const neuronInfo = Object.assign(this.state[n], {neuronName: n});
+      if (this.state[n].selected){
+        selectedNeurons.push(neuronInfo);
+      } else {
+        unselectedNeurons.push(neuronInfo);
+      }
+    });
     const styles = {
       page: 'w-screen h-screen',
       searchbar:
@@ -245,9 +259,8 @@ export default class StlViewer extends React.Component {
           value: this.state.searchInput,
           placeholder: 'Search neurons',
         }),
-        h('div', { className: styles.selectedNeuronsContainer}, Array.from(selectedNeurons).map(n => h(NeuronListItem, {
-          neuronName: n, color: 'gray', selected: true, controller: this} ) )),
-        h('div', { className: styles.unselectedNeuronsContainer}, unselectedNeurons.map(n => h(NeuronListItem, {neuronName: n, color: 'gray', selected: false, controller: this})))
+        h('div', { className: styles.selectedNeuronsContainer}, Array.from(selectedNeurons).map(n => h(NeuronListItem, { ...n, controller: this} ) )),
+        h('div', { className: styles.unselectedNeuronsContainer}, unselectedNeurons.map(n => h(NeuronListItem, { ...n, controller: this})))
       ]),
       h('div', { className: styles.animateButtons }, [
         h(
