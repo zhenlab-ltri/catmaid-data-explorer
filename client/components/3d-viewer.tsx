@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as THREE from 'three';
 import chroma from 'chroma-js'
+import debounce from 'lodash.debounce';
+import { SketchPicker } from 'react-color';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
-
 import MouseTooltip from 'react-sticky-mouse-tooltip';
 
 import h from 'react-hyperscript';
@@ -17,21 +18,25 @@ import texture from '../images/texture.jpg';
 
 const loader = new STLLoader();
 const NeuronListItem = props => {
-  const { neuronName, color, selected, controller } = props;
+  const { neuronName, color, selected, colorPickerNeuron, controller } = props;
+
+  const selectingColor = selected && colorPickerNeuron === neuronName;
+
+
   const styles = {
-    NeuronListItem: 'cursor-pointer flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300',
+    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 overflow-visible ${selectingColor ? 'border-indigo-900 border-2' : ''}`,
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
-    neuronColorPicker: 'w-5 h-5 shadow-inner rounded hover:w-8 hover:h-8'
+    neuronColor: 'relative cursor-pointer w-6 h-4 shadow-inner rounded',
   };
 
-  return h('div', {className: styles.NeuronListItem, onClick: () => controller.toggleNeuron(neuronName, !selected)}, [
-    h('div', {className: 'w-20 flex items-center'}, [
+  return h('div', {className: styles.NeuronListItem}, [
+    h('div', {className: 'w-20 flex items-center cursor-pointer', onClick: () => controller.toggleNeuron(neuronName, !selected)}, [
       h('input', { className: styles.neuronChecked, type: 'checkbox', checked: selected, onChange: () => controller.toggleNeuron(neuronName, !selected)}),
       h('div', {className: styles.neuronName}, neuronName),  
     ]),
     selected ? 
-      h('div', { style: {backgroundColor: color}, className: styles.neuronColorPicker}, '') : null
+      h('div', { style: {backgroundColor: color}, onClick: () => props.controller.handleNeuronColorClick(neuronName), className: styles.neuronColor}) : null,
   ]);
 };
 
@@ -47,7 +52,9 @@ export default class StlViewer extends React.Component {
       searchInput: '',
       selectedNeurons: new Set(),
       showNeuronNameTooltip: false,
-      hoveredNeuron: null
+      hoveredNeuron: null,
+      colorPickerNeuron: '',
+      showColorPicker: false
     };
 
     neuronsSorted.forEach(n => {
@@ -150,6 +157,41 @@ export default class StlViewer extends React.Component {
 
   }
 
+
+  handleNeuronColorClick(neuronName){
+    let nextShowColorPicker = !this.state.showColorPicker;
+    let nextColorPickerNeuron = '';
+    if(nextShowColorPicker || neuronName != this.state.colorPickerNeuron){
+      nextColorPickerNeuron = neuronName;
+      nextShowColorPicker = true;
+    }
+
+    this.setState({
+      colorPickerNeuron: nextColorPickerNeuron,
+      showColorPicker: nextShowColorPicker
+    });
+  }
+
+  updateNeuronMeshColor = (color, neuron) => {
+    let neuronObj = this.scene.getObjectByName(this.state.colorPickerNeuron);
+
+    neuronObj.material.color.set(color.hex);
+    this.composer.render();
+  }
+
+  debouncedUpdateNeuronMeshColor = debounce(this.updateNeuronMeshColor, 200)
+
+  handleColorPickerChange(color){
+    const nextState = {
+
+    };
+    nextState[this.state.colorPickerNeuron] = Object.assign(this.state[this.state.colorPickerNeuron], {
+      color: color.hex
+    });
+
+    this.setState(nextState, () => this.debouncedUpdateNeuronMeshColor(color, this.state.colorPickerNeuron));
+  }
+
   viewNeuron() {
     const selectedNeurons = neuronsSorted.filter(n => this.state[n].selected);
 
@@ -215,7 +257,7 @@ export default class StlViewer extends React.Component {
 
     let nextState = {
       selectedNeurons: neurons,
-
+      searchInput: value
     };
 
     neurons.forEach(n => nextState[n] = Object.assign(this.state[n], {selected: true}));
@@ -250,33 +292,37 @@ export default class StlViewer extends React.Component {
     const styles = {
       page: 'w-screen h-screen',
       searchbar:
-        'absolute top-4 left-4 w-60 h-2/3 shadow-lg bg-white rounded z-10 overflow-scroll',
-      searchbarInput: ' p-4 w-full h-10 rounded',
+        'absolute top-2 left-2 w-60 h-2/3 shadow-lg bg-white rounded z-10 overflow-scroll',
+      stickyTop: 'sticky top-0',
+      searchbarInput: 'p-4 w-full h-10 rounded',
       animateButtons:
         'absolute right-20 top-4 shadow-lg flex bg-white  z-10 rounded',
       animateButton:
         'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
-        selectedNeuronsContainer: ' sticky top-0 border-2 border-gray-300 bg-gray-300 font-bold text-gray-700',
-        unselectedNeuronsContainer: 'text-gray-400',
-        neuronNameTooltip: 'bg-white text-gray-400 shadow-lg p-4 rounded'
+        selectedNeuronsContainer: 'rounded-b border-b-2 border-t-2 shadow-lg border-gray-300 bg-gray-100 font-bold text-gray-700',
+        unselectedNeuronsContainer: 'w-full h-full text-gray-400',
+        neuronNameTooltip: 'bg-white font-bold text-gray-700 shadow-lg p-4 rounded',
+        colorPicker: 'absolute top-14 left-64 border-2 border-indigo-900'
     };
     
-
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
       h('div', { className: styles.searchbar }, [
-        h('input', {
-          type: 'text',
-          className: styles.searchbarInput,
-          onChange: (e) => this.handleSearchBarChange(e),
-          value: this.state.searchInput,
-          placeholder: 'Search neurons',
-        }),
-        h('div', { className: styles.selectedNeuronsContainer}, Array.from(selectedNeurons).map(n => h(NeuronListItem, { ...n, controller: this} ) )),
-        h('div', { className: styles.unselectedNeuronsContainer}, unselectedNeurons.map(n => h(NeuronListItem, { ...n, controller: this})))
+        h('div', {className: styles.stickyTop}, [
+          h('input', {
+            type: 'text',
+            className: styles.searchbarInput,
+            onChange: (e) => this.handleSearchBarChange(e),
+            value: this.state.searchInput,
+            placeholder: 'Search neurons',
+          }),
+          h('div', { className: styles.selectedNeuronsContainer}, Array.from(selectedNeurons).map(n => h(NeuronListItem, { ...n, colorPickerNeuron: this.state.colorPickerNeuron, controller: this} ) )),  
+        ]),
+        h('div', { className: styles.unselectedNeuronsContainer}, unselectedNeurons.map(n => h(NeuronListItem, { ...n, colorPickerNeuron: this.state.colorPickerNeuron, controller: this})))
       ]),
       h(MouseTooltip, { visible: this.state.showNeuronNameTooltip, offsetX: 15, offsetY: 10}, [
         h('div', { className: styles.neuronNameTooltip},  selectedObject != null ? selectedObject.name : null)
       ]), 
+      this.state.showColorPicker ? h(SketchPicker, {className: styles.colorPicker, color: this.state[this.state.colorPickerNeuron].color, onChange: (color, e) => this.handleColorPickerChange(color, e)}) : null,
       h('div', { className: styles.animateButtons }, [
         h(
           'button',
