@@ -20,11 +20,8 @@ const loader = new STLLoader();
 const NeuronListItem = props => {
   const { neuronName, color, selected, colorPickerNeuron, controller } = props;
 
-  const selectingColor = selected && colorPickerNeuron === neuronName;
-
-
   const styles = {
-    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 overflow-visible ${selectingColor ? 'border-indigo-900 border-2' : ''}`,
+    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 overflow-visible`,
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
     neuronColor: 'relative cursor-pointer w-6 h-4 shadow-inner rounded',
@@ -302,8 +299,11 @@ export default class StlViewer extends React.Component {
         selectedNeuronsContainer: 'rounded-b border-b-2 border-t-2 shadow-lg border-gray-300 bg-gray-100 font-bold text-gray-700',
         unselectedNeuronsContainer: 'w-full h-full text-gray-400',
         neuronNameTooltip: 'bg-white font-bold text-gray-700 shadow-lg p-4 rounded',
-        colorPicker: 'absolute top-14 left-64 border-2 border-indigo-900'
-    };
+        colorPicker: '',
+        colorPickerWidget: 'bg-white absolute top-14 left-64 border-2',
+        colorPickerClose: 'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
+
+      };
     
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
       h('div', { className: styles.searchbar }, [
@@ -322,7 +322,24 @@ export default class StlViewer extends React.Component {
       h(MouseTooltip, { visible: this.state.showNeuronNameTooltip, offsetX: 15, offsetY: 10}, [
         h('div', { className: styles.neuronNameTooltip},  selectedObject != null ? selectedObject.name : null)
       ]), 
-      this.state.showColorPicker ? h(SketchPicker, {className: styles.colorPicker, color: this.state[this.state.colorPickerNeuron].color, onChange: (color, e) => this.handleColorPickerChange(color, e)}) : null,
+      this.state.showColorPicker ? h('div', {className: styles.colorPickerWidget }, [
+        h('div', {className: 'flex items-center p-2'}, [
+          h('i', {
+            className: styles.colorPickerClose,
+            onClick: e => this.setState({
+              colorPickerNeuron: '',
+              showColorPicker: false        
+            })
+          }, 'close'),
+          h('div', {className: 'justify-self-center'}, `Color Picker - ${this.state.colorPickerNeuron}`),
+        ]),
+        h(SketchPicker, {
+          className: styles.colorPicker, 
+          color: this.state[this.state.colorPickerNeuron].color, 
+          onChange: (color, e) => this.handleColorPickerChange(color, e),
+          presetColors: ['#f9cef9', '#ff887a', '#b7daf5', '#f9d77b', '#a8f5a2', '#d9d9d9']
+        })    
+      ]) : null,
       h('div', { className: styles.animateButtons }, [
         h(
           'button',
