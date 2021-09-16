@@ -24,6 +24,7 @@
     "chroma-js": "^2.1.2",
     "cytoscape": "^3.16.1",
     "express": "^4.17.1",
+    "express-basic-auth": "^1.2.0",
     "lodash.debounce": "^4.0.8",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.11.1",

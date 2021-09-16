@@ -1,7 +1,18 @@
 const express = require('express');
 const fs = require('fs');
-
+const basicAuth = require('express-basic-auth');
 const app = express();
+
+const { USER, PASSWORD } = require('../config.json');
+
+
+if (USER !== '' && PASSWORD !== '') {
+  app.use(basicAuth({
+      users: { [USER]: PASSWORD },
+      challenge: true
+  }));
+
+}
 
 app.use(express.static('dist'));
 app.use(express.urlencoded({ extended: true }));
