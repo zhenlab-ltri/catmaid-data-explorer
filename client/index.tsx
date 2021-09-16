@@ -17,11 +17,11 @@ class HomePage extends React.Component {
         'h-1/2 bg-gradient-to-tr from-gray-900 via-gray-800 to-gray-600 text-white flex justify-center ',
       cardPositioner: 'container mx-auto flex items-stretch justify-center',
       cardContainer:
-        'container mx-auto flex items-center justify-center relative w-4/5 h-96 bottom-40 border-gray border-2 rounded-lg shadow-xl bg-gray-200',
+        'container mx-auto flex flex-wrap items-center justify-center relative w-4/5 h-96 bottom-40 border-gray border-2 rounded-lg shadow-xl bg-gray-200',
       cardContent:
-        'ml-10 mr-10 flex flex-col w-60 h-80 shadow-lg z-10 bg-gray-100 hover:shadow-xl',
+        'ml-10 mr-10 mb-2 flex flex-col w-60 h-80 shadow-lg z-10 bg-gray-100 hover:shadow-xl',
       cardContentDisabled:
-        'ml-10 mr-10 flex flex-col w-60 h-80 shadow-lg z-10 bg-gray-100 hover:shadow-xl opacity-40',
+        'ml-10 mr-10 flex mb-2 flex-col w-60 h-80 shadow-lg z-10 bg-gray-100 hover:shadow-xl opacity-40',
       cardImage:
         'w-80 h-50 justify-center transform scale-90 border-2 border-gray',
     };

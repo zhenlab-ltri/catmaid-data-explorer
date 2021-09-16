@@ -9,12 +9,11 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
 import MouseTooltip from 'react-sticky-mouse-tooltip';
-
 import h from 'react-hyperscript';
 
 import { getNeuronModels } from 'services';
-import model from '../model';
-import texture from '../images/texture.jpg';
+import model from '../../model';
+import texture from '../../images/texture.jpg';
 
 const loader = new STLLoader();
 const NeuronListItem = props => {
@@ -289,7 +288,7 @@ export default class StlViewer extends React.Component {
     const styles = {
       page: 'w-screen h-screen',
       searchbar:
-        'absolute top-2 left-2 w-60 h-2/3 shadow-lg bg-white rounded z-10 overflow-scroll',
+        'absolute top-2 left-2 w-44 h-2/3 shadow-lg bg-white rounded z-10 overflow-scroll',
       stickyTop: 'sticky top-0',
       searchbarInput: 'p-4 w-full h-10 rounded',
       animateButtons:
@@ -302,7 +301,7 @@ export default class StlViewer extends React.Component {
         colorPicker: '',
         colorPickerWidget: 'bg-white absolute top-14 left-64 border-2',
         colorPickerClose: 'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
-
+        scalebar: 'absolute left-2 bottom-2 p-2 bg-black'
       };
     
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
@@ -340,6 +339,7 @@ export default class StlViewer extends React.Component {
           presetColors: ['#f9cef9', '#ff887a', '#b7daf5', '#f9d77b', '#a8f5a2', '#d9d9d9']
         })    
       ]) : null,
+      h('div', { className: styles.scalebar}, 'scalebar'),
       h('div', { className: styles.animateButtons }, [
         h(
           'button',
