@@ -2,21 +2,31 @@ const express = require('express');
 const fs = require('fs');
 const basicAuth = require('express-basic-auth');
 const app = express();
+const path = require('path');
+
 
 const { USER, PASSWORD } = require('../config.json');
 
 
 if (USER !== '' && PASSWORD !== '') {
+  console.log(USER, PASSWORD);
   app.use(basicAuth({
       users: { [USER]: PASSWORD },
       challenge: true
   }));
-
 }
 
 app.use(express.static('dist'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.get('/branchplotter', (req, res) => {
+	res.sendFile(path.resolve(__dirname, '../../branch_synapse_plotter/branch_plotter.html'));
+});
+
+app.get('/synapseplotter', (req, res) => {
+	res.sendFile(path.resolve(__dirname, '../../branch_synapse_plotter/synapse_plotter.html'));
+});
 
 let isValidNeuron = neuronName => true;
 

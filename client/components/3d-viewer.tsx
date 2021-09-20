@@ -15,6 +15,7 @@ import h from 'react-hyperscript';
 import { getNeuronModels } from 'services';
 import model from '../model';
 import texture from '../images/texture.jpg';
+import neurons from '../model/neurons.json'
 
 const loader = new STLLoader();
 const NeuronListItem = props => {
@@ -38,7 +39,7 @@ const NeuronListItem = props => {
 };
 
 
-const neuronsSorted = model.neurons.map(n => n.id).sort();
+const neuronsSorted = neurons.sort();
 
 export default class StlViewer extends React.Component {
   constructor(props) {
@@ -249,7 +250,7 @@ export default class StlViewer extends React.Component {
 
   handleSearchBarChange(e) {
     let value = e.target.value;
-    let isNeuron = (token) => model.neuronInfo[token] != null;
+    let isNeuron = (token) => neurons.indexOf(token) !== -1;
     let neurons = new Set(value.split(' ').filter((token) => isNeuron(token)))
 
     let nextState = {
