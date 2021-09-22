@@ -57,14 +57,22 @@ class HomePage extends React.Component {
               ]),
             ]),
           ]),
-          // h(Link, { to: '/3d-viewer' }, [
-          h('div', { className: styles.cardContentDisabled }, [
-            h('img', { className: styles.cardImage, src: nemanodeImage }),
-            h('div', { className: 'text-center text-gray-700 font-bold' }, [
-              'Dauer Branch Analysis',
+          h('a', { href: 'http://zhen-tools.com/synapseplotter' }, [
+            h('div', { className: styles.cardContent }, [
+              h('img', { className: styles.cardImage, src: nemanodeImage }),
+              h('div', { className: 'text-center text-gray-700 font-bold' }, [
+                'Synapse Ploter',
+              ]),
             ]),
           ]),
-          // ]),
+          h('a', { href: 'http://zhen-tools.com/branchplotter' }, [
+            h('div', { className: styles.cardContent }, [
+              h('img', { className: styles.cardImage, src: nemanodeImage }),
+              h('div', { className: 'text-center text-gray-700 font-bold' }, [
+                'Branch Plotter',
+              ]),
+            ]),
+          ]),
         ]),
       ]),
     ]);
