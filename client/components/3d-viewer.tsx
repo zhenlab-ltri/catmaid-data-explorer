@@ -68,6 +68,7 @@ export default class StlViewer extends React.Component {
       hoveredNeuron: null,
       colorPickerNeuron: '',
       showColorPicker: false,
+      animating: false,
     };
 
     neuronsSorted.forEach((n) => {
@@ -252,20 +253,27 @@ export default class StlViewer extends React.Component {
     });
   }
 
-  runAnimationLoop() {
-    this.controls.autoRotate = true;
-    this.controls.autoRotateSpeed = 10;
-    this.renderer.setAnimationLoop(() => {
-      this.composer.render();
-      this.controls.update();
-    });
-  }
-
-  stopAnimationLoop() {
-    this.renderer.setAnimationLoop(null);
-    this.composer.render();
-    this.controls.autoRotate = false;
-    this.controls.update();
+  toggleAnimationLoop() {
+    this.setState(
+      {
+        animating: !this.state.animating,
+      },
+      () => {
+        if (this.state.animating) {
+          this.controls.autoRotate = true;
+          this.controls.autoRotateSpeed = 10;
+          this.renderer.setAnimationLoop(() => {
+            this.composer.render();
+            this.controls.update();
+          });
+        } else {
+          this.renderer.setAnimationLoop(null);
+          this.composer.render();
+          this.controls.autoRotate = false;
+          this.controls.update();
+        }
+      }
+    );
   }
 
   handleSearchBarChange(e) {
@@ -321,7 +329,7 @@ export default class StlViewer extends React.Component {
       stickyTop: 'sticky top-0',
       searchbarInput: 'p-4 w-full h-10 rounded',
       controls:
-        'absolute bottom-2 shadow-lg flex bg-white  z-10 rounded left-1/2 transform -translate-x-1/2 items-center',
+        'p-2 absolute bottom-2 shadow-lg flex bg-white  z-10 rounded left-1/2 transform -translate-x-1/2 items-center',
       animateButton:
         'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
       selectedNeuronsContainer:
@@ -330,7 +338,7 @@ export default class StlViewer extends React.Component {
       neuronNameTooltip:
         'bg-white font-bold text-gray-700 shadow-lg p-4 rounded',
       colorPicker: '',
-      colorPickerWidget: 'bg-white absolute top-14 left-64 border-2',
+      colorPickerWidget: 'bg-white absolute top-14 right-64 border-2',
       colorPickerClose:
         'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
       selectedNeuronLegend:
@@ -430,7 +438,7 @@ export default class StlViewer extends React.Component {
           'i',
           {
             className: styles.colorPickerClose,
-            onClick: (e) => {},
+            onClick: (e) => this.toggleAnimationLoop(),
           },
           'animation'
         ),
@@ -449,22 +457,6 @@ export default class StlViewer extends React.Component {
             onClick: (e) => {},
           },
           'gif_box'
-        ),
-        h(
-          'button',
-          {
-            className: styles.animateButton,
-            onClick: () => this.runAnimationLoop(),
-          },
-          'Start animation'
-        ),
-        h(
-          'button',
-          {
-            className: styles.animateButton,
-            onClick: () => this.stopAnimationLoop(),
-          },
-          'Stop animation'
         ),
       ]),
     ]);
