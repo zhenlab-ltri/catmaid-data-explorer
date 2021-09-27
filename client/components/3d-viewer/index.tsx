@@ -15,6 +15,8 @@ import { getNeuronModels } from 'services';
 import model from '../../model';
 import texture from '../../images/texture.jpg';
 
+import { SCALE_BAR_SIZES, SCALE_BAR_UNITS } from './constants';
+
 const loader = new STLLoader();
 const NeuronListItem = props => {
   const { neuronName, color, selected, colorPickerNeuron, controller } = props;
@@ -50,7 +52,9 @@ export default class StlViewer extends React.Component {
       showNeuronNameTooltip: false,
       hoveredNeuron: null,
       colorPickerNeuron: '',
-      showColorPicker: false
+      showColorPicker: false,
+      scalebarMeasurement: 0,
+      scalebarMinWidth: 0,
     };
 
     neuronsSorted.forEach(n => {
@@ -63,13 +67,29 @@ export default class StlViewer extends React.Component {
 
   componentDidMount() {
     const scene = new THREE.Scene();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    let aspectRatio = window.innerWidth / window.innerHeight;
+    let frustumSize = 3000;
+    console.log(aspectRatio)
+    // const camera = new THREE.OrthographicCamera(
+    //   // (frustumSize * aspectRatio) / -2,
+    //   // (frustumSize * aspectRatio) / 2,
+    //   // (frustumSize * aspectRatio) / 2,
+    //   // (frustumSize * aspectRatio) / -2,
+    //   (frustumSize * aspectRatio) / -1,
+    //   (frustumSize * aspectRatio) / 1,
+    //   (frustumSize * aspectRatio) / 1,
+    //   (frustumSize * aspectRatio) / -1,
+    //   0,
+    //   40000
+    // );
     const camera = new THREE.PerspectiveCamera(
       750,
       window.innerWidth / window.innerHeight,
       10,
       100000
     );
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 500;
     controls.minDistance = 10;
@@ -118,6 +138,13 @@ export default class StlViewer extends React.Component {
     outlinePass.edgeStrength = 10;
     this.composer.addPass(outlinePass);
     this.controls.addEventListener('change', () => {
+      let { scalebarMeasurement, scalebarMinWidth } = this.computeScalebarMeasurement();
+
+      console.log(scalebarMeasurement, scalebarMinWidth)
+      this.setState({
+        scalebarMeasurement,
+        scalebarMinWidth
+      })
       this.composer.render();
     });
 
@@ -150,7 +177,54 @@ export default class StlViewer extends React.Component {
       this.composer.render();      
     });
     this.composer.render();
+  }
 
+  computeScalebarMeasurement(){
+    const { width } = this.renderer.domElement.getBoundingClientRect();
+    const scalebarMeasurement = (width * this.camera.zoom) / (3000);
+    const scalebarMinWidth = width / 5
+    return {
+      scalebarMeasurement,
+      scalebarMinWidth
+    };
+  }
+
+  scalebarContent(){
+    let width = 0;
+    let scalebarDisplayVal = 0;
+    const { scalebarMeasurement, scalebarMinWidth } = this.state;
+    for (let i = 0; i < SCALE_BAR_SIZES.length; ++i) {
+        scalebarDisplayVal = SCALE_BAR_SIZES[i];
+        width = SCALE_BAR_SIZES[i] * scalebarMeasurement;
+        if (width > Math.min(192, scalebarMinWidth)) {
+          break;
+        }
+    }
+
+    let ui = 0;
+    while (scalebarDisplayVal >= 1000 && ui < SCALE_BAR_UNITS.length - 1) {
+        scalebarDisplayVal /= 1000;
+        ++ui;
+    }
+    return {
+      width,
+      scalebarDisplayVal: `${scalebarDisplayVal} ${SCALE_BAR_UNITS[ui]}`
+    };
+  }
+
+  getScaleBarStyle(){
+      let textColor = '#777';
+      const { width } = this.scalebarContent();
+      return {
+          'width': `${width}px`,
+          'position': 'absolute',
+          'left': '10px',
+          'bottom': '10px',
+          'padding': '5px',
+          borderLeft: `2px solid ${textColor}`,
+          borderBottom: `2px solid ${textColor}`,
+          'color': textColor
+      };
   }
 
 
@@ -339,7 +413,7 @@ export default class StlViewer extends React.Component {
           presetColors: ['#f9cef9', '#ff887a', '#b7daf5', '#f9d77b', '#a8f5a2', '#d9d9d9']
         })    
       ]) : null,
-      h('div', { className: styles.scalebar}, 'scalebar'),
+      h('div', { style: this.getScaleBarStyle(), className: styles.scalebar}, this.scalebarContent().scalebarDisplayVal),
       h('div', { className: styles.animateButtons }, [
         h(
           'button',
