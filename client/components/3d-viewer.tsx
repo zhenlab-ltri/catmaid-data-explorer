@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import * as THREE from 'three';
 import chroma from 'chroma-js';
 import debounce from 'lodash.debounce';
@@ -9,11 +10,12 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
 import MouseTooltip from 'react-sticky-mouse-tooltip';
-
+import mergeImages from 'merge-images';
+import html2canvas from 'html2canvas';
 import h from 'react-hyperscript';
+import { saveAs } from 'file-saver';
 
 import { getNeuronModels } from 'services';
-import model from '../model';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
 
@@ -22,7 +24,7 @@ const NeuronListItem = (props) => {
   const { neuronName, color, selected, colorPickerNeuron, controller } = props;
 
   const styles = {
-    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 overflow-visible`,
+    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300`,
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
     neuronColor: 'relative cursor-pointer w-6 h-4 shadow-inner rounded',
@@ -42,7 +44,7 @@ const NeuronListItem = (props) => {
           checked: selected,
           onChange: () => controller.toggleNeuron(neuronName, !selected),
         }),
-        h('div', { className: styles.neuronName }, neuronName),
+        h('div', {className: styles.neuronName }, neuronName),
       ]
     ),
     selected
@@ -69,6 +71,7 @@ export default class StlViewer extends React.Component {
       colorPickerNeuron: '',
       showColorPicker: false,
       animating: false,
+      showImageLegend: false
     };
 
     neuronsSorted.forEach((n) => {
@@ -77,6 +80,8 @@ export default class StlViewer extends React.Component {
         color: chroma.random().hex(),
       };
     });
+    
+    this.imageLegendRef = React.createRef();
   }
 
   componentDidMount() {
@@ -87,7 +92,7 @@ export default class StlViewer extends React.Component {
       10,
       100000
     );
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 500;
     controls.minDistance = 10;
@@ -304,10 +309,29 @@ export default class StlViewer extends React.Component {
     this.setState(nextState, () => this.viewNeuron());
   }
 
-  render() {
+  exportImage(){
+    const { selectedNeurons } = this.getNeuronPartitions();
+    this.setState({
+      showImageLegend: true
+    }, async () => {
+      let mimeType = 'image/png';
+      let viewerImage = this.renderer.domElement.toDataURL(mimeType);
+      let legendNode = ReactDOM.findDOMNode(this.imageLegendRef.current);
+      let legendComponentCanvas = await html2canvas(legendNode, {
+        scrollY: -window.scrollY
+      });
+      let legendImage = legendComponentCanvas.toDataURL(mimeType);
+      let combinedImage = await mergeImages([viewerImage, legendImage]);
+      saveAs(combinedImage, `${selectedNeurons.map(n => n.neuronName).join('_')}.png`);
+      this.setState({
+        showImageLegend: false
+      });
+    });
+  }
+
+  getNeuronPartitions(){
     const selectedNeurons = [];
     const unselectedNeurons = [];
-    const { showNeuronNameTooltip, selectedObject } = this.state;
 
     neuronsSorted.forEach((n) => {
       const neuronInfo = Object.assign(this.state[n], { neuronName: n });
@@ -318,6 +342,15 @@ export default class StlViewer extends React.Component {
       }
     });
 
+    return {
+      selectedNeurons, 
+      unselectedNeurons
+    }
+  }
+
+  render() {
+    const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions(); 
+    const { showNeuronNameTooltip, selectedObject } = this.state;
     const matchedNeurons = unselectedNeurons.filter((n) =>
       n.neuronName.startsWith(this.state.searchInput)
     );
@@ -325,15 +358,15 @@ export default class StlViewer extends React.Component {
     const styles = {
       page: 'w-screen h-screen',
       searchbar:
-        'absolute top-2 left-2 w-60 max-h-96 shadow-lg bg-white rounded z-10 overflow-scroll',
+        'absolute top-2 left-2 w-60 max-h-96 shadow-lg bg-white rounded z-10 overflow-y-scroll',
       stickyTop: 'sticky top-0',
       searchbarInput: 'p-4 w-full h-10 rounded',
       controls:
-        'p-2 absolute bottom-2 shadow-lg flex bg-white  z-10 rounded left-1/2 transform -translate-x-1/2 items-center',
+        'p-2 absolute top-2 shadow-lg flex bg-white  z-10 rounded left-1/2 transform -translate-x-1/2 items-center',
       animateButton:
         'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
       selectedNeuronsContainer:
-        'rounded-b border-b-2 border-t-2 shadow-lg border-gray-300 bg-gray-100 font-bold text-gray-700',
+        'rounded border-2 shadow-lg border-gray-300 bg-gray-100 font-bold text-gray-700',
       unselectedNeuronsContainer: 'w-full h-full text-gray-400',
       neuronNameTooltip:
         'bg-white font-bold text-gray-700 shadow-lg p-4 rounded',
@@ -342,7 +375,12 @@ export default class StlViewer extends React.Component {
       colorPickerClose:
         'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
       selectedNeuronLegend:
-        'absolute top-2 right-2 w-60 shadow-lg bg-white rounded z-10 overflow-scroll',
+        'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
+      imageLegend: {
+        container: 'absolute -top-40 w-40 z-10 flex flex-col font-bold text-gray-700',
+        imageLegendEntry: 'p-2 flex items-center',
+        imageLegendEntryColor: 'rounded w-6 h-6 relative top-2'
+      }
     };
 
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
@@ -419,7 +457,6 @@ export default class StlViewer extends React.Component {
         : null,
       Array.from(selectedNeurons).length > 0
         ? h('div', { className: styles.selectedNeuronLegend }, [
-            h('div', { className: 'p-2' }, 'Legend'),
             h(
               'div',
               { className: styles.selectedNeuronsContainer },
@@ -433,6 +470,16 @@ export default class StlViewer extends React.Component {
             ),
           ])
         : null,
+      this.state.showImageLegend ? h('div', { ref: this.imageLegendRef, className: styles.imageLegend.container }, 
+        Array.from(selectedNeurons).map((n) => (
+          h('div', { style: {backgroundColor: '#D9D8D4'}, className: styles.imageLegend.imageLegendEntry }, [
+            h('div', {className: 'mr-2 self-start'}, n.neuronName),
+            h('div', {
+              style: { backgroundColor: n.color },
+              className: styles.imageLegend.imageLegendEntryColor,
+            })
+          ]))
+        )) : null,
       h('div', { className: styles.controls }, [
         h(
           'i',
@@ -446,7 +493,7 @@ export default class StlViewer extends React.Component {
           'i',
           {
             className: styles.colorPickerClose,
-            onClick: (e) => {},
+            onClick: (e) => this.exportImage(),
           },
           'image'
         ),
