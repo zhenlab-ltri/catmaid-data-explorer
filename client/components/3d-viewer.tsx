@@ -18,8 +18,8 @@ import { saveAs } from 'file-saver';
 import { getNeuronModels } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
+import { image } from '~../node_modules/html2canvas/dist/types/css/types/image';
 
-const loader = new STLLoader();
 const NeuronListItem = (props) => {
   const { neuronName, color, selected, colorPickerNeuron, controller } = props;
 
@@ -31,13 +31,7 @@ const NeuronListItem = (props) => {
   };
 
   return h('div', { className: styles.NeuronListItem }, [
-    h(
-      'div',
-      {
-        className: 'w-20 flex items-center cursor-pointer',
-        onClick: () => controller.toggleNeuron(neuronName, !selected),
-      },
-      [
+    h('div', { className: 'w-20 flex items-center cursor-pointer', onClick: () => controller.toggleNeuron(neuronName, !selected) }, [
         h('input', {
           className: styles.neuronChecked,
           type: 'checkbox',
@@ -57,7 +51,6 @@ const NeuronListItem = (props) => {
   ]);
 };
 
-const neuronsSorted = neurons.sort();
 
 export default class StlViewer extends React.Component {
   constructor(props) {
@@ -74,7 +67,9 @@ export default class StlViewer extends React.Component {
       showImageLegend: false
     };
 
-    neuronsSorted.forEach((n) => {
+
+    this.neuronsSorted = neurons.sort();
+    this.neuronsSorted.forEach((n) => {
       this.state[n] = {
         selected: false,
         color: chroma.random().hex(),
@@ -122,6 +117,7 @@ export default class StlViewer extends React.Component {
 
     const textureLoader = new THREE.TextureLoader();
 
+    this.loader = new STLLoader();
     this.scene = scene;
     this.renderer = renderer;
     this.camera = camera;
@@ -217,7 +213,7 @@ export default class StlViewer extends React.Component {
   }
 
   viewNeuron() {
-    const selectedNeurons = neuronsSorted.filter((n) => this.state[n].selected);
+    const selectedNeurons = this.neuronsSorted.filter((n) => this.state[n].selected);
 
     getNeuronModels(Array.from(selectedNeurons)).then((neuronModelBuffers) => {
       let currentNeuronGroup = this.scene.getObjectByName('currentNeurons');
@@ -235,7 +231,7 @@ export default class StlViewer extends React.Component {
 
       neuronModelBuffers.forEach((buffer, index) => {
         const { neuronName, color } = this.state[selectedNeurons[index]];
-        const geometry = loader.parse(buffer);
+        const geometry = this.loader.parse(buffer);
         const material = new THREE.MeshMatcapMaterial({
           color: new THREE.Color(color),
           matcap: this.textures[0],
@@ -309,7 +305,61 @@ export default class StlViewer extends React.Component {
     this.setState(nextState, () => this.viewNeuron());
   }
 
-  exportImage(){
+  getImageSequence(){
+    this.setState({
+      showImageLegend: true,
+      animating: true,
+
+    }, async () => {
+      let mimeType = 'image/png';
+      let images = [];
+
+      this.controls.autoRotate = true;
+      this.controls.autoRotateSpeed = 30;
+
+      let finish = async () => {
+        this.renderer.setAnimationLoop(null);
+        this.composer.render();
+        this.controls.autoRotate = false;
+        this.controls.update();
+
+        let legendNode = ReactDOM.findDOMNode(this.imageLegendRef.current);
+        let legendComponentCanvas = await html2canvas(legendNode, {
+          scrollY: -window.scrollY
+        });
+
+        for(let i = 0; i < images.length; i++){
+          let image = images[i];
+          let legendImage = legendComponentCanvas.toDataURL(mimeType);
+          let combinedImage = await mergeImages([image, legendImage]);
+          
+          images[i] = combinedImage;
+        }
+
+        this.setState({
+          showImageLegend: false,
+          animating: false
+        });
+
+      };
+
+      let start = async () => {
+        this.composer.render();
+        this.controls.update();
+        let viewerImage = this.renderer.domElement.toDataURL(mimeType);
+        images.push(viewerImage);
+
+        if(images.length > 120){
+          finish();
+        }
+
+      };
+
+      this.renderer.setAnimationLoop(start);
+    });
+  }
+
+  exportAndSaveImage(){
     const { selectedNeurons } = this.getNeuronPartitions();
     this.setState({
       showImageLegend: true
@@ -333,7 +383,7 @@ export default class StlViewer extends React.Component {
     const selectedNeurons = [];
     const unselectedNeurons = [];
 
-    neuronsSorted.forEach((n) => {
+    this.neuronsSorted.forEach((n) => {
       const neuronInfo = Object.assign(this.state[n], { neuronName: n });
       if (this.state[n].selected) {
         selectedNeurons.push(neuronInfo);
@@ -493,7 +543,7 @@ export default class StlViewer extends React.Component {
           'i',
           {
             className: styles.colorPickerClose,
-            onClick: (e) => this.exportImage(),
+            onClick: (e) => this.exportAndSaveImage(),
           },
           'image'
         ),
@@ -501,7 +551,7 @@ export default class StlViewer extends React.Component {
           'i',
           {
             className: styles.colorPickerClose,
-            onClick: (e) => {},
+            onClick: (e) => this.getImageSequence(),
           },
           'gif_box'
         ),
