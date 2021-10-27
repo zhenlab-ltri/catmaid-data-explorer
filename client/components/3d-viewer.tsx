@@ -44,7 +44,7 @@ const NeuronListItem = (props) => {
           checked: selected,
           onChange: () => controller.toggleNeuron(neuronName, !selected),
         }),
-        h('div', {className: styles.neuronName }, neuronName),
+        h('div', { className: styles.neuronName }, neuronName),
       ]
     ),
     selected
@@ -71,7 +71,7 @@ export default class StlViewer extends React.Component {
       colorPickerNeuron: '',
       showColorPicker: false,
       animating: false,
-      showImageLegend: false
+      showImageElements: false,
     };
 
     neuronsSorted.forEach((n) => {
@@ -80,8 +80,9 @@ export default class StlViewer extends React.Component {
         color: chroma.random().hex(),
       };
     });
-    
+
     this.imageLegendRef = React.createRef();
+    this.imageWatermarkRef = React.createRef();
   }
 
   componentDidMount() {
@@ -92,7 +93,10 @@ export default class StlViewer extends React.Component {
       10,
       100000
     );
-    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      preserveDrawingBuffer: true,
+    });
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 500;
     controls.minDistance = 10;
@@ -309,27 +313,50 @@ export default class StlViewer extends React.Component {
     this.setState(nextState, () => this.viewNeuron());
   }
 
-  exportImage(){
+  exportImage() {
     const { selectedNeurons } = this.getNeuronPartitions();
-    this.setState({
-      showImageLegend: true
-    }, async () => {
-      let mimeType = 'image/png';
-      let viewerImage = this.renderer.domElement.toDataURL(mimeType);
-      let legendNode = ReactDOM.findDOMNode(this.imageLegendRef.current);
-      let legendComponentCanvas = await html2canvas(legendNode, {
-        scrollY: -window.scrollY
-      });
-      let legendImage = legendComponentCanvas.toDataURL(mimeType);
-      let combinedImage = await mergeImages([viewerImage, legendImage]);
-      saveAs(combinedImage, `${selectedNeurons.map(n => n.neuronName).join('_')}.png`);
-      this.setState({
-        showImageLegend: false
-      });
-    });
+    this.setState(
+      {
+        showImageElements: true,
+      },
+      async () => {
+        let mimeType = 'image/png';
+        let viewerImage = this.renderer.domElement.toDataURL(mimeType);
+        let legendNode = ReactDOM.findDOMNode(this.imageLegendRef.current);
+        let watermarkNode = ReactDOM.findDOMNode(
+          this.imageWatermarkRef.current
+        );
+
+        let legendComponentCanvas = await html2canvas(legendNode, {
+          scrollY: -window.scrollY,
+        });
+        let watermarkCanvas = await html2canvas(watermarkNode, {
+          scrollY: -window.scrollY,
+        });
+        let legendImage = legendComponentCanvas.toDataURL(mimeType);
+        let watermarkImage = watermarkCanvas.toDataURL(mimeType);
+
+        let combinedImage = await mergeImages([
+          { src: viewerImage, x: 0, y: 0 },
+          { src: legendImage, x: 0, y: 0 },
+          {
+            src: watermarkImage,
+            x: this.renderer.domElement.clientWidth - 300,
+            y: this.renderer.domElement.clientHeight - 60,
+          },
+        ]);
+        saveAs(
+          combinedImage,
+          `${selectedNeurons.map((n) => n.neuronName).join('_')}.png`
+        );
+        this.setState({
+          showImageElements: false,
+        });
+      }
+    );
   }
 
-  getNeuronPartitions(){
+  getNeuronPartitions() {
     const selectedNeurons = [];
     const unselectedNeurons = [];
 
@@ -343,13 +370,13 @@ export default class StlViewer extends React.Component {
     });
 
     return {
-      selectedNeurons, 
-      unselectedNeurons
-    }
+      selectedNeurons,
+      unselectedNeurons,
+    };
   }
 
   render() {
-    const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions(); 
+    const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
     const { showNeuronNameTooltip, selectedObject } = this.state;
     const matchedNeurons = unselectedNeurons.filter((n) =>
       n.neuronName.startsWith(this.state.searchInput)
@@ -377,10 +404,14 @@ export default class StlViewer extends React.Component {
       selectedNeuronLegend:
         'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
       imageLegend: {
-        container: 'absolute -top-40 w-40 z-10 flex flex-col font-bold text-gray-700',
+        container:
+          'absolute -top-40 w-40 z-10 flex flex-col font-bold text-gray-700',
         imageLegendEntry: 'p-2 flex items-center',
-        imageLegendEntryColor: 'rounded w-6 h-6 relative top-2'
-      }
+        imageLegendEntryColor: 'rounded w-6 h-6 relative top-2',
+      },
+      imageWatermark: {
+        container: 'p-2 absolute w-60 z-10 -top-40 -right-40',
+      },
     };
 
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
@@ -470,16 +501,42 @@ export default class StlViewer extends React.Component {
             ),
           ])
         : null,
-      this.state.showImageLegend ? h('div', { ref: this.imageLegendRef, className: styles.imageLegend.container }, 
-        Array.from(selectedNeurons).map((n) => (
-          h('div', { style: {backgroundColor: '#D9D8D4'}, className: styles.imageLegend.imageLegendEntry }, [
-            h('div', {className: 'mr-2 self-start'}, n.neuronName),
-            h('div', {
-              style: { backgroundColor: n.color },
-              className: styles.imageLegend.imageLegendEntryColor,
-            })
-          ]))
-        )) : null,
+      this.state.showImageElements
+        ? h(
+            'div',
+            {
+              ref: this.imageLegendRef,
+              className: styles.imageLegend.container,
+            },
+            Array.from(selectedNeurons).map((n) =>
+              h(
+                'div',
+                {
+                  style: { backgroundColor: '#D9D8D4' },
+                  className: styles.imageLegend.imageLegendEntry,
+                },
+                [
+                  h('div', { className: 'mr-2 self-start' }, n.neuronName),
+                  h('div', {
+                    style: { backgroundColor: n.color },
+                    className: styles.imageLegend.imageLegendEntryColor,
+                  }),
+                ]
+              )
+            )
+          )
+        : null,
+      this.state.showImageElements
+        ? h(
+            'div',
+            {
+              ref: this.imageWatermarkRef,
+              style: { backgroundColor: '#D9D8D4' },
+              className: styles.imageWatermark.container,
+            },
+            '(2021 Witvliet et al.)'
+          )
+        : null,
       h('div', { className: styles.controls }, [
         h(
           'i',

@@ -35,7 +35,7 @@ class HomePage extends React.Component {
             'Zhen Lab Tools'
           ),
           h('span', { className: 'text-gray-200' }, 'Explore the '),
-          h('span', { className: 'text-gray-200 italic' }, 'C. Elegans '),
+          h('span', { className: 'text-gray-200 italic' }, 'C. elegans '),
           h('span', { className: 'text-gray-200' }, 'Connectome'),
         ]),
       ]),
