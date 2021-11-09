@@ -25,37 +25,43 @@ const NeuronListItem = (props) => {
   const { neuronName, color, selected, colorPickerNeuron, controller } = props;
 
   const styles = {
-    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300`,
+    NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 cursor-pointer`,
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
     neuronColor: 'relative cursor-pointer w-6 h-4 shadow-inner rounded',
   };
 
-  return h('div', { className: styles.NeuronListItem }, [
-    h(
-      'div',
-      {
-        className: 'w-20 flex items-center cursor-pointer',
-        onClick: () => controller.toggleNeuron(neuronName, !selected),
-      },
-      [
-        h('input', {
-          className: styles.neuronChecked,
-          type: 'checkbox',
-          checked: selected,
-          onChange: () => controller.toggleNeuron(neuronName, !selected),
-        }),
-        h('div', { className: styles.neuronName }, neuronName),
-      ]
-    ),
-    selected
-      ? h('div', {
-          style: { backgroundColor: color },
-          onClick: () => props.controller.handleNeuronColorClick(neuronName),
-          className: styles.neuronColor,
-        })
-      : null,
-  ]);
+  return h(
+    'div',
+    {
+      className: styles.NeuronListItem,
+      onClick: () => controller.toggleNeuron(neuronName, !selected),
+    },
+    [
+      h(
+        'div',
+        {
+          className: 'w-20 flex items-center',
+        },
+        [
+          h('input', {
+            className: styles.neuronChecked,
+            type: 'checkbox',
+            checked: selected,
+            onChange: () => controller.toggleNeuron(neuronName, !selected),
+          }),
+          h('div', { className: styles.neuronName }, neuronName),
+        ]
+      ),
+      selected
+        ? h('div', {
+            style: { backgroundColor: color },
+            onClick: () => props.controller.handleNeuronColorClick(neuronName),
+            className: styles.neuronColor,
+          })
+        : null,
+    ]
+  );
 };
 
 const neuronsSorted = neurons.sort();
@@ -305,7 +311,7 @@ export default class StlViewer extends React.Component {
     let value = e.target.value.toUpperCase();
     let isNeuron = (token) => neurons.indexOf(token) !== -1;
     let recognizedNeurons = new Set(
-      value.split(' ').filter((token) => isNeuron(token))
+      value.split(', ').filter((token) => isNeuron(token))
     );
 
     let nextState = {
@@ -325,6 +331,14 @@ export default class StlViewer extends React.Component {
     nextState[neuronName] = Object.assign(this.state[neuronName], {
       selected,
     });
+
+    if (selected) {
+      const tokens = this.state.searchInput.split(', ');
+      const lastToken = tokens.pop();
+      nextState['searchInput'] = `${
+        tokens.length > 0 ? tokens.join(', ') + ', ' : ''
+      }${neuronName},`;
+    }
 
     this.setState(nextState, () => this.viewNeuron());
   }
@@ -393,9 +407,10 @@ export default class StlViewer extends React.Component {
 
   render() {
     const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
-    const { showNeuronNameTooltip, selectedObject } = this.state;
-    const matchedNeurons = unselectedNeurons.filter((n) =>
-      n.neuronName.startsWith(this.state.searchInput)
+    const { showNeuronNameTooltip, selectedObject, searchInput } = this.state;
+    const lastSearchTerm = searchInput.split(', ').pop();
+    const searchSuggestions = unselectedNeurons.filter((n) =>
+      n.neuronName.startsWith(lastSearchTerm)
     );
 
     const styles = {
@@ -445,7 +460,7 @@ export default class StlViewer extends React.Component {
           ? h(
               'div',
               { className: styles.unselectedNeuronsContainer },
-              matchedNeurons.map((n) =>
+              searchSuggestions.map((n) =>
                 h(NeuronListItem, {
                   ...n,
                   colorPickerNeuron: this.state.colorPickerNeuron,
