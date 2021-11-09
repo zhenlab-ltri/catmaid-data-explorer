@@ -3,7 +3,6 @@ import h from 'react-hyperscript';
 import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
-import MultiMatrix from './components/multi-matrix';
 import StlViewer from './components/3d-viewer';
 import Sandbox from './components/sandbox';
 
@@ -88,11 +87,6 @@ class App extends React.Component {
             exact: true,
             path: '/',
             component: HomePage,
-          }),
-          h(Route, {
-            exact: true,
-            path: '/multi-matrix',
-            component: MultiMatrix,
           }),
           h(Route, {
             exact: true,

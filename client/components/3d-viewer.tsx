@@ -18,6 +18,7 @@ import { saveAs } from 'file-saver';
 import { getNeuronModels } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
+import model from '../model';
 
 const loader = new STLLoader();
 const NeuronListItem = (props) => {
@@ -59,6 +60,15 @@ const NeuronListItem = (props) => {
 
 const neuronsSorted = neurons.sort();
 
+const colorMap = {
+  sensory: '#f9cef9',
+  interneuron: '#ff887a',
+  motor: '#b7daf5',
+  modulatory: '#f9d77b',
+  muscle: '#a8f5a2',
+  unknown: '#d9d9d9',
+};
+
 export default class StlViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -75,9 +85,15 @@ export default class StlViewer extends React.Component {
     };
 
     neuronsSorted.forEach((n) => {
+      let t = model.neuronInfo[n];
+      let color = colorMap['unknown'];
+
+      if (t != null) {
+        color = colorMap[t.canonicalType];
+      }
       this.state[n] = {
         selected: false,
-        color: chroma.random().hex(),
+        color,
       };
     });
 
@@ -475,14 +491,7 @@ export default class StlViewer extends React.Component {
               className: styles.colorPicker,
               color: this.state[this.state.colorPickerNeuron].color,
               onChange: (color, e) => this.handleColorPickerChange(color, e),
-              presetColors: [
-                '#f9cef9',
-                '#ff887a',
-                '#b7daf5',
-                '#f9d77b',
-                '#a8f5a2',
-                '#d9d9d9',
-              ],
+              presetColors: Object.values(colorMap),
             }),
           ])
         : null,
