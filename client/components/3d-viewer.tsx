@@ -306,12 +306,13 @@ export default class StlViewer extends React.Component {
       synapsePositionInfo.forEach(syn => {
         const { position, pre, post, catmaidId, volumeSize } = syn;
         const [x, y, z] = position;
+        const translatedVolume = volumeSize / 10000000;
 
         createSphere(
           [x, y, z], 
           `pre: ${pre}, post: ${post}, catmaid id: ${catmaidId}`,
            pre === firstNeuron ? '#FAFFAB' : '#800080',
-           volumeSize / 10000000
+          Math.min(Math.max(0.05, translatedVolume), 0.5)
         );
       });
 

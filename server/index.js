@@ -3,6 +3,7 @@ const fs = require('fs');
 const basicAuth = require('express-basic-auth');
 const app = express();
 const path = require('path');
+const parseSTL = require('parse-stl');
 
 const { USER, PASSWORD } = require('../config.json');
 
@@ -18,6 +19,9 @@ csv.toString().split('\n')
   });
 
 const averageSynapseSize = Object.values(synapseSizeMap).reduce((a, b) => a + b, 0) / Object.values(synapseSizeMap).length;
+const sortedSizes = Object.values(synapseSizeMap).map(size => parseInt(size) / 10000000).filter(s =>  !isNaN(s)).sort();
+console.log(sortedSizes, sortedSizes.length);
+console.log(sortedSizes[0], sortedSizes[Math.floor(sortedSizes.length / 2)], sortedSizes[sortedSizes.length - 1]);
 
 
 if (USER !== '' && PASSWORD !== '') {
@@ -51,7 +55,6 @@ app.get('/api/models/:neuronId', (req, res) => {
 
 app.get('/api/synapses/:neuronId', (req, res) => {
   const neuronId = req.params.neuronId;
-  console.log(synapseSizeMap);
 
   const synapseFiles = fs.readdirSync('./server/3d-models/synapses/');
   const synapseFileInfo = f => f.split('.')[1].split('_');
@@ -67,7 +70,7 @@ app.get('/api/synapses/:neuronId', (req, res) => {
         pre: sfi[0],
         post: sfi[1],
         catmaidId: sfi[2],
-        volumeSize: synapseSizeMap[sfi[2]] || averageSynapseSize
+        volumeSize: parseInt(synapseSizeMap[sfi[2]]) || averageSynapseSize
       })
     }
   });
