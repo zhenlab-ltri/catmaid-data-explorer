@@ -13,3 +13,20 @@ export const getNeuronModels = neuronNames => {
 
   return Promise.all(neuronModelPromises);
 }
+
+export const getNeuronSynapses = neuronName => {
+  if(neuronName == null) {
+    return Promise.resolve([]);
+  };
+  
+  return fetch(`/api/synapses/${neuronName}`, {
+    method: 'GET',
+  }).then(res => res.json());
+};
+
+export const getNeuronsSynapses = neuronNames => {
+  const neuronSynapses = neuronNames.map(neuronName => getNeuronSynapses(neuronName));
+
+  return Promise.all(neuronSynapses);
+
+}

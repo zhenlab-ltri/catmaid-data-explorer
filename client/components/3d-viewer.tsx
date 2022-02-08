@@ -15,7 +15,7 @@ import html2canvas from 'html2canvas';
 import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
 
-import { getNeuronModels } from 'services';
+import { getNeuronModels, getNeuronSynapses, getNeuronsSynapses } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
 import model from '../model';
@@ -112,7 +112,7 @@ export default class StlViewer extends React.Component {
     const camera = new THREE.PerspectiveCamera(
       750,
       window.innerWidth / window.innerHeight,
-      10,
+      1,
       100000
     );
     const renderer = new THREE.WebGLRenderer({
@@ -120,8 +120,8 @@ export default class StlViewer extends React.Component {
       preserveDrawingBuffer: true,
     });
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 500;
-    controls.minDistance = 10;
+    controls.maxDistance = 50000;
+    controls.minDistance = 1;
 
     /**
      * Light setup
@@ -166,6 +166,7 @@ export default class StlViewer extends React.Component {
       scene,
       camera
     );
+    this.outlinePass = outlinePass;
     outlinePass.visibleEdgeColor.setHex(0xff4503);
     outlinePass.edgeGlow = 0.05;
     outlinePass.edgeStrength = 10;
@@ -186,6 +187,9 @@ export default class StlViewer extends React.Component {
 
       if (intersects.length > 0) {
         this.selectedObject = intersects[0].object;
+        // console.log(this.selectedObject);
+        // console.log(this.selectedObject.getWorldPosition(new THREE.Vector3()));
+
         outlinePass.selectedObjects = [this.selectedObject];
         this.setState({
           showNeuronNameTooltip: true,
@@ -244,8 +248,12 @@ export default class StlViewer extends React.Component {
 
   viewNeuron() {
     const selectedNeurons = neuronsSorted.filter((n) => this.state[n].selected);
+    const firstNeuron = Array.from(selectedNeurons).shift();
+    Promise.all([
+      getNeuronModels(Array.from(selectedNeurons)),
+      getNeuronSynapses(firstNeuron)
+    ]).then(([neuronModelBuffers, synapsePositionInfo]) => {
 
-    getNeuronModels(Array.from(selectedNeurons)).then((neuronModelBuffers) => {
       let currentNeuronGroup = this.scene.getObjectByName('currentNeurons');
       this.scene.remove(currentNeuronGroup);
       if (currentNeuronGroup != null) {
@@ -258,21 +266,56 @@ export default class StlViewer extends React.Component {
 
       let currentNeurons = new THREE.Group();
       currentNeurons.name = 'currentNeurons';
+      let orientModel = (mesh) => {
+        // mesh.geometry.computeVertexNormals(true);
+        // mesh.rotation.z = Math.PI / -2;
+        // mesh.rotation.x = Math.PI / -2;
+      };
 
-      neuronModelBuffers.forEach((buffer, index) => {
-        const { neuronName, color } = this.state[selectedNeurons[index]];
+      let loadModel = (buffer, modelName, color) => {
         const geometry = loader.parse(buffer);
         const material = new THREE.MeshMatcapMaterial({
           color: new THREE.Color(color),
           matcap: this.textures[0],
         });
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.name = neuronName;
+        mesh.name = modelName;
+        return mesh;
+      }
+      let createSphere = ([x, y, z], name, color, size) => {
+        const geometry = new THREE.SphereGeometry( 2 * size, 16, 16 );
+        const material = new THREE.MeshBasicMaterial( { color } );
+        const sphere = new THREE.Mesh( geometry, material );
+        sphere.position.set(x, y, z);
+        sphere.name = name;
+        orientModel(sphere);
+        currentNeurons.add( sphere );
 
-        mesh.geometry.computeVertexNormals(true);
-        mesh.rotation.x = Math.PI / -2;
+      }
+
+      neuronModelBuffers.forEach((buffer, index) => {
+        const { neuronName, color } = this.state[selectedNeurons[index]];
+        const mesh = loadModel(buffer, neuronName, color);
+
+        orientModel(mesh);
+
         currentNeurons.add(mesh);
+
       });
+
+      synapsePositionInfo.forEach(syn => {
+        const { position, pre, post, catmaidId, volumeSize } = syn;
+        const [x, y, z] = position;
+
+        createSphere(
+          [x, y, z], 
+          `pre: ${pre}, post: ${post}, catmaid id: ${catmaidId}`,
+           pre === firstNeuron ? '#FAFFAB' : '#800080',
+           volumeSize / 10000000
+        );
+      });
+
+
 
       // center the current neurons group
       const box = new THREE.Box3().setFromObject(currentNeurons);
@@ -280,6 +323,9 @@ export default class StlViewer extends React.Component {
       currentNeurons.position.set(-c.x, -c.y, -c.z);
 
       this.scene.add(currentNeurons);
+      // const axesHelper = new THREE.AxesHelper( 5 );
+      // this.scene.add( axesHelper );
+
       this.composer.render();
     });
   }

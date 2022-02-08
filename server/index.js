@@ -4,8 +4,20 @@ const basicAuth = require('express-basic-auth');
 const app = express();
 const path = require('path');
 
-
 const { USER, PASSWORD } = require('../config.json');
+
+const synapseSizeMap = {};
+const csv = fs.readFileSync('./server/synapse-sizes.txt');
+csv.toString().split('\n')
+  .map(line => line.split('  '))
+  .filter((lineItems) => !lineItems[0].includes('synapses') && lineItems[0] != '')
+  .forEach(([synapseInfoStr, _, numVoxels, volumeSize]) => {
+    const [pre, post, catmaidId] = synapseInfoStr.split(' ');
+    const cleanedCatmaidId = catmaidId.replace('"', '');
+    synapseSizeMap[cleanedCatmaidId] = volumeSize;
+  });
+
+const averageSynapseSize = Object.values(synapseSizeMap).reduce((a, b) => a + b, 0) / Object.values(synapseSizeMap).length;
 
 
 if (USER !== '' && PASSWORD !== '') {
@@ -36,5 +48,30 @@ app.get('/api/models/:neuronId', (req, res) => {
   const stlModelFile = fs.readFileSync(`./server/3d-models/${neuronId}-SEM_adult.stl`);
   res.end(stlModelFile, 'binary');
 });
+
+app.get('/api/synapses/:neuronId', (req, res) => {
+  const neuronId = req.params.neuronId;
+  console.log(synapseSizeMap);
+
+  const synapseFiles = fs.readdirSync('./server/3d-models/synapses/');
+  const synapseFileInfo = f => f.split('.')[1].split('_');
+  const synapsePositions = [];
+  const relevantSynapses = synapseFiles.filter(f => synapseFileInfo(f)[0] === neuronId || synapseFileInfo(f)[1].includes(neuronId));
+  relevantSynapses.forEach( f => {
+    const sfi = synapseFileInfo(f);
+    if(sfi[0] === neuronId || sfi[1].includes(neuronId)) {
+
+      const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
+      synapsePositions.push({
+        position: stlData.positions[stlData.positions.length / 2], 
+        pre: sfi[0],
+        post: sfi[1],
+        catmaidId: sfi[2],
+        volumeSize: synapseSizeMap[sfi[2]] || averageSynapseSize
+      })
+    }
+  });
+  res.json(synapsePositions);
+})
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
