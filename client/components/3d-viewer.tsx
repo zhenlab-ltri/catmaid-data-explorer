@@ -266,11 +266,6 @@ export default class StlViewer extends React.Component {
 
       let currentNeurons = new THREE.Group();
       currentNeurons.name = 'currentNeurons';
-      let orientModel = (mesh) => {
-        // mesh.geometry.computeVertexNormals(true);
-        // mesh.rotation.z = Math.PI / -2;
-        // mesh.rotation.x = Math.PI / -2;
-      };
 
       let loadModel = (buffer, modelName, color) => {
         const geometry = loader.parse(buffer);
@@ -288,7 +283,6 @@ export default class StlViewer extends React.Component {
         const sphere = new THREE.Mesh( geometry, material );
         sphere.position.set(x, y, z);
         sphere.name = name;
-        orientModel(sphere);
         currentNeurons.add( sphere );
 
       }
@@ -296,8 +290,6 @@ export default class StlViewer extends React.Component {
       neuronModelBuffers.forEach((buffer, index) => {
         const { neuronName, color } = this.state[selectedNeurons[index]];
         const mesh = loadModel(buffer, neuronName, color);
-
-        orientModel(mesh);
 
         currentNeurons.add(mesh);
 
@@ -316,6 +308,8 @@ export default class StlViewer extends React.Component {
         );
       });
 
+      // currentNeurons.rotation.z = Math.PI / -2;
+      // currentNeurons.rotation.y = Math.PI / 2;
 
 
       // center the current neurons group
@@ -323,9 +317,10 @@ export default class StlViewer extends React.Component {
       const c = box.getCenter(new THREE.Vector3());
       currentNeurons.position.set(-c.x, -c.y, -c.z);
 
+
       this.scene.add(currentNeurons);
-      // const axesHelper = new THREE.AxesHelper( 5 );
-      // this.scene.add( axesHelper );
+      const axesHelper = new THREE.AxesHelper( 5 );
+      this.scene.add( axesHelper );
 
       this.composer.render();
     });
