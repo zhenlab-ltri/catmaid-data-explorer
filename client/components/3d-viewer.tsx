@@ -308,8 +308,7 @@ export default class StlViewer extends React.Component {
         );
       });
 
-      // currentNeurons.rotation.z = Math.PI / -2;
-      // currentNeurons.rotation.y = Math.PI / 2;
+      currentNeurons.rotation.y = Math.PI;
 
 
       // center the current neurons group
