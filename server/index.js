@@ -19,9 +19,9 @@ csv.toString().split('\n')
   });
 
 const averageSynapseSize = Object.values(synapseSizeMap).reduce((a, b) => a + b, 0) / Object.values(synapseSizeMap).length;
-const sortedSizes = Object.values(synapseSizeMap).map(size => parseInt(size) / 10000000).filter(s =>  !isNaN(s)).sort();
-console.log(sortedSizes, sortedSizes.length);
-console.log(sortedSizes[0], sortedSizes[Math.floor(sortedSizes.length / 2)], sortedSizes[sortedSizes.length - 1]);
+// const sortedSizes = Objecst.values(synapseSizeMap).map(size => parseInt(size) / 10000000).filter(s =>  !isNaN(s)).sort();
+// console.log(sortedSizes, sortedSizes.length);
+// console.log(sortedSizes[0], sortedSizes[Math.floor(sortedSizes.length / 2)], sortedSizes[sortedSizes.length - 1]);
 
 
 if (USER !== '' && PASSWORD !== '') {
@@ -63,14 +63,15 @@ app.get('/api/synapses/:neuronId', (req, res) => {
   relevantSynapses.forEach( f => {
     const sfi = synapseFileInfo(f);
     if(sfi[0] === neuronId || sfi[1].includes(neuronId)) {
+      const catmaidId = sfi[2].split('-')[0];
 
       const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
       synapsePositions.push({
         position: stlData.positions[stlData.positions.length / 2], 
         pre: sfi[0],
         post: sfi[1],
-        catmaidId: sfi[2],
-        volumeSize: parseInt(synapseSizeMap[sfi[2]]) || averageSynapseSize
+        catmaidId,
+        volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize
       })
     }
   });
