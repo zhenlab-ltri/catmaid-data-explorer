@@ -28,5 +28,8 @@ export const getNeuronsSynapses = neuronNames => {
   const neuronSynapses = neuronNames.map(neuronName => getNeuronSynapses(neuronName));
 
   return Promise.all(neuronSynapses);
+}
 
+export const getNerveRingModel = () => {
+  return fetch('/api/models/nervering').then( res => res.arrayBuffer() );
 }

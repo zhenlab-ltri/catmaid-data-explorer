@@ -46,6 +46,11 @@ app.get('/synapseplotter', (req, res) => {
 
 let isValidNeuron = neuronName => true;
 
+app.get('/api/models/nervering', (req, res) => {
+  const nerveRingModel = fs.readFileSync('./server/3d-models/nervering/nervering-SEM_adult.stl');
+  res.end(nerveRingModel, 'binary');
+});
+
 app.get('/api/models/:neuronId', (req, res) => {
   const neuronId = req.params.neuronId ;
   // const validNeurons = input.filter(neruonName => isValidNeuron(neuronName));

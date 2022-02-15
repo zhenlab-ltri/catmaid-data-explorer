@@ -15,7 +15,7 @@ import html2canvas from 'html2canvas';
 import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
 
-import { getNeuronModels, getNeuronSynapses, getNeuronsSynapses } from 'services';
+import { getNeuronModels, getNeuronSynapses, getNeuronsSynapses, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
 import model from '../model';
@@ -186,9 +186,12 @@ export default class StlViewer extends React.Component {
       const intersects = this.raycaster.intersectObject(this.scene, true);
 
       if (intersects.length > 0) {
-        this.selectedObject = intersects[0].object;
-        // console.log(this.selectedObject);
-        // console.log(this.selectedObject.getWorldPosition(new THREE.Vector3()));
+        if(intersects.length > 1){
+          this.selectedObject = intersects.filter(i => i.object.name !== 'Nerve ring')[0].object;
+        } else {
+          this.selectedObject = intersects[0].object;
+
+        }
 
         outlinePass.selectedObjects = [this.selectedObject];
         this.setState({
@@ -251,8 +254,9 @@ export default class StlViewer extends React.Component {
     const firstNeuron = Array.from(selectedNeurons).shift();
     Promise.all([
       getNeuronModels(Array.from(selectedNeurons)),
-      getNeuronSynapses(firstNeuron)
-    ]).then(([neuronModelBuffers, synapsePositionInfo]) => {
+      getNeuronSynapses(firstNeuron),
+      getNerveRingModel()
+    ]).then(([neuronModelBuffers, synapsePositionInfo, nerveRingModelBuffer]) => {
 
       let currentNeuronGroup = this.scene.getObjectByName('currentNeurons');
       this.scene.remove(currentNeuronGroup);
@@ -267,14 +271,19 @@ export default class StlViewer extends React.Component {
       let currentNeurons = new THREE.Group();
       currentNeurons.name = 'currentNeurons';
 
-      let loadModel = (buffer, modelName, color) => {
+      let loadModel = (buffer, modelName, color, opacity = 1.0, renderOrder = 0) => {
         const geometry = loader.parse(buffer);
         const material = new THREE.MeshMatcapMaterial({
           color: new THREE.Color(color),
-          matcap: this.textures[0],
+          matcap: this.textures[0]
         });
+        opacity != 1.0 ? material.transparent = true : null;
+        opacity != 1.0 ? material.opacity = opacity : null;
+
         const mesh = new THREE.Mesh(geometry, material);
         mesh.name = modelName;
+
+        mesh.renderOrder = renderOrder;
         return mesh;
       }
       let createSphere = ([x, y, z], name, color, size) => {
@@ -284,8 +293,11 @@ export default class StlViewer extends React.Component {
         sphere.position.set(x, y, z);
         sphere.name = name;
         currentNeurons.add( sphere );
-
       }
+
+      const nerveRing = loadModel(nerveRingModelBuffer, 'Nerve ring', '#d9d9d9', 0.1, 10);
+      currentNeurons.add(nerveRing);
+
 
       neuronModelBuffers.forEach((buffer, index) => {
         const { neuronName, color } = this.state[selectedNeurons[index]];
@@ -307,6 +319,7 @@ export default class StlViewer extends React.Component {
           Math.min(Math.max(0.05, translatedVolume), 0.5)
         );
       });
+
 
       currentNeurons.rotation.y = Math.PI;
 
