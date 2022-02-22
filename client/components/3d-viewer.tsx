@@ -15,7 +15,7 @@ import html2canvas from 'html2canvas';
 import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
 
-import { getNeuronModels, getNeuronSynapses, getNeuronsSynapses, getNerveRingModel } from 'services';
+import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
 import model from '../model';
@@ -252,9 +252,11 @@ export default class StlViewer extends React.Component {
   viewNeuron() {
     const selectedNeurons = neuronsSorted.filter((n) => this.state[n].selected);
     const firstNeuron = Array.from(selectedNeurons).shift();
+    const onlyOneNeuron = selectedNeurons.length === 1;
+
     Promise.all([
       getNeuronModels(Array.from(selectedNeurons)),
-      getNeuronSynapses(firstNeuron),
+      onlyOneNeuron ? getNeuronSynapses(firstNeuron) : getSynapsesBetween(Array.from(selectedNeurons)),
       getNerveRingModel()
     ]).then(([neuronModelBuffers, synapsePositionInfo, nerveRingModelBuffer]) => {
 
@@ -295,13 +297,13 @@ export default class StlViewer extends React.Component {
         currentNeurons.add( sphere );
       }
 
-      const nerveRing = loadModel(nerveRingModelBuffer, 'Nerve ring', '#d9d9d9', 0.1, 10);
+      const nerveRing = loadModel(nerveRingModelBuffer, 'Nerve ring', '#d9d9d9', 0.3, 10);
       currentNeurons.add(nerveRing);
 
 
       neuronModelBuffers.forEach((buffer, index) => {
         const { neuronName, color } = this.state[selectedNeurons[index]];
-        const mesh = loadModel(buffer, neuronName, color);
+        const mesh = loadModel(buffer, neuronName, color, !onlyOneNeuron ? 0.5 : 1);
 
         currentNeurons.add(mesh);
 
@@ -311,11 +313,20 @@ export default class StlViewer extends React.Component {
         const { position, pre, post, catmaidId, volumeSize } = syn;
         const [x, y, z] = position;
         const translatedVolume = volumeSize / 10000000;
+        let color = '#000000';
+
+        if(onlyOneNeuron){
+          if(pre === firstNeuron) {
+            color = '#FAFFAB';
+          } else {
+            color = '#800080';
+          }
+        }
 
         createSphere(
           [x, y, z], 
           `pre: ${pre}, post: ${post}, catmaid id: ${catmaidId}`,
-           pre === firstNeuron ? '#FAFFAB' : '#800080',
+          color,
           Math.min(Math.max(0.05, translatedVolume), 0.5)
         );
       });
@@ -497,6 +508,9 @@ export default class StlViewer extends React.Component {
       imageWatermark: {
         container: 'p-2 absolute w-60 z-10 -top-40 -right-40',
       },
+      watermark: {
+        container: 'p-2 absolute h-10 w-10 bottom-2'
+      }
     };
 
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [

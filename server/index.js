@@ -58,29 +58,65 @@ app.get('/api/models/:neuronId', (req, res) => {
   res.end(stlModelFile, 'binary');
 });
 
+const synapseFileInfo = f => { 
+  const data = f.split('.')[1].split('_');
+  return {
+    pre: data[0],
+    post: data[1].split(','),
+    catmaidId: data[2].split('-')[0] 
+  };
+};
+
 app.get('/api/synapses/:neuronId', (req, res) => {
   const neuronId = req.params.neuronId;
 
   const synapseFiles = fs.readdirSync('./server/3d-models/synapses/');
-  const synapseFileInfo = f => f.split('.')[1].split('_');
-  const synapsePositions = [];
-  const relevantSynapses = synapseFiles.filter(f => synapseFileInfo(f)[0] === neuronId || synapseFileInfo(f)[1].includes(neuronId));
-  relevantSynapses.forEach( f => {
-    const sfi = synapseFileInfo(f);
-    if(sfi[0] === neuronId || sfi[1].includes(neuronId)) {
-      const catmaidId = sfi[2].split('-')[0];
+  const synapsePositions = synapseFiles
+  .filter(f => {
+    const { pre, post } = synapseFileInfo(f);
+    return pre === neuronId || post.includes(neuronId);
+  }).map(f => {
+    const { pre, post, catmaidId } = synapseFileInfo(f);
 
-      const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
-      synapsePositions.push({
-        position: stlData.positions[stlData.positions.length / 2], 
-        pre: sfi[0],
-        post: sfi[1],
-        catmaidId,
-        volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize
-      })
-    }
+    const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
+    return {
+      position: stlData.positions[stlData.positions.length / 2], 
+      pre,
+      post: post.join(','),
+      catmaidId,
+      volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize
+    };
   });
+
   res.json(synapsePositions);
 })
+
+app.get('/api/synapses', (req, res) => {
+
+  const neurons = new Set(req.query.neurons.split(','))
+  const synapseFiles = fs.readdirSync('./server/3d-models/synapses/');
+  const synapsePositions = synapseFiles
+  .filter(fileName => {
+    const { pre, post } = synapseFileInfo(fileName);
+
+    const preInNeurons = neurons.has(pre);
+    const anyPostInNeurons = Array.from(neurons).filter(n => post.includes(n)).length > 0;
+
+    return preInNeurons && anyPostInNeurons;
+  })
+  .map( f => {
+    const { pre, post, catmaidId } = synapseFileInfo(f);
+
+    const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
+    return {
+        position: stlData.positions[stlData.positions.length / 2], 
+        pre,
+        post: post.join(','),
+        catmaidId,
+        volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize
+    };
+  });
+  res.json(synapsePositions);
+});
 
 app.listen(3000, () => console.log('Listening on port 3000!'));

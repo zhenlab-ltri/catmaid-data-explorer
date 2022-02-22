@@ -24,6 +24,18 @@ export const getNeuronSynapses = neuronName => {
   }).then(res => res.json());
 };
 
+export const getSynapsesBetween = neurons => {
+  console.log(neurons);
+  if(neurons.length === 0) {
+    return Promise.resolve([]);
+  };
+
+  return fetch(`/api/synapses?${new URLSearchParams({ neurons: neurons.join(',')})}`, {
+    method: 'GET',
+  }).then(res => res.json());
+
+}
+
 export const getNeuronsSynapses = neuronNames => {
   const neuronSynapses = neuronNames.map(neuronName => getNeuronSynapses(neuronName));
 
