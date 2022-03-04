@@ -25,7 +25,6 @@ export const getNeuronSynapses = neuronName => {
 };
 
 export const getSynapsesBetween = neurons => {
-  console.log(neurons);
   if(neurons.length === 0) {
     return Promise.resolve([]);
   };

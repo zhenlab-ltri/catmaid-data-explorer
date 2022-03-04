@@ -212,7 +212,7 @@ export default class StlViewer extends React.Component {
 
         }
 
-        outlinePass.selectedObjects = [this.selectedObject];
+        this.selectedObject != null ? outlinePass.selectedObjects = [this.selectedObject] : outlinePass.selectedObjects = [];
         this.setState({
           showTooltip: true,
           selectedObject: this.selectedObject,
