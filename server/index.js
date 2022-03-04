@@ -6,6 +6,21 @@ const path = require('path');
 const parseSTL = require('parse-stl');
 
 const { USER, PASSWORD } = require('../config.json');
+const catmaidConnectors = require('./catmaid-synapse-info.json');
+
+const catmaidIdLinkMap = {};
+catmaidConnectors.connectors.forEach(entry => {
+  const [
+    id, x, y, z,
+    confidence,
+    creator_id,
+    editor_id,
+    creation_time, 
+    edition_time ] = entry;
+  
+    catmaidIdLinkMap[`${id}`] = `https://zhencatmaid.com/?pid=${135}&zp=${z}&yp=${y}&xp=${x}&tool=tracingtool&sid0=${101}&s0=0`;
+});
+
 
 const synapseSizeMap = {};
 const csv = fs.readFileSync('./server/synapse-sizes.txt');
@@ -84,7 +99,8 @@ app.get('/api/synapses/:neuronId', (req, res) => {
       pre,
       post: post.join(','),
       catmaidId,
-      volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize
+      volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize,
+      catmaidLink: catmaidIdLinkMap[catmaidId]
     };
   });
 
@@ -113,9 +129,11 @@ app.get('/api/synapses', (req, res) => {
         pre,
         post: post.join(','),
         catmaidId,
-        volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize
-    };
+        volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize,
+        catmaidLink: catmaidIdLinkMap[catmaidId]
+      };
   });
+
   res.json(synapsePositions);
 });
 

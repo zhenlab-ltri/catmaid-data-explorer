@@ -14,6 +14,7 @@ import mergeImages from 'merge-images';
 import html2canvas from 'html2canvas';
 import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
+import debounce from 'lodash.debounce';
 
 import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
@@ -66,7 +67,7 @@ const NeuronListItem = (props) => {
 
 const neuronsSorted = neurons.sort();
 
-const colorMap = {
+const neuronColorMap = {
   sensory: '#f9cef9',
   interneuron: '#ff887a',
   motor: '#b7daf5',
@@ -75,6 +76,14 @@ const colorMap = {
   unknown: '#d9d9d9',
 };
 
+const synapseColorMap = {
+  pre: '#FAFFAB',
+  post: '#800080',
+  synapse: '#000000'
+}
+
+const synapseInfoKey = (info) => info.catmaidId;
+
 export default class StlViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -82,20 +91,28 @@ export default class StlViewer extends React.Component {
     this.state = {
       searchInput: '',
       selectedNeurons: new Set(),
-      showNeuronNameTooltip: false,
-      hoveredNeuron: null,
+      showTooltip: false,
+      selectedSynapse: null,
+      selectedObject: null,
       colorPickerNeuron: '',
       showColorPicker: false,
       animating: false,
       showImageElements: false,
+      synapsePositionInfo: [],
+      synapseDetail: null,
+      showSynapseDetail: false,
+      synapseDetailPosition: {
+        x: 0,
+        y: 0
+      },
     };
 
     neuronsSorted.forEach((n) => {
       let t = model.neuronInfo[n];
-      let color = colorMap['unknown'];
+      let color = neuronColorMap['unknown'];
 
       if (t != null) {
-        color = colorMap[t.canonicalType];
+        color = neuronColorMap[t.canonicalType];
       }
       this.state[n] = {
         selected: false,
@@ -187,7 +204,9 @@ export default class StlViewer extends React.Component {
 
       if (intersects.length > 0) {
         if(intersects.length > 1){
-          this.selectedObject = intersects.filter(i => i.object.name !== 'Nerve ring')[0].object;
+          const firstIntersect = intersects.filter(i => i.object.name !== 'Nerve ring')[0];
+
+          firstIntersect != null ? this.selectedObject = firstIntersect.object : null;
         } else {
           this.selectedObject = intersects[0].object;
 
@@ -195,21 +214,63 @@ export default class StlViewer extends React.Component {
 
         outlinePass.selectedObjects = [this.selectedObject];
         this.setState({
-          showNeuronNameTooltip: true,
+          showTooltip: true,
           selectedObject: this.selectedObject,
         });
       } else {
         this.selectedObject = null;
         outlinePass.selectedObjects = [];
         this.setState({
-          showNeuronNameTooltip: false,
+          showTooltip: false,
           selectedObject: null,
         });
       }
 
       this.composer.render();
     });
+
+    this.renderer.domElement.addEventListener('click', (e) => {
+      this.mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
+      this.mousePosition.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      this.raycaster.setFromCamera(this.mousePosition, this.camera);
+      const intersects = this.raycaster.intersectObject(this.scene, true);
+      const firstSynapseIntersect = intersects.filter(i => i.object.name.includes('➝'))[0]; 
+      if(firstSynapseIntersect) {
+        const synapseData = firstSynapseIntersect.object.userData;
+        this.setState({
+          synapseDetail: synapseData,
+          showSynapseDetail: true,
+          synapseDetailPosition: {
+            x: e.clientX,
+            y: e.clientY
+          }
+        })
+      } else {
+        this.setState({
+          showSynapseDetail: false
+        });
+      }
+    })
+
+    this.controls.addEventListener('change', debounce(e => {
+      this.setState({
+        synapseDetail: null,
+        showSynapseDetail: false
+      })
+    }), 250);
     this.composer.render();
+
+    const searchParams = new URLSearchParams(this.props.location.search);
+    let searchInput = '';
+    if(searchParams.has('neurons')){
+      searchInput = searchParams.get('neurons')?.split(',').join(', ');
+    }
+
+    this.handleSearchBarChange({
+      target:{
+        value: searchInput
+      }
+    });
   }
 
   handleNeuronColorClick(neuronName) {
@@ -288,12 +349,13 @@ export default class StlViewer extends React.Component {
         mesh.renderOrder = renderOrder;
         return mesh;
       }
-      let createSphere = ([x, y, z], name, color, size) => {
+      let createSphere = ([x, y, z], name, color, size, data) => {
         const geometry = new THREE.SphereGeometry( 2 * size, 16, 16 );
         const material = new THREE.MeshBasicMaterial( { color } );
         const sphere = new THREE.Mesh( geometry, material );
         sphere.position.set(x, y, z);
         sphere.name = name;
+        sphere.userData = data;
         currentNeurons.add( sphere );
       }
 
@@ -303,7 +365,7 @@ export default class StlViewer extends React.Component {
 
       neuronModelBuffers.forEach((buffer, index) => {
         const { neuronName, color } = this.state[selectedNeurons[index]];
-        const mesh = loadModel(buffer, neuronName, color, !onlyOneNeuron ? 0.5 : 1);
+        const mesh = loadModel(buffer, neuronName, color, !onlyOneNeuron ? 0.7 : 1);
 
         currentNeurons.add(mesh);
 
@@ -313,21 +375,22 @@ export default class StlViewer extends React.Component {
         const { position, pre, post, catmaidId, volumeSize } = syn;
         const [x, y, z] = position;
         const translatedVolume = volumeSize / 10000000;
-        let color = '#000000';
+        let color = synapseColorMap['synapse'];
 
         if(onlyOneNeuron){
           if(pre === firstNeuron) {
-            color = '#FAFFAB';
+            color = synapseColorMap['pre'];
           } else {
-            color = '#800080';
+            color = synapseColorMap['post'];
           }
         }
 
         createSphere(
           [x, y, z], 
-          `pre: ${pre}, post: ${post}, catmaid id: ${catmaidId}`,
+          `${pre} ➝ ${post.split(',').join(', ')}`,
           color,
-          Math.min(Math.max(0.05, translatedVolume), 0.5)
+          Math.min(Math.max(0.05, translatedVolume), 0.5),
+          syn
         );
       });
 
@@ -342,9 +405,6 @@ export default class StlViewer extends React.Component {
 
 
       this.scene.add(currentNeurons);
-      const axesHelper = new THREE.AxesHelper( 5 );
-      this.scene.add( axesHelper );
-
       this.composer.render();
     });
   }
@@ -472,14 +532,22 @@ export default class StlViewer extends React.Component {
 
   render() {
     const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
-    const { showNeuronNameTooltip, selectedObject, searchInput } = this.state;
+    const { 
+      showTooltip, 
+      selectedObject, 
+      searchInput, 
+      synapseDetail,
+      showSynapseDetail,
+      synapseDetailPosition
+    } = this.state;
+    const onlyOneNeuron = Array.from(selectedNeurons).length === 1;
     const lastSearchTerm = searchInput.split(', ').pop();
     const searchSuggestions = unselectedNeurons.filter((n) =>
       n.neuronName.startsWith(lastSearchTerm)
     );
 
     const styles = {
-      page: 'w-screen h-screen',
+      page: `w-screen h-screen ${showTooltip ? 'cursor-pointer' : ''}`,
       searchbar:
         'absolute top-2 left-2 w-60 max-h-96 shadow-lg bg-white rounded z-10 overflow-y-scroll',
       stickyTop: 'sticky top-0',
@@ -497,8 +565,11 @@ export default class StlViewer extends React.Component {
       colorPickerWidget: 'bg-white absolute top-14 right-64 border-2',
       colorPickerClose:
         'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
-      selectedNeuronLegend:
-        'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
+      legendContainer: 'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
+      selectedNeuronLegend: '',
+        // 'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
+      synapseLegend: '',
+      // 'absolute top-10 right-2 w-60 shadow-lg rounded z-10',
       imageLegend: {
         container:
           'absolute -top-40 w-40 z-10 flex flex-col font-bold text-gray-700',
@@ -510,7 +581,8 @@ export default class StlViewer extends React.Component {
       },
       watermark: {
         container: 'p-2 absolute h-10 w-10 bottom-2'
-      }
+      },
+      synapseInfo: 'absolute w-60 h-80 bottom-20 left-2 overflow-y-scroll bg-white shadow-lg rounded z-10',
     };
 
     return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
@@ -540,7 +612,7 @@ export default class StlViewer extends React.Component {
       ]),
       h(
         MouseTooltip,
-        { visible: this.state.showNeuronNameTooltip, offsetX: 15, offsetY: 10 },
+        { visible: this.state.showTooltip, offsetX: 15, offsetY: 10 },
         [
           h(
             'div',
@@ -574,11 +646,12 @@ export default class StlViewer extends React.Component {
               className: styles.colorPicker,
               color: this.state[this.state.colorPickerNeuron].color,
               onChange: (color, e) => this.handleColorPickerChange(color, e),
-              presetColors: Object.values(colorMap),
+              presetColors: Object.values(neuronColorMap),
             }),
           ])
         : null,
-      Array.from(selectedNeurons).length > 0
+      h('div', { className: styles.legendContainer }, [
+        Array.from(selectedNeurons).length > 0
         ? h('div', { className: styles.selectedNeuronLegend }, [
             h(
               'div',
@@ -593,6 +666,38 @@ export default class StlViewer extends React.Component {
             ),
           ])
         : null,
+      Array.from(selectedNeurons).length > 0
+      ? h('div', { className: styles.synapseLegend }, [
+          h(
+            'div',
+            { className: styles.selectedNeuronsContainer },
+            (onlyOneNeuron ?  ['pre', 'post'] : ['synapse']).map(n => 
+              h(NeuronListItem, {
+                neuronName: n,
+                color: synapseColorMap[n],
+                selected: true,
+                controller: this,
+              }))
+          ),
+        ])
+      : null,
+      ]),
+      this.state.synapsePositionInfo.length > 0 ? h('div', { className: styles.synapseInfo }, this.state.synapsePositionInfo.map(syn => {
+        const { pre, post, catmaidLink, volumeSize } = syn;
+        const neurons = [pre, ...post.split(',')].join('__');
+        const nemanodeLink = `http://nemanode.zhen-tools.com?db=head&ds=witvliet_2020_8&in=${neurons}`
+        return h('div', { 
+          className: styles.synapseInfoEntry, 
+        }, [
+          h('div', `${pre} ➝ ${post.split(',').join(', ')}`),
+          h('div', [
+            `Volume: ${volumeSize} nm`,
+            h('sup', '3')
+          ]),
+          h('div', [h('a', {target: '_blank', href: catmaidLink }, 'Open in CATMAID')]),
+          h('div', [h('a', {target: '_blank', href: nemanodeLink }, 'Open in NemaNode')]),
+        ])
+      })) : null,
       this.state.showImageElements
         ? h(
             'div',
@@ -646,15 +751,43 @@ export default class StlViewer extends React.Component {
           },
           'image'
         ),
-        h(
-          'i',
-          {
-            className: styles.colorPickerClose,
-            onClick: (e) => {},
-          },
-          'gif_box'
-        ),
+        // h(
+        //   'i',
+        //   {
+        //     className: styles.colorPickerClose,
+        //     onClick: (e) => {},
+        //   },
+        //   'gif_box'
+        // ),
       ]),
+      this.state.showSynapseDetail ? h('div', {
+        className: 'bg-white p-4 rounded shadow-lg w-80',
+        style: {
+          position: 'absolute', 
+          top: `${synapseDetailPosition.y}px`,
+          left: `${synapseDetailPosition.x}px`,
+          zIndex: 10
+        }
+      }, [
+        h('div', {className: 'flex justify-between p-2'}, [
+          h('div', {className: 'font-bold text-gray-700'}, `${synapseDetail.pre} ➝ ${synapseDetail.post.split(',').join(', ')}`),
+          h('div', {className: 'text-gray-400 hover:text-gray-700 cursor-pointer', onClick: e => this.setState({showSynapseDetail: false})}, 'X'),
+        ]),
+        h('div', {className: 'flex pl-4 pr-4 pt-2 pb-2'}, [
+          h('div', {className: 'text-gray-500 font-light mr-2'},'Volume:'),
+          h('div', {className: 'text-gray-500 font-bold'}, [
+            `${synapseDetail.volumeSize} nm`,
+            h('sup', '3')  
+          ])
+        ]),
+        h('div', {className: 'pl-4 pr-4 pt-2 pb-2 flex'}, [
+          h('div', {className: 'text-gray-500 font-light mr-2' }, 'View in:'),
+          h('div', [h('a', {className: 'mr-2 underline text-gray-500', target: '_blank', href: synapseDetail.catmaidLink }, 'CATMAID')]),
+          h('div', [h('a', {className: 'underline text-gray-500', target: '_blank', href: `http://nemanode.zhen-tools.com?db=head&ds=witvliet_2020_8&in=${[synapseDetail.pre, ...synapseDetail.post.split(',')].join('__')}`}, 'NemaNode')
+        ])
+      ])
+    ]) : null,
+    h('div', { className: 'absolute bottom-10 right-10'}, '(2021 Witvliet et. al)')
     ]);
   }
 }
