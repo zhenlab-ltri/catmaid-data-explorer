@@ -38,6 +38,31 @@ const averageSynapseSize = Object.values(synapseSizeMap).reduce((a, b) => a + b,
 // console.log(sortedSizes, sortedSizes.length);
 // console.log(sortedSizes[0], sortedSizes[Math.floor(sortedSizes.length / 2)], sortedSizes[sortedSizes.length - 1]);
 
+const synapseFileInfo = f => { 
+  const data = f.split('.')[1].split('_');
+  return {
+    pre: data[0],
+    post: data[1].split(','),
+    catmaidId: data[2].split('-')[0] 
+  };
+};
+
+const synapseInfoList = fs.readdirSync('./server/3d-models/synapses/').map( f => {
+  const { pre, post, catmaidId } = synapseFileInfo(f);
+
+  const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
+  return {
+    position: stlData.positions[stlData.positions.length / 2], 
+    pre,
+    post: post.join(','),
+    catmaidId,
+    volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize,
+    catmaidLink: catmaidIdLinkMap[catmaidId]
+  };
+
+});
+
+
 
 if (USER !== '' && PASSWORD !== '') {
   console.log(USER, PASSWORD);
@@ -73,68 +98,33 @@ app.get('/api/models/:neuronId', (req, res) => {
   res.end(stlModelFile, 'binary');
 });
 
-const synapseFileInfo = f => { 
-  const data = f.split('.')[1].split('_');
-  return {
-    pre: data[0],
-    post: data[1].split(','),
-    catmaidId: data[2].split('-')[0] 
-  };
-};
 
 app.get('/api/synapses/:neuronId', (req, res) => {
   const neuronId = req.params.neuronId;
 
-  const synapseFiles = fs.readdirSync('./server/3d-models/synapses/');
-  const synapsePositions = synapseFiles
-  .filter(f => {
-    const { pre, post } = synapseFileInfo(f);
-    return pre === neuronId || post.includes(neuronId);
-  }).map(f => {
-    const { pre, post, catmaidId } = synapseFileInfo(f);
+  const relevantSynapses = synapseInfoList.filter(entry => {
+    const { pre, post } = entry;
 
-    const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
-    return {
-      position: stlData.positions[stlData.positions.length / 2], 
-      pre,
-      post: post.join(','),
-      catmaidId,
-      volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize,
-      catmaidLink: catmaidIdLinkMap[catmaidId]
-    };
+    return pre === neuronId || post.includes(neuronId);
   });
 
-  res.json(synapsePositions);
+  res.json(relevantSynapses);
 })
 
 app.get('/api/synapses', (req, res) => {
 
   const neurons = new Set(req.query.neurons.split(','))
-  const synapseFiles = fs.readdirSync('./server/3d-models/synapses/');
-  const synapsePositions = synapseFiles
-  .filter(fileName => {
-    const { pre, post } = synapseFileInfo(fileName);
+
+  const relevantSynapses = synapseInfoList.filter(entry => {
+    const { pre, post } = entry;
 
     const preInNeurons = neurons.has(pre);
     const anyPostInNeurons = Array.from(neurons).filter(n => post.includes(n)).length > 0;
 
     return preInNeurons && anyPostInNeurons;
-  })
-  .map( f => {
-    const { pre, post, catmaidId } = synapseFileInfo(f);
-
-    const stlData = parseSTL(fs.readFileSync(`./server/3d-models/synapses/${f}`));
-    return {
-        position: stlData.positions[stlData.positions.length / 2], 
-        pre,
-        post: post.join(','),
-        catmaidId,
-        volumeSize: parseInt(synapseSizeMap[catmaidId]) || averageSynapseSize,
-        catmaidLink: catmaidIdLinkMap[catmaidId]
-      };
   });
 
-  res.json(synapsePositions);
+  res.json(relevantSynapses);
 });
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
