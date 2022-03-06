@@ -41,6 +41,14 @@ export const getNeuronsSynapses = neuronNames => {
   return Promise.all(neuronSynapses);
 }
 
+let nerveRingArrayBuffer = null;
 export const getNerveRingModel = () => {
-  return fetch('/api/models/nervering').then( res => res.arrayBuffer() );
+  if(nerveRingArrayBuffer != null){
+    return Promise.resolve(nerveRingArrayBuffer);
+  } else {
+    return fetch('/api/models/nervering').then( res => res.arrayBuffer()).then( res => {
+      nerveRingArrayBuffer = res;
+      return res;
+    });
+  }
 }
