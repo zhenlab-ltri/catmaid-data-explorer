@@ -23,7 +23,15 @@ import model from '../model';
 
 const loader = new STLLoader();
 const NeuronListItem = (props) => {
-  const { neuronName, color, selected, colorPickerNeuron, controller } = props;
+  const { 
+    neuronName, 
+    color, 
+    selected, 
+    colorPickerNeuron, 
+    controller,
+    topLevelOnClick = () => {},
+    colorOnClick = () => {},
+  } = props;
 
   const styles = {
     NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 cursor-pointer`,
@@ -36,7 +44,7 @@ const NeuronListItem = (props) => {
     'div',
     {
       className: styles.NeuronListItem,
-      onClick: () => controller.toggleNeuron(neuronName, !selected),
+      onClick: e => topLevelOnClick(e),
     },
     [
       h(
@@ -45,19 +53,13 @@ const NeuronListItem = (props) => {
           className: 'w-20 flex items-center',
         },
         [
-          h('input', {
-            className: styles.neuronChecked,
-            type: 'checkbox',
-            checked: selected,
-            onChange: () => controller.toggleNeuron(neuronName, !selected),
-          }),
           h('div', { className: styles.neuronName }, neuronName),
         ]
       ),
       selected
         ? h('div', {
             style: { backgroundColor: color },
-            onClick: () => props.controller.handleNeuronColorClick(neuronName),
+            onClick: (e) => colorOnClick(e),
             className: styles.neuronColor,
           })
         : null,
@@ -463,6 +465,10 @@ export default class StlViewer extends React.Component {
       nextState['searchInput'] = `${
         tokens.length > 0 ? tokens.join(', ') + ', ' : ''
       }${neuronName},`;
+    } else {
+      // const tokens = this.state.searchInput.split(',').filter(item => item != neuronName);
+      // nextState['searchInput'] = tokens.join(',');
+      // console.log(nextState['searchInput'])
     }
 
     this.setState(nextState, () => this.viewNeuron());
@@ -604,6 +610,8 @@ export default class StlViewer extends React.Component {
                 h(NeuronListItem, {
                   ...n,
                   colorPickerNeuron: this.state.colorPickerNeuron,
+                  topLevelOnClick: () => this.toggleNeuron(n.neuronName, !n.selected),
+                  colorOnClick: () => {},
                   controller: this,
                 })
               )
@@ -660,6 +668,10 @@ export default class StlViewer extends React.Component {
                 h(NeuronListItem, {
                   ...n,
                   colorPickerNeuron: this.state.colorPickerNeuron,
+                  colorOnClick: (e) => {
+                    e.stopPropagation();
+                    this.handleNeuronColorClick(n.neuronName)
+                  },
                   controller: this,
                 })
               )
