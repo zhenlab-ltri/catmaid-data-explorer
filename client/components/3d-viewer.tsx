@@ -446,6 +446,10 @@ export default class StlViewer extends React.Component {
       searchInput: value,
     };
 
+    neuronsSorted.forEach(
+      (n) => (nextState[n] = Object.assign(this.state[n], { selected: false }))
+    );
+
     recognizedNeurons.forEach(
       (n) => (nextState[n] = Object.assign(this.state[n], { selected: true }))
     );
