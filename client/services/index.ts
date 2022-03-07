@@ -1,11 +1,20 @@
 
 import 'regenerator-runtime/runtime';
 
+const neuronModelBufferCache = {};
 
 export const getNeuronModel = neuronName => {
-  return fetch(`/api/models/${neuronName}`, {
-    method: 'GET',
-  }).then(res => res.arrayBuffer());
+
+  if(neuronModelBufferCache[neuronName]) {
+    return Promise.resolve(neuronModelBufferCache[neuronName]);
+  }
+
+  return fetch(`/api/models/${neuronName}`, {method: 'GET',})
+    .then(res => res.arrayBuffer())
+    .then(res => {
+      neuronModelBufferCache[neuronName] = res;
+      return res;
+    });
 }
 
 export const getNeuronModels = neuronNames => {
