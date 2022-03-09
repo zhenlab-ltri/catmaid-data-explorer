@@ -37,7 +37,7 @@ const NeuronListItem = (props) => {
     NeuronListItem: `flex justify-between row items-center pl-4 pr-4 pt-2 pb-2 hover:bg-gray-300 cursor-pointer`,
     neuronName: '',
     neuronChecked: 'cursor-pointer mr-4',
-    neuronColor: 'relative cursor-pointer w-6 h-4 shadow-inner rounded',
+    neuronColor: 'relative cursor-pointer w-4 h-4 shadow-inner rounded-full',
   };
 
   return h(
@@ -79,8 +79,8 @@ const neuronColorMap = {
 };
 
 const synapseColorMap = {
-  pre: '#FAFFAB',
-  post: '#800080',
+  pre: '#ffffff',
+  post: '#000000',
   synapse: '#000000'
 }
 
