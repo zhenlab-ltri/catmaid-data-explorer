@@ -243,8 +243,8 @@ export default class StlViewer extends React.Component {
           synapseDetail: synapseData,
           showSynapseDetail: true,
           synapseDetailPosition: {
-            x: e.clientX,
-            y: e.clientY
+            x: e.clientX + 40,
+            y: e.clientY - 25
           }
         })
       } else {
@@ -624,7 +624,7 @@ export default class StlViewer extends React.Component {
       ]),
       h(
         MouseTooltip,
-        { visible: this.state.showTooltip, offsetX: 15, offsetY: 10 },
+        { visible: this.state.showTooltip, offsetX: 40, offsetY: -25 },
         [
           h(
             'div',
