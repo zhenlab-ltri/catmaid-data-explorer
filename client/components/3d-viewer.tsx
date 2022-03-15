@@ -555,18 +555,18 @@ export default class StlViewer extends React.Component {
     const selectedNeuronClasses = [];
     const unselectedNeuronClasses = [];
 
-    neuronClassesSorted.forEach(c => {
-      const anyMember = Object.values(model.neuronInfo).find(ni => ni.class == c);
-      const classMembers = anyMember != null ? anyMember.classMembers : [];
+    // neuronClassesSorted.forEach(c => {
+      // const anyMember = Object.values(model.neuronInfo).find(ni => ni.class == c);
+      // const classMembers = anyMember != null ? anyMember.classMembers : [];
 
-      classMembers.forEach(n => {
-        const neuronInfo = Object.assign(this.state[n], { neuronName: n });
-        if (this.state[n].selected) {
-          selectedNeurons.push(neuronInfo);
-        } else {
-          unselectedNeurons.push(neuronInfo);
-        }      
-      });
+      // classMembers.forEach(n => {
+      //   const neuronInfo = Object.assign(this.state[n], { neuronName: n });
+      //   if (this.state[n].selected) {
+      //     selectedNeurons.push(neuronInfo);
+      //   } else {
+      //     unselectedNeurons.push(neuronInfo);
+      //   }      
+      // });
 
       // if (this.state[n].selected) {
       //   selectedNeurons.push(neuronInfo);
@@ -574,17 +574,17 @@ export default class StlViewer extends React.Component {
       //   unselectedNeurons.push(neuronInfo);
       // }
 
-    })
+    // })
 
-    return {
-      selectedNeurons,
-      unselectedNeurons,
-    };
+    // return {
+    //   selectedNeurons,
+    //   unselectedNeurons,
+    // };
   }
 
   render() {
     const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
-    const { selectedClasses, unselectedClasses } = this.getNeuronClassPartitions();
+    // const { selectedClasses, unselectedClasses } = this.getNeuronClassPartitions();
     const { 
       showTooltip, 
       hoveredObject, 
