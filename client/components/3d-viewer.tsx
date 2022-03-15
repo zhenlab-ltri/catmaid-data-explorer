@@ -93,7 +93,7 @@ export default class StlViewer extends React.Component {
       selectedNeurons: new Set(),
       showTooltip: false,
       selectedSynapse: null,
-      hoveredObject: null,
+      selectedObject: null,
       clickedObject: null,
       colorPickerNeuron: '',
       showColorPicker: false,
@@ -194,7 +194,7 @@ export default class StlViewer extends React.Component {
     });
 
     // hover outline
-    this.hoveredObject = null;
+    this.selectedObject = null;
     this.renderer.domElement.addEventListener('pointermove', (e) => {
       if (e.isPrimary === false) return;
       this.mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -202,30 +202,27 @@ export default class StlViewer extends React.Component {
 
       this.raycaster.setFromCamera(this.mousePosition, this.camera);
       const intersects = this.raycaster.intersectObject(this.scene, true);
-
       if (intersects.length > 0) {
-        if(intersects.length > 1){
+        if(intersects.length > 1) {
           const firstIntersect = intersects.filter(i => i.object.name !== 'Nerve ring')[0];
 
-          firstIntersect != null ? this.hoveredObject = firstIntersect.object : null;
+          firstIntersect != null ? this.selectedObject = firstIntersect.object : null;
         } else {
-          this.hoveredObject = intersects[0].object;
+          this.selectedObject = intersects[0].object;
 
         }
 
-        this.hoveredObject != null ? outlinePass.selectedObjects = [null, this.hoveredObject] : outlinePass.hoveredObjects = [];
+        this.selectedObject != null ? outlinePass.selectedObjects = [this.selectedObject] : outlinePass.selectedObjects = [];
         this.setState({
           showTooltip: true,
-          hoveredObject: this.hoveredObject,
+          selectedObject: this.selectedObject,
         });
       } else {
-        if(this.hoveredObject == null) {
-          
-        }
-        this.hoveredObject = null;
+        this.selectedObject = null;
+        outlinePass.selectedObjects = [];
         this.setState({
           showTooltip: false,
-          hoveredObject: null,
+          selectedObject: null,
         });
       }
 
@@ -587,7 +584,7 @@ export default class StlViewer extends React.Component {
     // const { selectedClasses, unselectedClasses } = this.getNeuronClassPartitions();
     const { 
       showTooltip, 
-      hoveredObject, 
+      selectedObject, 
       searchInput, 
       synapseDetail,
       showSynapseDetail,
@@ -673,7 +670,7 @@ export default class StlViewer extends React.Component {
           h(
             'div',
             { className: styles.neuronNameTooltip },
-            hoveredObject != null ? hoveredObject.name : null
+            selectedObject != null ? selectedObject.name : null
           ),
         ]
       ),
