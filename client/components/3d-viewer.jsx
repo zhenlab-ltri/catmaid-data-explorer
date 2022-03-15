@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import * as THREE from 'three';
-import chroma from 'chroma-js';
-import debounce from 'lodash.debounce';
 import { SketchPicker } from 'react-color';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
@@ -27,8 +25,6 @@ const NeuronListItem = (props) => {
     neuronName, 
     color, 
     selected, 
-    colorPickerNeuron, 
-    controller,
     topLevelOnClick = () => {},
     colorOnClick = () => {},
   } = props;
@@ -68,6 +64,9 @@ const NeuronListItem = (props) => {
 };
 
 const neuronsSorted = neurons.sort();
+const neuronClassesSorted = neuronsSorted.map(n => {
+ return model.neuronInfo[n] != null ? model.neuronInfo[n].class : '';
+});
 
 const neuronColorMap = {
   sensory: '#f9cef9',
@@ -84,7 +83,6 @@ const synapseColorMap = {
   synapse: '#000000'
 }
 
-const synapseInfoKey = (info) => info.catmaidId;
 
 export default class StlViewer extends React.Component {
   constructor(props) {
@@ -95,7 +93,8 @@ export default class StlViewer extends React.Component {
       selectedNeurons: new Set(),
       showTooltip: false,
       selectedSynapse: null,
-      selectedObject: null,
+      hoveredObject: null,
+      clickedObject: null,
       colorPickerNeuron: '',
       showColorPicker: false,
       animating: false,
@@ -195,7 +194,7 @@ export default class StlViewer extends React.Component {
     });
 
     // hover outline
-    this.selectedObject = null;
+    this.hoveredObject = null;
     this.renderer.domElement.addEventListener('pointermove', (e) => {
       if (e.isPrimary === false) return;
       this.mousePosition.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -208,23 +207,25 @@ export default class StlViewer extends React.Component {
         if(intersects.length > 1){
           const firstIntersect = intersects.filter(i => i.object.name !== 'Nerve ring')[0];
 
-          firstIntersect != null ? this.selectedObject = firstIntersect.object : null;
+          firstIntersect != null ? this.hoveredObject = firstIntersect.object : null;
         } else {
-          this.selectedObject = intersects[0].object;
+          this.hoveredObject = intersects[0].object;
 
         }
 
-        this.selectedObject != null ? outlinePass.selectedObjects = [this.selectedObject] : outlinePass.selectedObjects = [];
+        this.hoveredObject != null ? outlinePass.selectedObjects = [null, this.hoveredObject] : outlinePass.hoveredObjects = [];
         this.setState({
           showTooltip: true,
-          selectedObject: this.selectedObject,
+          hoveredObject: this.hoveredObject,
         });
       } else {
-        this.selectedObject = null;
-        outlinePass.selectedObjects = [];
+        if(this.hoveredObject == null) {
+          
+        }
+        this.hoveredObject = null;
         this.setState({
           showTooltip: false,
-          selectedObject: null,
+          hoveredObject: null,
         });
       }
 
@@ -534,6 +535,47 @@ export default class StlViewer extends React.Component {
       }
     });
 
+    // neuronClassesSorted.forEach(c => {
+    //   const anyMember = Object.values(model.neuronInfo).find(ni => ni.class == c);
+    //   const classMembers = anyMember != null ? anyMember.classMembers : [];
+
+    //   classMembers.forEach(n => {
+    //     const neuronInfo = Object.assign(this.state[n], { neuronName: n });
+    //       selectedNeurons.push(neuronInfo);
+    //   });
+    // })
+
+    return {
+      selectedNeurons,
+      unselectedNeurons,
+    };
+  }
+
+  getNeuronClassPartitions() {
+    const selectedNeuronClasses = [];
+    const unselectedNeuronClasses = [];
+
+    neuronClassesSorted.forEach(c => {
+      const anyMember = Object.values(model.neuronInfo).find(ni => ni.class == c);
+      const classMembers = anyMember != null ? anyMember.classMembers : [];
+
+      classMembers.forEach(n => {
+        const neuronInfo = Object.assign(this.state[n], { neuronName: n });
+        if (this.state[n].selected) {
+          selectedNeurons.push(neuronInfo);
+        } else {
+          unselectedNeurons.push(neuronInfo);
+        }      
+      });
+
+      // if (this.state[n].selected) {
+      //   selectedNeurons.push(neuronInfo);
+      // } else {
+      //   unselectedNeurons.push(neuronInfo);
+      // }
+
+    })
+
     return {
       selectedNeurons,
       unselectedNeurons,
@@ -542,9 +584,10 @@ export default class StlViewer extends React.Component {
 
   render() {
     const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
+    const { selectedClasses, unselectedClasses } = this.getNeuronClassPartitions();
     const { 
       showTooltip, 
-      selectedObject, 
+      hoveredObject, 
       searchInput, 
       synapseDetail,
       showSynapseDetail,
@@ -612,11 +655,12 @@ export default class StlViewer extends React.Component {
               { className: styles.unselectedNeuronsContainer },
               searchSuggestions.map((n) =>
                 h(NeuronListItem, {
-                  ...n,
+                  neuronName: n.neuronName,
+                  selected: n.selected,
+                  color: n.color,
                   colorPickerNeuron: this.state.colorPickerNeuron,
                   topLevelOnClick: () => this.toggleNeuron(n.neuronName, !n.selected),
                   colorOnClick: () => {},
-                  controller: this,
                 })
               )
             )
@@ -629,7 +673,7 @@ export default class StlViewer extends React.Component {
           h(
             'div',
             { className: styles.neuronNameTooltip },
-            selectedObject != null ? selectedObject.name : null
+            hoveredObject != null ? hoveredObject.name : null
           ),
         ]
       ),
@@ -692,7 +736,6 @@ export default class StlViewer extends React.Component {
                 neuronName: n,
                 color: synapseColorMap[n],
                 selected: true,
-                controller: this,
               }))
           ),
         ])
