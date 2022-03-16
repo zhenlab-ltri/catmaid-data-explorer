@@ -453,9 +453,19 @@ export default class StlViewer extends React.Component {
   handleSearchBarChange(e) {
     let value = e.target.value.toUpperCase();
     let isNeuron = (token) => neurons.indexOf(token) !== -1;
+    let isNeuronClass = (token) => this.state.neuronClassState[token] != null;
     let recognizedNeurons = new Set(
       value.split(', ').filter((token) => isNeuron(token))
     );
+
+    let recognizedNeuronClasses = new Set(
+      value.split(', ').filter((token) => isNeuronClass(token))
+    );
+
+    Array.from(recognizedNeuronClasses).forEach(c => {
+      model.getNeuronClassMembers(c).forEach(cm => recognizedNeurons.add(cm));
+    });
+
 
     let nextState = {
       selectedNeurons: recognizedNeurons,
@@ -504,31 +514,42 @@ export default class StlViewer extends React.Component {
   }
 
   toggleNeuronClass(neuronClass, selected) {
-    // const nextNeuronClassState = Object.assign(this.state.neuronClassState[neuronClass], {
-    //   selected
-    // });
+    const nextNeuronClassState = Object.assign(this.state.neuronClassState[neuronClass], {
+      selected
+    });
 
-    // const neuronClassMembers = model.getNeuronClassMembers(neuronClass);
+    const nextNeuronClassMembersState = {};
+    
+    const classMembers = model.getNeuronClassMembers(neuronClass);
+    classMembers.forEach(member => {
+      nextNeuronClassMembersState[this.state.neuronState[member]] = Object.assign(this.state.neuronState[member], { selected });
+    });
 
-    // if (selected) {
-    //   const tokens = this.state.searchInput.split(', ');
-    //   const lastToken = tokens.pop();
-    //   nextSearchInput = `${
-    //     tokens.length > 0 ? tokens.join(', ') + ', ' : ''
-    //   }${neuronClass},`;
-    // } else {
-    //   // const tokens = this.state.searchInput.split(',').filter(item => item != neuronName);
-    //   // nextState['searchInput'] = tokens.join(',');
-    //   // console.log(nextState['searchInput'])
-    // }
+    let nextSearchInput = '';
 
-    // this.setState({
-    //   neuronState: {
-    //     ...this.state.neuronState,
-    //     [this.state.neuronState[neuronName]]: nextNeuronState
-    //   },
-    //   searchInput: nextSearchInput
-    // }, () => this.viewNeuron());
+    if (selected) {
+      const tokens = this.state.searchInput.split(', ');
+      const lastToken = tokens.pop();
+      nextSearchInput = `${
+        tokens.length > 0 ? tokens.join(', ') + ', ' : ''
+      }${neuronClass},`;
+    } else {
+      // const tokens = this.state.searchInput.split(',').filter(item => item != neuronName);
+      // nextState['searchInput'] = tokens.join(',');
+      // console.log(nextState['searchInput'])
+    }
+
+    this.setState({
+      neuronState: {
+        ...this.state.neuronState,
+        nextNeuronClassMembersState
+      },
+      neuronClassState: {
+        ...this.state.neuronClassState,
+        nextNeuronClassState
+      },
+      searchInput: nextSearchInput
+    }, () => this.viewNeuron());
   }
 
   exportImage() {
@@ -613,7 +634,6 @@ export default class StlViewer extends React.Component {
 
   render() {
     const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
-    console.log(this.getNeuronClassPartitions());
     const { selectedNeuronClasses, unselectedNeuronClasses } = this.getNeuronClassPartitions();
     const { 
       showTooltip, 
