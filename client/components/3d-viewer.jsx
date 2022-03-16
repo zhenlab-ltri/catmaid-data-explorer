@@ -64,9 +64,9 @@ const NeuronListItem = (props) => {
 };
 
 const neuronsSorted = neurons.sort();
-const neuronClassesSorted = neuronsSorted.map(n => {
- return model.neuronInfo[n] != null ? model.neuronInfo[n].class : '';
-});
+const neuronClassesSorted = Array.from(
+  new Set(neuronsSorted.map(n => model.neuronInfo[n] != null ? model.neuronInfo[n].class : ''))
+).sort();
 
 const neuronColorMap = {
   sensory: '#f9cef9',
@@ -106,6 +106,8 @@ export default class StlViewer extends React.Component {
         x: 0,
         y: 0
       },
+      neuronState: {},
+      neuronClassState: {}
     };
 
     neuronsSorted.forEach((n) => {
@@ -115,9 +117,20 @@ export default class StlViewer extends React.Component {
       if (t != null) {
         color = neuronColorMap[t.canonicalType];
       }
-      this.state[n] = {
+      this.state.neuronState[n] = {
+        neuronName: n,
         selected: false,
+        isNeuron: true,
         color,
+      };
+    });
+
+    neuronClassesSorted.forEach((c) => {
+      this.state.neuronClassState[c] = {
+        neuronName: c,
+        selected: false,
+        isNeuron: false,
+        classMembers: model.getNeuronClassMembers(c)
       };
     });
 
@@ -297,21 +310,26 @@ export default class StlViewer extends React.Component {
   debouncedUpdateNeuronMeshColor = debounce(this.updateNeuronMeshColor, 200);
 
   handleColorPickerChange(color) {
-    const nextState = {};
-    nextState[this.state.colorPickerNeuron] = Object.assign(
-      this.state[this.state.colorPickerNeuron],
+    const nextNeuronState = Object.assign(
+      this.state.neuronState[this.state.colorPickerNeuron],
       {
         color: color.hex,
       }
     );
 
-    this.setState(nextState, () =>
+
+    this.setState({
+      neuronState: {
+        ...this.state.neuronState,
+        [this.state.colorPickerNeuron]: nextNeuronState
+      }
+    }, () =>
       this.debouncedUpdateNeuronMeshColor(color, this.state.colorPickerNeuron)
     );
   }
 
   viewNeuron() {
-    const selectedNeurons = neuronsSorted.filter((n) => this.state[n].selected);
+    const selectedNeurons = neuronsSorted.filter((n) => this.state.neuronState[n].selected);
     const firstNeuron = Array.from(selectedNeurons).shift();
     const onlyOneNeuron = selectedNeurons.length === 1;
 
@@ -364,7 +382,7 @@ export default class StlViewer extends React.Component {
 
 
       neuronModelBuffers.forEach((buffer, index) => {
-        const { neuronName, color } = this.state[selectedNeurons[index]];
+        const { neuronName, color } = this.state.neuronState[selectedNeurons[index]];
         const mesh = loadModel(buffer, neuronName, color, !onlyOneNeuron ? 0.7 : 1);
 
         currentNeurons.add(mesh);
@@ -442,29 +460,32 @@ export default class StlViewer extends React.Component {
     let nextState = {
       selectedNeurons: recognizedNeurons,
       searchInput: value,
+      neuronState: {}
     };
 
     neuronsSorted.forEach(
-      (n) => (nextState[n] = Object.assign(this.state[n], { selected: false }))
+      (n) => (nextState.neuronState[n] = Object.assign(this.state.neuronState[n], { selected: false }))
     );
 
     recognizedNeurons.forEach(
-      (n) => (nextState[n] = Object.assign(this.state[n], { selected: true }))
+      (n) => (nextState.neuronState[n] = Object.assign(this.state.neuronState[n], { selected: true }))
     );
 
     this.setState(nextState, () => this.viewNeuron());
   }
 
   toggleNeuron(neuronName, selected) {
-    const nextState = {};
-    nextState[neuronName] = Object.assign(this.state[neuronName], {
+
+    const nextNeuronState = Object.assign(this.state.neuronState[neuronName], {
       selected,
     });
+
+    let nextSearchInput = '';
 
     if (selected) {
       const tokens = this.state.searchInput.split(', ');
       const lastToken = tokens.pop();
-      nextState['searchInput'] = `${
+      nextSearchInput = `${
         tokens.length > 0 ? tokens.join(', ') + ', ' : ''
       }${neuronName},`;
     } else {
@@ -473,7 +494,41 @@ export default class StlViewer extends React.Component {
       // console.log(nextState['searchInput'])
     }
 
-    this.setState(nextState, () => this.viewNeuron());
+    this.setState({
+      neuronState: {
+        ...this.state.neuronState,
+        [this.state.neuronState[neuronName]]: nextNeuronState
+      },
+      searchInput: nextSearchInput
+    }, () => this.viewNeuron());
+  }
+
+  toggleNeuronClass(neuronClass, selected) {
+    // const nextNeuronClassState = Object.assign(this.state.neuronClassState[neuronClass], {
+    //   selected
+    // });
+
+    // const neuronClassMembers = model.getNeuronClassMembers(neuronClass);
+
+    // if (selected) {
+    //   const tokens = this.state.searchInput.split(', ');
+    //   const lastToken = tokens.pop();
+    //   nextSearchInput = `${
+    //     tokens.length > 0 ? tokens.join(', ') + ', ' : ''
+    //   }${neuronClass},`;
+    // } else {
+    //   // const tokens = this.state.searchInput.split(',').filter(item => item != neuronName);
+    //   // nextState['searchInput'] = tokens.join(',');
+    //   // console.log(nextState['searchInput'])
+    // }
+
+    // this.setState({
+    //   neuronState: {
+    //     ...this.state.neuronState,
+    //     [this.state.neuronState[neuronName]]: nextNeuronState
+    //   },
+    //   searchInput: nextSearchInput
+    // }, () => this.viewNeuron());
   }
 
   exportImage() {
@@ -524,23 +579,13 @@ export default class StlViewer extends React.Component {
     const unselectedNeurons = [];
 
     neuronsSorted.forEach((n) => {
-      const neuronInfo = Object.assign(this.state[n], { neuronName: n });
-      if (this.state[n].selected) {
+      const neuronInfo = Object.assign(this.state.neuronState[n], { neuronName: n });
+      if (this.state.neuronState[n].selected) {
         selectedNeurons.push(neuronInfo);
       } else {
         unselectedNeurons.push(neuronInfo);
       }
     });
-
-    // neuronClassesSorted.forEach(c => {
-    //   const anyMember = Object.values(model.neuronInfo).find(ni => ni.class == c);
-    //   const classMembers = anyMember != null ? anyMember.classMembers : [];
-
-    //   classMembers.forEach(n => {
-    //     const neuronInfo = Object.assign(this.state[n], { neuronName: n });
-    //       selectedNeurons.push(neuronInfo);
-    //   });
-    // })
 
     return {
       selectedNeurons,
@@ -552,36 +597,24 @@ export default class StlViewer extends React.Component {
     const selectedNeuronClasses = [];
     const unselectedNeuronClasses = [];
 
-    // neuronClassesSorted.forEach(c => {
-      // const anyMember = Object.values(model.neuronInfo).find(ni => ni.class == c);
-      // const classMembers = anyMember != null ? anyMember.classMembers : [];
+    neuronClassesSorted.forEach(c => {
+      if (this.state.neuronClassState[c].selected) {
+        selectedNeuronClasses.push(this.state.neuronClassState[c]);
+      } else {
+        unselectedNeuronClasses.push(this.state.neuronClassState[c]);
+      }
+    });
 
-      // classMembers.forEach(n => {
-      //   const neuronInfo = Object.assign(this.state[n], { neuronName: n });
-      //   if (this.state[n].selected) {
-      //     selectedNeurons.push(neuronInfo);
-      //   } else {
-      //     unselectedNeurons.push(neuronInfo);
-      //   }      
-      // });
-
-      // if (this.state[n].selected) {
-      //   selectedNeurons.push(neuronInfo);
-      // } else {
-      //   unselectedNeurons.push(neuronInfo);
-      // }
-
-    // })
-
-    // return {
-    //   selectedNeurons,
-    //   unselectedNeurons,
-    // };
+    return {
+      selectedNeuronClasses,
+      unselectedNeuronClasses,
+    };
   }
 
   render() {
     const { selectedNeurons, unselectedNeurons } = this.getNeuronPartitions();
-    // const { selectedClasses, unselectedClasses } = this.getNeuronClassPartitions();
+    console.log(this.getNeuronClassPartitions());
+    const { selectedNeuronClasses, unselectedNeuronClasses } = this.getNeuronClassPartitions();
     const { 
       showTooltip, 
       selectedObject, 
@@ -592,7 +625,11 @@ export default class StlViewer extends React.Component {
     } = this.state;
     const onlyOneNeuron = Array.from(selectedNeurons).length === 1;
     const lastSearchTerm = searchInput.split(', ').pop();
-    const searchSuggestions = unselectedNeurons.filter((n) =>
+
+    const searchSuggestions = [
+      ...unselectedNeurons,
+      ...unselectedNeuronClasses
+    ].sort((a, b) => b.neuronName - a.neuronName ).filter((n) =>
       n.neuronName.startsWith(lastSearchTerm)
     );
 
@@ -650,16 +687,28 @@ export default class StlViewer extends React.Component {
           ? h(
               'div',
               { className: styles.unselectedNeuronsContainer },
-              searchSuggestions.map((n) =>
-                h(NeuronListItem, {
-                  neuronName: n.neuronName,
-                  selected: n.selected,
-                  color: n.color,
-                  colorPickerNeuron: this.state.colorPickerNeuron,
-                  topLevelOnClick: () => this.toggleNeuron(n.neuronName, !n.selected),
-                  colorOnClick: () => {},
+              [
+                ...searchSuggestions.map((n) => {
+
+                  if(n.isNeuron){
+                    return h(NeuronListItem, {
+                      neuronName: n.neuronName,
+                      selected: n.selected,
+                      color: n.color,
+                      topLevelOnClick: () => this.toggleNeuron(n.neuronName, !n.selected),
+                      colorOnClick: () => {},
+                    });  
+                  } else {
+                    return h(NeuronListItem, {
+                      neuronName: n.neuronName,
+                      selected: false,
+                      color: '',
+                      topLevelOnClick: () => this.toggleNeuronClass(n.neuronName, !n.selected),
+                      colorOnClick: () => {},
+                    })
+                  }
                 })
-              )
+              ]
             )
           : null,
       ]),
@@ -697,7 +746,7 @@ export default class StlViewer extends React.Component {
             ]),
             h(SketchPicker, {
               className: styles.colorPicker,
-              color: this.state[this.state.colorPickerNeuron].color,
+              color: this.state.neuronState[this.state.colorPickerNeuron].color,
               onChange: (color, e) => this.handleColorPickerChange(color, e),
               presetColors: Object.values(neuronColorMap),
             }),

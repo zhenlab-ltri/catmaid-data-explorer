@@ -24,6 +24,16 @@ model.getIndexOfNeuron = (neuron: string): number => {
   return neuronsIndexMap[neuron];
 }
 
+model.getNeuronClassMembers = (neuronClass: string) => {
+  const classMember = Object.values(neuronInfoMap).find(ni => ni.class === neuronClass);
+
+  if(classMember){
+    return classMember.classMembers;
+  }
+
+  return [];
+};
+
 model.getIndexOfDataset = (dataset: string): number => {
   return datasetIndexMap[dataset];
 }
