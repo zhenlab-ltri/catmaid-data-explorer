@@ -78,8 +78,8 @@ const neuronColorMap = {
 };
 
 const synapseColorMap = {
-  pre: '#ffffff',
-  post: '#000000',
+  pre: '#e1f0ef',
+  post: '#6b645e',
   synapse: '#000000'
 }
 
@@ -102,10 +102,10 @@ export default class StlViewer extends React.Component {
       synapsePositionInfo: [],
       synapseDetail: null,
       showSynapseDetail: false,
-      synapseDetailPosition: {
-        x: 0,
-        y: 0
-      },
+      // synapseDetailPosition: {
+      //   x: 0,
+      //   y: 0
+      // },
       neuronState: {},
       neuronClassState: {}
     };
@@ -206,7 +206,7 @@ export default class StlViewer extends React.Component {
       this.composer.render();
     });
 
-    // hover outline
+    // hover tooltip
     this.selectedObject = null;
     this.renderer.domElement.addEventListener('pointermove', (e) => {
       if (e.isPrimary === false) return;
@@ -225,21 +225,19 @@ export default class StlViewer extends React.Component {
 
         }
 
-        this.selectedObject != null ? outlinePass.selectedObjects = [this.selectedObject] : outlinePass.selectedObjects = [];
+        // this.selectedObject != null ? outlinePass.selectedObjects = [this.selectedObject] : outlinePass.selectedObjects = [];
         this.setState({
           showTooltip: true,
           selectedObject: this.selectedObject,
         });
       } else {
-        this.selectedObject = null;
-        outlinePass.selectedObjects = [];
+        // this.selectedObject = null;
+        // outlinePass.selectedObjects = [];
         this.setState({
           showTooltip: false,
           selectedObject: null,
         });
       }
-
-      this.composer.render();
     });
 
     this.renderer.domElement.addEventListener('click', (e) => {
@@ -248,21 +246,26 @@ export default class StlViewer extends React.Component {
       this.raycaster.setFromCamera(this.mousePosition, this.camera);
       const intersects = this.raycaster.intersectObject(this.scene, true);
       const firstSynapseIntersect = intersects.filter(i => i.object.name.includes('➝'))[0]; 
+
+
       if(firstSynapseIntersect) {
         const synapseData = firstSynapseIntersect.object.userData;
         this.setState({
           synapseDetail: synapseData,
           showSynapseDetail: true,
-          synapseDetailPosition: {
-            x: e.clientX + 40,
-            y: e.clientY - 25
-          }
-        })
+          // synapseDetailPosition: {
+          //   x: e.clientX + 150,
+          //   y: e.clientY - 25
+          // }
+        });
+        this.outlinePass.selectedObjects = [firstSynapseIntersect.object];
       } else {
         this.setState({
           showSynapseDetail: false
         });
+        this.outlinePass.selectedObjects = [];
       }
+      this.composer.render();
     })
 
     this.controls.addEventListener('change', debounce(e => {
@@ -369,7 +372,7 @@ export default class StlViewer extends React.Component {
       }
       let createSphere = ([x, y, z], name, color, size, data) => {
         const geometry = new THREE.SphereGeometry( 2 * size, 16, 16 );
-        const material = new THREE.MeshBasicMaterial( { color } );
+        const material = new THREE.MeshMatcapMaterial( { color: new THREE.Color(color), matcap: this.textures[0] } );
         const sphere = new THREE.Mesh( geometry, material );
         sphere.position.set(x, y, z);
         sphere.name = name;
@@ -641,7 +644,7 @@ export default class StlViewer extends React.Component {
       searchInput, 
       synapseDetail,
       showSynapseDetail,
-      synapseDetailPosition
+      // synapseDetailPosition
     } = this.state;
     const onlyOneNeuron = Array.from(selectedNeurons).length === 1;
     const lastSearchTerm = searchInput.split(', ').pop();
@@ -734,7 +737,7 @@ export default class StlViewer extends React.Component {
       ]),
       h(
         MouseTooltip,
-        { visible: this.state.showTooltip, offsetX: 40, offsetY: -25 },
+        { visible: this.state.showTooltip, offsetX: 50, offsetY: -25 },
         [
           h(
             'div',
@@ -856,7 +859,7 @@ export default class StlViewer extends React.Component {
               style: { backgroundColor: '#D9D8D4' },
               className: styles.imageWatermark.container,
             },
-            '(2021 Witvliet et al.)'
+            [h('div', '(Witvliet et al. 2021)')]
           )
         : null,
       h('div', { className: styles.controls }, [
@@ -886,13 +889,7 @@ export default class StlViewer extends React.Component {
         // ),
       ]),
       this.state.showSynapseDetail ? h('div', {
-        className: 'bg-white p-4 rounded shadow-lg w-80',
-        style: {
-          position: 'absolute', 
-          top: `${synapseDetailPosition.y}px`,
-          left: `${synapseDetailPosition.x}px`,
-          zIndex: 10
-        }
+        className: 'bg-white p-4 rounded shadow-lg w-80 absolute left-2 top-1/3 z-10',
       }, [
         h('div', {className: 'flex justify-between p-2'}, [
           h('div', {className: 'font-bold text-gray-700'}, `${synapseDetail.pre} ➝ ${synapseDetail.post.split(',').join(', ')}`),
@@ -912,7 +909,7 @@ export default class StlViewer extends React.Component {
         ])
       ])
     ]) : null,
-    h('div', { className: 'absolute bottom-10 right-10'}, '(2021 Witvliet et. al)')
+    h('div', { className: 'absolute bottom-10 right-10'}, '(2021 Witvliet et al.)')
     ]);
   }
 }
