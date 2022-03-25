@@ -152,8 +152,6 @@ export default class StlViewer extends React.Component {
       preserveDrawingBuffer: true,
     });
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 100.0;
-    controls.minDistance = 75;
 
     /**
      * Light setup
@@ -283,14 +281,14 @@ export default class StlViewer extends React.Component {
       antialias: true,
       preserveDrawingBuffer: true
     });
-    directionRenderer.setSize(250, 150);
+    directionRenderer.setSize(250, 250);
     this.directionMount.append(directionRenderer.domElement)
     const directionCamera = new THREE.PerspectiveCamera(750,
       1,
       1,
       100000);
     directionCamera.position.z = 100;
-    const axesHelper = new THREE.AxesHelper( 20 );
+    const axesHelper = new THREE.AxesHelper( 15 );
     directionScene.add( axesHelper );
     directionScene.background = new THREE.Color(0xd9d8d4);
     const directionControls = new OrbitControls(directionCamera, directionRenderer.domElement);
@@ -328,7 +326,7 @@ export default class StlViewer extends React.Component {
     directionRenderer.render(directionScene, directionCamera);
 
     const labelRenderer = new CSS2DRenderer();
-    labelRenderer.setSize(250, 150);
+    labelRenderer.setSize(250, 250);
     labelRenderer.domElement.style.position = 'absolute';
     labelRenderer.domElement.style.top = '0px';
 
@@ -338,8 +336,8 @@ export default class StlViewer extends React.Component {
 
 
     this.controls.addEventListener('change', (e) => {
-      directionCamera.position.copy(this.camera.position);
       directionCamera.rotation.copy(this.camera.rotation);
+      directionCamera.position.copy(this.camera.position.clone().normalize().multiplyScalar(100));
 
       directionRenderer.render(directionScene, directionCamera);
       this.composer.render();
@@ -980,8 +978,8 @@ export default class StlViewer extends React.Component {
         ])
       ])
     ]) : null,
-    h('div', { className: 'absolute bottom-20 right-20'}, '(2021 Witvliet et al.)'),
-    h('div', { ref: r => this.directionMount = r, className: 'absolute bottom-32 right-32 h-48 w-48 '},)
+    h('div', { className: 'absolute bottom-2 w-40 inset-x-1/2'}, '(2021 Witvliet et al.)'),
+    h('div', { ref: r => this.directionMount = r, className: 'absolute bottom-2 right-2 h-[250] w-[250] '},)
     ]);
   }
 }
