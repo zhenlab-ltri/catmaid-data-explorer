@@ -7,6 +7,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass';
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import MouseTooltip from 'react-sticky-mouse-tooltip';
 import mergeImages from 'merge-images';
 import html2canvas from 'html2canvas';
@@ -151,8 +152,8 @@ export default class StlViewer extends React.Component {
       preserveDrawingBuffer: true,
     });
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 50000;
-    controls.minDistance = 1;
+    controls.maxDistance = 100.0;
+    controls.minDistance = 75;
 
     /**
      * Light setup
@@ -276,6 +277,76 @@ export default class StlViewer extends React.Component {
     }), 250);
     this.composer.render();
 
+    this.directionIndicatorScene = {};
+    const directionScene = new THREE.Scene();
+    const directionRenderer = new THREE.WebGLRenderer({
+      antialias: true,
+      preserveDrawingBuffer: true
+    });
+    directionRenderer.setSize(250, 150);
+    this.directionMount.append(directionRenderer.domElement)
+    const directionCamera = new THREE.PerspectiveCamera(750,
+      1,
+      1,
+      100000);
+    directionCamera.position.z = 100;
+    const axesHelper = new THREE.AxesHelper( 20 );
+    directionScene.add( axesHelper );
+    directionScene.background = new THREE.Color(0xd9d8d4);
+    const directionControls = new OrbitControls(directionCamera, directionRenderer.domElement);
+    directionControls.enableZoom = false;
+    directionControls.addEventListener('change', () => {
+      directionRenderer.render(directionScene, directionCamera);
+    });
+
+    const dorsalDiv = document.createElement('div');
+    dorsalDiv.className = 'label';
+    dorsalDiv.textContent = 'Dorsal';
+    dorsalDiv.style.marginTop = '-1em';
+    const dorsalLabel = new CSS2DObject(dorsalDiv);
+    dorsalLabel.position.set(0, 20, 0);
+    axesHelper.add( dorsalLabel );
+
+
+    const posteriorDiv = document.createElement('div');
+    posteriorDiv.className = 'label';
+    posteriorDiv.textContent = 'Posterior';
+    posteriorDiv.style.marginTop = '-1em';
+    const posteriorLabel = new CSS2DObject(posteriorDiv);
+    posteriorLabel.position.set(20, 0, 0);
+    axesHelper.add(posteriorLabel);
+
+    const leftDiv = document.createElement('div');
+    leftDiv.className = 'label';
+    leftDiv.textContent = 'Left';
+    leftDiv.style.marginTop = '-1em';
+    const leftLabel = new CSS2DObject(leftDiv);
+    leftLabel.position.set(0, 0, 20);
+    axesHelper.add(leftLabel);
+
+    axesHelper.position.setY(-10);
+    directionRenderer.render(directionScene, directionCamera);
+
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(250, 150);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+
+
+    this.directionMount.append(labelRenderer.domElement);
+    labelRenderer.render(directionScene, directionCamera);
+
+
+    this.controls.addEventListener('change', (e) => {
+      directionCamera.position.copy(this.camera.position);
+      directionCamera.rotation.copy(this.camera.rotation);
+
+      directionRenderer.render(directionScene, directionCamera);
+      this.composer.render();
+      labelRenderer.render(directionScene, directionCamera);
+
+    });
+    
     const searchParams = new URLSearchParams(this.props.location.search);
     let searchInput = '';
     if(searchParams.has('neurons')){
@@ -909,7 +980,8 @@ export default class StlViewer extends React.Component {
         ])
       ])
     ]) : null,
-    h('div', { className: 'absolute bottom-10 right-10'}, '(2021 Witvliet et al.)')
+    h('div', { className: 'absolute bottom-20 right-20'}, '(2021 Witvliet et al.)'),
+    h('div', { ref: r => this.directionMount = r, className: 'absolute bottom-32 right-32 h-48 w-48 '},)
     ]);
   }
 }
