@@ -652,8 +652,8 @@ export default class StlViewer extends React.Component {
           { src: legendImage, x: 0, y: 0 },
           {
             src: watermarkImage,
-            x: this.renderer.domElement.clientWidth - 300,
-            y: this.renderer.domElement.clientHeight - 60,
+            x: this.renderer.domElement.clientWidth - 340,
+            y: this.renderer.domElement.clientHeight - 80,
           },
         ]);
         saveAs(
@@ -928,7 +928,7 @@ export default class StlViewer extends React.Component {
               style: { backgroundColor: '#D9D8D4' },
               className: styles.imageWatermark.container,
             },
-            [h('div', '(Witvliet et al. 2021)')]
+            [h('div', '2021 (Witvliet et al.)')]
           )
         : null,
       h('div', { className: styles.controls }, [

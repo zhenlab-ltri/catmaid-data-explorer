@@ -104,8 +104,7 @@ app.get('/api/synapses/:neuronId', (req, res) => {
 
   const relevantSynapses = synapseInfoList.filter(entry => {
     const { pre, post } = entry;
-
-    return pre === neuronId || post.includes(neuronId);
+    return pre === neuronId || post.split(',').includes(neuronId);
   });
 
   res.json(relevantSynapses);
@@ -119,7 +118,7 @@ app.get('/api/synapses', (req, res) => {
     const { pre, post } = entry;
 
     const preInNeurons = neurons.has(pre);
-    const anyPostInNeurons = Array.from(neurons).filter(n => post.includes(n)).length > 0;
+    const anyPostInNeurons = Array.from(neurons).filter(n => post.split(',').includes(n)).length > 0;
 
     return preInNeurons && anyPostInNeurons;
   });
