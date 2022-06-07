@@ -15,7 +15,7 @@ import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
 import debounce from 'lodash.debounce';
 
-import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNerveRingModel } from 'services';
+import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNeuronClassSynapses, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
 import model from '../model';
@@ -402,12 +402,15 @@ export default class StlViewer extends React.Component {
 
   viewNeuron() {
     const selectedNeurons = neuronsSorted.filter((n) => this.state.neuronState[n].selected);
-    const firstNeuron = Array.from(selectedNeurons).shift();
+    const firstNeuron = Array.from(selectedNeurons)[0];
+    const allAreClassMembers = Array.from(selectedNeurons).map(n => this.state.neuronState[n] != null).reduce((a, b) => a && b, true);
+    const allHaveSameClass = new Set(Array.from(selectedNeurons).map(n => model.neuronInfo[n].class)).size === 1;
     const onlyOneNeuron = selectedNeurons.length === 1;
+    const onlyOneNeuronClass = selectedNeurons.length > 1 && allAreClassMembers && allHaveSameClass;
 
     Promise.all([
       getNeuronModels(Array.from(selectedNeurons)),
-      onlyOneNeuron ? getNeuronSynapses(firstNeuron) : getSynapsesBetween(Array.from(selectedNeurons)),
+      onlyOneNeuron ? getNeuronSynapses(firstNeuron) : onlyOneNeuronClass ? getNeuronClassSynapses(selectedNeurons) : getSynapsesBetween(Array.from(selectedNeurons)),
       getNerveRingModel()
     ]).then(([neuronModelBuffers, synapsePositionInfo, nerveRingModelBuffer]) => {
 
@@ -469,6 +472,14 @@ export default class StlViewer extends React.Component {
 
         if(onlyOneNeuron){
           if(pre === firstNeuron) {
+            color = synapseColorMap['pre'];
+          } else {
+            color = synapseColorMap['post'];
+          }
+        }
+
+        if(onlyOneNeuronClass){
+          if(selectedNeurons.includes(pre)){
             color = synapseColorMap['pre'];
           } else {
             color = synapseColorMap['post'];
@@ -717,6 +728,11 @@ export default class StlViewer extends React.Component {
     } = this.state;
     const onlyOneNeuron = Array.from(selectedNeurons).length === 1;
     const lastSearchTerm = searchInput.split(', ').pop();
+    const _selectedNeurons = neuronsSorted.filter((n) => this.state.neuronState[n].selected);
+    const allAreClassMembers = Array.from(_selectedNeurons).map(n => this.state.neuronState[n] != null).reduce((a, b) => a && b, true);
+    const allHaveSameClass = new Set(Array.from(_selectedNeurons).map(n => model.neuronInfo[n].class)).size === 1;
+    const onlyOneNeuronClass = _selectedNeurons.length > 1 && allAreClassMembers && allHaveSameClass;
+
 
     const searchSuggestions = [
       ...unselectedNeurons,
@@ -869,7 +885,7 @@ export default class StlViewer extends React.Component {
           h(
             'div',
             { className: styles.selectedNeuronsContainer },
-            (onlyOneNeuron ?  ['pre', 'post'] : ['synapse']).map(n => 
+            (onlyOneNeuron || onlyOneNeuronClass ?  ['pre', 'post'] : ['synapse']).map(n => 
               h(NeuronListItem, {
                 neuronName: n,
                 color: synapseColorMap[n],

@@ -4,6 +4,7 @@ const basicAuth = require('express-basic-auth');
 const app = express();
 const path = require('path');
 const parseSTL = require('parse-stl');
+const _ =  require('lodash');
 
 const { USER, PASSWORD } = require('../config.json');
 const catmaidConnectors = require('./catmaid-synapse-info.json');
@@ -108,7 +109,19 @@ app.get('/api/synapses/:neuronId', (req, res) => {
   });
 
   res.json(relevantSynapses);
-})
+});
+
+
+app.get('/api/neuron-class-synapses', (req, res) => {
+  const classMembers = new Set(req.query.neuronClassMembers.split(','));
+  
+  const relevantSynapses = synapseInfoList.filter(entry => {
+    const { pre, post } = entry;
+    return classMembers.has(pre) || _.intersection(post.split(','), Array.from(classMembers)).length > 0;
+  });
+
+  res.json(relevantSynapses);
+});
 
 app.get('/api/synapses', (req, res) => {
 

@@ -50,6 +50,13 @@ export const getNeuronsSynapses = neuronNames => {
   return Promise.all(neuronSynapses);
 }
 
+export const getNeuronClassSynapses = neuronClassMembers => {
+  return fetch(`/api/neuron-class-synapses?${new URLSearchParams({ neuronClassMembers: neuronClassMembers.join(',')})}`, {
+    method: 'GET',
+  }).then(res => res.json());
+}
+
+
 let nerveRingArrayBuffer = null;
 export const getNerveRingModel = () => {
   if(nerveRingArrayBuffer != null){
