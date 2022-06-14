@@ -14,6 +14,9 @@ import html2canvas from 'html2canvas';
 import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
 import debounce from 'lodash.debounce';
+import ReactTooltip from 'react-tooltip';
+import { Popover, Text, Stack, Group, Switch, CloseButton } from '@mantine/core';
+
 
 import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNeuronClassSynapses, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
@@ -64,7 +67,8 @@ const NeuronListItem = (props) => {
   );
 };
 
-const neuronsSorted = neurons.sort();
+const bodyCells = ['B01DL', 'B01DR', 'B01VL', 'B01VR', 'B02DL', 'B02DR', 'B02VL', 'B02VR', 'B03DL', 'B03DR', 'B03VL', 'B03VR', 'B04DL', 'B04DR', 'B04VL', 'B04VR', 'B05DL', 'B05DR', 'B05VL', 'B05VR', 'B06DL', 'B06DR', 'B06VL', 'B06VR', 'B07DL', 'B07DR', 'B07VL', 'B07VR', 'B08DL', 'B08DR', 'B08VL', 'B08VR'];
+const neuronsSorted = neurons.filter(c => !bodyCells.includes(c)).sort();
 const neuronClassesSorted = Array.from(
   new Set(neuronsSorted.map(n => model.neuronInfo[n] != null ? model.neuronInfo[n].class : ''))
 ).sort();
@@ -90,6 +94,11 @@ export default class StlViewer extends React.Component {
     super(props);
 
     this.state = {
+      showSettings: false,
+      showNeuronModels: true,
+      showSynapseModels: true,
+      showWormBody: true,
+      showTour: false,
       searchInput: '',
       selectedNeurons: new Set(),
       showTooltip: false,
@@ -270,7 +279,8 @@ export default class StlViewer extends React.Component {
     this.controls.addEventListener('change', debounce(e => {
       this.setState({
         synapseDetail: null,
-        showSynapseDetail: false
+        showSynapseDetail: false,
+        showSettings: false
       })
     }), 250);
     this.composer.render();
@@ -355,6 +365,12 @@ export default class StlViewer extends React.Component {
       target:{
         value: searchInput
       }
+    });
+  }
+
+  setShowSettingsMenu(show){
+    this.setState({
+      showSettings: show
     });
   }
 
@@ -452,49 +468,54 @@ export default class StlViewer extends React.Component {
         currentNeurons.add( sphere );
       }
 
-      const nerveRing = loadModel(nerveRingModelBuffer, 'Nerve ring', '#d9d9d9', 0.3, 10);
-      currentNeurons.add(nerveRing);
+      if(this.state.showWormBody){
+        const nerveRing = loadModel(nerveRingModelBuffer, 'Nerve ring', '#d9d9d9', 0.3, 10);
+        currentNeurons.add(nerveRing);  
+      }
 
 
-      neuronModelBuffers.forEach((buffer, index) => {
-        const { neuronName, color } = this.state.neuronState[selectedNeurons[index]];
-        const mesh = loadModel(buffer, neuronName, color, !onlyOneNeuron ? 0.7 : 1);
+      if(this.state.showNeuronModels){
+        neuronModelBuffers.forEach((buffer, index) => {
+          const { neuronName, color } = this.state.neuronState[selectedNeurons[index]];
+          const mesh = loadModel(buffer, neuronName, color, !onlyOneNeuron ? 0.7 : 1);
+  
+          currentNeurons.add(mesh);
+  
+        });  
+      }
 
-        currentNeurons.add(mesh);
-
-      });
-
-      synapsePositionInfo.forEach(syn => {
-        const { position, pre, post, catmaidId, volumeSize } = syn;
-        const [x, y, z] = position;
-        const translatedVolume = volumeSize / 10000000;
-        let color = synapseColorMap['synapse'];
-
-        if(onlyOneNeuron){
-          if(pre === firstNeuron) {
-            color = synapseColorMap['pre'];
-          } else {
-            color = synapseColorMap['post'];
+      if(this.state.showSynapseModels){
+        synapsePositionInfo.forEach(syn => {
+          const { position, pre, post, catmaidId, volumeSize } = syn;
+          const [x, y, z] = position;
+          const translatedVolume = volumeSize / 10000000;
+          let color = synapseColorMap['synapse'];
+  
+          if(onlyOneNeuron){
+            if(pre === firstNeuron) {
+              color = synapseColorMap['pre'];
+            } else {
+              color = synapseColorMap['post'];
+            }
           }
-        }
-
-        if(onlyOneNeuronClass){
-          if(selectedNeurons.includes(pre)){
-            color = synapseColorMap['pre'];
-          } else {
-            color = synapseColorMap['post'];
+  
+          if(onlyOneNeuronClass){
+            if(selectedNeurons.includes(pre)){
+              color = synapseColorMap['pre'];
+            } else {
+              color = synapseColorMap['post'];
+            }
           }
-        }
-
-        createSphere(
-          [x, y, z], 
-          `${pre} ➝ ${post.split(',').join(', ')}`,
-          color,
-          Math.min(Math.max(0.05, translatedVolume), 0.5),
-          syn
-        );
-      });
-
+  
+          createSphere(
+            [x, y, z], 
+            `${pre} ➝ ${post.split(',').join(', ')}`,
+            color,
+            Math.min(Math.max(0.05, translatedVolume), 0.5),
+            syn
+          );
+        });  
+      }
 
       currentNeurons.rotation.y = Math.PI;
 
@@ -780,7 +801,7 @@ export default class StlViewer extends React.Component {
       synapseInfo: 'absolute w-60 h-80 bottom-20 left-2 overflow-y-scroll bg-white shadow-lg rounded z-10',
     };
 
-    return h('div', { className: styles.page, ref: (r) => (this.mount = r) }, [
+    return h('div', { id: 'app', className: styles.page, ref: (r) => (this.mount = r) }, [
       h('div', { className: styles.searchbar }, [
         h('div', { className: styles.stickyTop }, [
           h('input', {
@@ -951,6 +972,8 @@ export default class StlViewer extends React.Component {
         h(
           'i',
           {
+            'data-tip': true,
+            'data-for': 'animation-tooltip',
             className: styles.colorPickerClose,
             onClick: (e) => this.toggleAnimationLoop(),
           },
@@ -959,11 +982,95 @@ export default class StlViewer extends React.Component {
         h(
           'i',
           {
+            'data-tip': true,
+            'data-for': 'export-image-tooltip',
             className: styles.colorPickerClose,
             onClick: (e) => this.exportImage(),
           },
           'image'
         ),
+
+        h(Popover, {
+            style: {
+              marginTop: 6,
+            },
+            closeOnClickOutside: true,
+            trapFocus: false,
+            opened: this.state.showSettings,
+            onClose: () => this.setShowSettingsMenu(false),
+            target: h(
+              'i',
+              {
+                'data-tip': true,
+                'data-for': 'view-settings-tooltip',
+                className: styles.colorPickerClose,
+                onClick: (e) => this.setShowSettingsMenu(true),
+              },
+              'settings'
+            ),
+            width: 260,
+            position: 'bottom',
+            withArrow: true
+          }, [
+            h(Stack, [
+              h(Group, {position: 'apart'}, [
+                h(Text, 'Settings'),
+                h(CloseButton, {
+                  onClick: () => this.setShowSettingsMenu(false),
+                })
+              ]),
+              h(Switch, {
+                onLabel: "ON",
+                offLabel: "OFF",
+                size: 'md',
+                checked: this.state.showWormBody,
+                onChange: (e) => {
+                  this.setState({ showWormBody: e.target.checked });
+                  this.viewNeuron();
+                },
+                label: 'Toggle worm body',
+              }),
+              h(Switch, {
+                onLabel: "ON",
+                offLabel: "OFF",
+                size: 'md', 
+                checked: this.state.showSynapseModels,
+                onChange: (e) => {
+                  this.setState({ showSynapseModels: e.target.checked });
+                  this.viewNeuron();
+                },
+                label: 'Toggle synapses',
+              }),
+              h(Switch, {
+                onLabel: "ON",
+                offLabel: "OFF",
+                size: 'md',
+                checked: this.state.showNeuronModels,
+                onChange: (e) => {
+                  this.setState({ showNeuronModels: e.target.checked });
+                  this.viewNeuron();
+                },
+                label: 'Toggle neurons',
+              })
+
+            ])
+          ]
+        ),
+        h(
+          'i',
+          {
+            'data-tip': true,
+            'data-for': 'view-help-tooltip',
+            className: styles.colorPickerClose,
+            onClick: (e) => this.exportImage(),
+          },
+          'help'
+        ),
+        h(ReactTooltip, {id: 'animation-tooltip', type: 'light'}, 'Toggle animation loop'),
+        h(ReactTooltip, {id: 'export-image-tooltip', type: 'light'}, 'Export image'),
+        h(ReactTooltip, {id: 'view-settings-tooltip', type: 'light'}, 'Settings'),
+        h(ReactTooltip, {id: 'view-help-tooltip', type: 'light'}, 'Help'),
+
         // h(
         //   'i',
         //   {
