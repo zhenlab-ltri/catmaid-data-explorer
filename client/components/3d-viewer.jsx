@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import * as THREE from 'three';
 import { SketchPicker } from 'react-color';
@@ -15,9 +15,18 @@ import h from 'react-hyperscript';
 import { saveAs } from 'file-saver';
 import debounce from 'lodash.debounce';
 import ReactTooltip from 'react-tooltip';
-import { Popover, Text, Stack, Group, Switch, CloseButton } from '@mantine/core';
+import { 
+  Button,
+  Popover, 
+  Text, 
+  Stack, 
+  Group, 
+  Switch, 
+  CloseButton,
+  TextInput
+} from '@mantine/core';
 
-
+import Tour from 'reactour'
 import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNeuronClassSynapses, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
 import neurons from '../model/neurons.json';
@@ -87,6 +96,44 @@ const synapseColorMap = {
   post: '#6b645e',
   synapse: '#000000'
 }
+
+const styles = {
+  searchbar:
+    'absolute top-2 left-2 w-60 max-h-96 shadow-lg bg-white rounded z-10 overflow-y-scroll',
+  stickyTop: 'sticky top-0',
+  searchbarInput: 'p-4 w-full h-10 rounded',
+  controls:
+    'p-2 absolute top-2 shadow-lg flex bg-white  z-10 rounded left-1/2 transform -translate-x-1/2 items-center',
+  animateButton:
+    'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
+  selectedNeuronsContainer:
+    'rounded border-2 shadow-lg border-gray-300 bg-gray-100 font-bold text-gray-700',
+  unselectedNeuronsContainer: 'w-full h-full text-gray-400',
+  neuronNameTooltip:
+    'bg-white font-bold text-gray-700 shadow-lg p-4 rounded',
+  colorPicker: '',
+  colorPickerWidget: 'bg-white absolute top-14 right-64 border-2 rounded',
+  colorPickerClose:
+    'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
+  legendContainer: 'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
+  selectedNeuronLegend: '',
+    // 'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
+  synapseLegend: '',
+  // 'absolute top-10 right-2 w-60 shadow-lg rounded z-10',
+  imageLegend: {
+    container:
+      'absolute -top-40 w-40 z-10 flex flex-col font-bold text-gray-700',
+    imageLegendEntry: 'p-2 flex items-center',
+    imageLegendEntryColor: 'rounded w-6 h-6 relative top-2',
+  },
+  imageWatermark: {
+    container: 'p-2 absolute w-60 z-10 -top-40 -right-40',
+  },
+  watermark: {
+    container: 'p-2 absolute h-10 w-10 bottom-2'
+  },
+  synapseInfo: 'absolute w-60 h-80 bottom-20 left-2 overflow-y-scroll bg-white shadow-lg rounded z-10',
+};
 
 
 export default class StlViewer extends React.Component {
@@ -762,51 +809,15 @@ export default class StlViewer extends React.Component {
       n.neuronName.startsWith(lastSearchTerm)
     );
 
-    const styles = {
-      page: `w-screen h-screen ${showTooltip ? 'cursor-pointer' : ''}`,
-      searchbar:
-        'absolute top-2 left-2 w-60 max-h-96 shadow-lg bg-white rounded z-10 overflow-y-scroll',
-      stickyTop: 'sticky top-0',
-      searchbarInput: 'p-4 w-full h-10 rounded',
-      controls:
-        'p-2 absolute top-2 shadow-lg flex bg-white  z-10 rounded left-1/2 transform -translate-x-1/2 items-center',
-      animateButton:
-        'bg-white shadow text-gray-600 rounded m-1 hover:bg-gray-200 pl-2 pr-2 m-4',
-      selectedNeuronsContainer:
-        'rounded border-2 shadow-lg border-gray-300 bg-gray-100 font-bold text-gray-700',
-      unselectedNeuronsContainer: 'w-full h-full text-gray-400',
-      neuronNameTooltip:
-        'bg-white font-bold text-gray-700 shadow-lg p-4 rounded',
-      colorPicker: '',
-      colorPickerWidget: 'bg-white absolute top-14 right-64 border-2',
-      colorPickerClose:
-        'mr-2 bg-white cursor-pointer material-icons text-gray-400 hover:text-gray-600 z-10',
-      legendContainer: 'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
-      selectedNeuronLegend: '',
-        // 'absolute top-2 right-2 w-60 shadow-lg rounded z-10',
-      synapseLegend: '',
-      // 'absolute top-10 right-2 w-60 shadow-lg rounded z-10',
-      imageLegend: {
-        container:
-          'absolute -top-40 w-40 z-10 flex flex-col font-bold text-gray-700',
-        imageLegendEntry: 'p-2 flex items-center',
-        imageLegendEntryColor: 'rounded w-6 h-6 relative top-2',
-      },
-      imageWatermark: {
-        container: 'p-2 absolute w-60 z-10 -top-40 -right-40',
-      },
-      watermark: {
-        container: 'p-2 absolute h-10 w-10 bottom-2'
-      },
-      synapseInfo: 'absolute w-60 h-80 bottom-20 left-2 overflow-y-scroll bg-white shadow-lg rounded z-10',
-    };
+    // return h(TourProvider, { steps, isOpen: true }, [
+      // h('div', { id: 'app', className: `w-screen h-screen ${showTooltip ? 'cursor-pointer' : ''}`, ref: (r) => (this.mount = r) }, [
 
-    return h('div', { id: 'app', className: styles.page, ref: (r) => (this.mount = r) }, [
-      h('div', { className: styles.searchbar }, [
+    return h('div', { id: 'app', className: `w-screen h-screen ${showTooltip ? 'cursor-pointer' : ''}`, ref: (r) => (this.mount = r) }, [
+      h('div', { id: 'searchbar', 'data-tour': 'step=1', className: styles.searchbar }, [
         h('div', { className: styles.stickyTop }, [
-          h('input', {
-            type: 'text',
-            className: styles.searchbarInput,
+          h(TextInput, {
+            size: 'md',
+            radius: 'sm',
             onChange: (e) => this.handleSearchBarChange(e),
             value: this.state.searchInput,
             placeholder: 'Search neurons',
@@ -853,20 +864,14 @@ export default class StlViewer extends React.Component {
         ]
       ),
       this.state.showColorPicker
-        ? h('div', { className: styles.colorPickerWidget }, [
-            h('div', { className: 'flex items-center p-2' }, [
-              h(
-                'i',
-                {
-                  className: styles.colorPickerClose,
-                  onClick: (e) =>
-                    this.setState({
-                      colorPickerNeuron: '',
-                      showColorPicker: false,
-                    }),
-                },
-                'close'
-              ),
+        ? h('div', {id: 'colorpicker', className: styles.colorPickerWidget }, [
+            h(Group, [
+              h(CloseButton, {
+                onClick: (e) => this.setState({
+                  colorPickerNeuron: '',
+                  showColorPicker: false,
+                })
+              }),
               h(
                 'div',
                 { className: 'justify-self-center' },
@@ -881,7 +886,7 @@ export default class StlViewer extends React.Component {
             }),
           ])
         : null,
-      h('div', { className: styles.legendContainer }, [
+      h('div', { id: 'legend', className: styles.legendContainer }, [
         Array.from(selectedNeurons).length > 0
         ? h('div', { className: styles.selectedNeuronLegend }, [
             h(
@@ -972,6 +977,7 @@ export default class StlViewer extends React.Component {
         h(
           'i',
           {
+            id: 'animate',
             'data-tip': true,
             'data-for': 'animation-tooltip',
             className: styles.colorPickerClose,
@@ -982,6 +988,7 @@ export default class StlViewer extends React.Component {
         h(
           'i',
           {
+            id: 'exportimage',
             'data-tip': true,
             'data-for': 'export-image-tooltip',
             className: styles.colorPickerClose,
@@ -989,7 +996,6 @@ export default class StlViewer extends React.Component {
           },
           'image'
         ),
-
         h(Popover, {
             style: {
               marginTop: 6,
@@ -1001,6 +1007,7 @@ export default class StlViewer extends React.Component {
             target: h(
               'i',
               {
+                id: 'settings',
                 'data-tip': true,
                 'data-for': 'view-settings-tooltip',
                 className: styles.colorPickerClose,
@@ -1012,7 +1019,7 @@ export default class StlViewer extends React.Component {
             position: 'bottom',
             withArrow: true
           }, [
-            h(Stack, [
+            h(Stack, {id: 'controls'}, [
               h(Group, {position: 'apart'}, [
                 h(Text, 'Settings'),
                 h(CloseButton, {
@@ -1059,10 +1066,15 @@ export default class StlViewer extends React.Component {
         h(
           'i',
           {
+            id: 'help',
             'data-tip': true,
             'data-for': 'view-help-tooltip',
             className: styles.colorPickerClose,
-            onClick: (e) => this.exportImage(),
+            onClick: (e) => {
+              this.handleSearchBarChange({target: {value: 'AIY, ASEL'}});
+              this.setState({showColorPicker: true, colorPickerNeuron: 'ASEL'});
+              this.setState({showTour: true})
+            },
           },
           'help'
         ),
@@ -1102,7 +1114,59 @@ export default class StlViewer extends React.Component {
       ])
     ]) : null,
     h('div', { className: 'absolute bottom-2 w-40 inset-x-1/2'}, '(2021 Witvliet et al.)'),
-    h('div', { ref: r => this.directionMount = r, className: 'absolute bottom-2 right-2 h-[250] w-[250] '},)
-    ]);
+    h('div', { id: 'directionindicator', ref: r => this.directionMount = r, className: 'absolute bottom-2 right-2 h-[250] w-[250] '},),
+    h(Tour, {
+      steps: [
+        {
+          selector: '#searchbar',
+          content: <p>Input your favorite neurons or neuron classes seperated by a comma.  For example: AIY, ASEL</p>,
+          position: 'bottom',
+        },
+        {
+          selector: '#app',
+          position: [100, 100],
+          content: <p>Explore the 3D model by dragging your mouse and zooming in and out.</p>
+        },
+        {
+          selector: '#app',
+          position: [100, 100],
+          content: <p>Click synapses spheres for more information.</p>
+        },
+        {
+          selector: '#animate',
+          content: <p>Perform a continuous rotation animation.</p>
+        },
+        {
+          selector: '#exportimage',
+          content: <p>Export the 3D view as a png image.</p>
+        },
+        {
+          selector: '#settings',
+          content: <p>Show/hide various elements of the 3D view.</p>
+        },
+        {
+          selector: '#help',
+          content: <p>Show/hide the tour</p>
+        },
+        {
+          selector: '#legend',
+          content: <p>Click on the colored circle of any neuron to open the color picker.</p>
+        },
+        {
+          selector: '#colorpicker',
+          content: <p>Chose a color for the selected neuron.</p>
+        },
+        {
+          selector: '#directionindicator',
+          content: <p>Dorsal, posterior and left indicators.</p>
+        }  
+      ],
+      showNumber: false,
+      isOpen: this.state.showTour,
+      rounded: 4,
+      lastStepNextButton: (<Button>Done</Button>),
+      onRequestClose: () => this.setState({ showTour: false})
+    })
+  ])
   }
 }
