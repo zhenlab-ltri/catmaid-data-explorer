@@ -29,8 +29,8 @@ import {
 import Tour from 'reactour'
 import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNeuronClassSynapses, getNerveRingModel } from 'services';
 import texture from '../images/texture.jpg';
-import neurons from '../model/neurons.json';
-import model from '../model';
+import neurons from '../../model/neurons.json';
+import model from '../../model';
 
 const loader = new STLLoader();
 const NeuronListItem = (props) => {
