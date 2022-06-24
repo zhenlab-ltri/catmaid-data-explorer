@@ -28,7 +28,7 @@ import {
 
 import Tour from 'reactour'
 import { getNeuronModels, getNeuronSynapses, getSynapsesBetween, getNeuronClassSynapses, getNerveRingModel } from 'services';
-import texture from '../images/texture.jpg';
+import texture from '../../images/texture.jpg';
 import neurons from '../../model/neurons.json';
 import model from '../../model';
 
@@ -970,7 +970,7 @@ export default class StlViewer extends React.Component {
               style: { backgroundColor: '#D9D8D4' },
               className: styles.imageWatermark.container,
             },
-            [h('div', '2021 (Witvliet et al.)')]
+            [h('div', '(2021 Witvliet et al.)')]
           )
         : null,
       h('div', { className: styles.controls }, [
