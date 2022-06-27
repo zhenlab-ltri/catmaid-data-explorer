@@ -924,7 +924,7 @@ export default class StlViewer extends React.Component {
       this.state.synapsePositionInfo.length > 0 ? h('div', { className: styles.synapseInfo }, this.state.synapsePositionInfo.map(syn => {
         const { pre, post, catmaidLink, volumeSize } = syn;
         const neurons = [pre, ...post.split(',')].join('__');
-        const nemanodeLink = `http://nemanode.zhen-tools.com?db=head&ds=witvliet_2020_8&in=${neurons}`
+        const nemanodeLink = `http://nemanode.com?db=head&ds=witvliet_2020_8&in=${neurons}`
         return h('div', { 
           className: styles.synapseInfoEntry, 
         }, [
@@ -933,7 +933,6 @@ export default class StlViewer extends React.Component {
             `Volume: ${volumeSize} nm`,
             h('sup', '3')
           ]),
-          h('div', [h('a', {target: '_blank', href: catmaidLink }, 'Open in CATMAID')]),
           h('div', [h('a', {target: '_blank', href: nemanodeLink }, 'Open in NemaNode')]),
         ])
       })) : null,
@@ -1108,8 +1107,7 @@ export default class StlViewer extends React.Component {
         ]),
         h('div', {className: 'pl-4 pr-4 pt-2 pb-2 flex'}, [
           h('div', {className: 'text-gray-500 font-light mr-2' }, 'View in:'),
-          h('div', [h('a', {className: 'mr-2 underline text-gray-500', target: '_blank', href: synapseDetail.catmaidLink }, 'CATMAID')]),
-          h('div', [h('a', {className: 'underline text-gray-500', target: '_blank', href: `http://nemanode.zhen-tools.com?db=head&ds=witvliet_2020_8&in=${[synapseDetail.pre, ...synapseDetail.post.split(',')].join('__')}`}, 'NemaNode')
+          h('div', [h('a', {className: 'underline text-gray-500', target: '_blank', href: `http://nemanode.com?db=head&ds=witvliet_2020_8&in=${[synapseDetail.pre, ...synapseDetail.post.split(',')].join('__')}`}, 'NemaNode')
         ])
       ])
     ]) : null,
