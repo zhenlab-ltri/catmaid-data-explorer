@@ -91,12 +91,6 @@ const neuronColorMap = {
   unknown: '#d9d9d9',
 };
 
-const synapseColorMap = {
-  pre: '#e1f0ef',
-  post: '#6b645e',
-  synapse: '#000000'
-}
-
 const styles = {
   searchbar:
     'absolute top-2 left-2 w-60 max-h-96 shadow-lg bg-white rounded z-10 overflow-y-scroll',
@@ -158,6 +152,13 @@ export default class StlViewer extends React.Component {
       showImageElements: false,
       synapsePositionInfo: [],
       synapseDetail: null,
+      showColorPickerSynapse: false,
+      synapseColors: {
+        pre: '#5e7993',
+        post: '#a58627',
+        synapse: '#000000'      
+      },
+      colorPickerSynapse: '',
       showSynapseDetail: false,
       // synapseDetailPosition: {
       //   x: 0,
@@ -435,6 +436,34 @@ export default class StlViewer extends React.Component {
     });
   }
 
+
+  // start the process of changing a color for pre, post or synapse
+  handleSynapseColorClick(synapseType) {
+    let showColorPickerSynapse = !this.state.showColorPickerSynapse;
+    let nextColorPickerSynapse = '';
+    if (showColorPickerSynapse || synapseType != this.state.colorPickerSynapse) {
+      nextColorPickerSynapse = synapseType;
+      showColorPickerSynapse = true;
+    }
+
+    this.setState({
+      colorPickerSynapse: nextColorPickerSynapse,
+      showColorPickerSynapse: showColorPickerSynapse,
+    });
+  }
+
+  handleSynapseColorPickerChange(color) {
+    const nextSynapseColorState = Object.assign(
+      this.state.synapseColors, {[this.state.colorPickerSynapse]: color.hex});
+
+    this.setState({
+      synapseColors: nextSynapseColorState
+    }, () =>
+      this.debouncedUpdateSynapseMeshColor(color, this.state.colorPickerSynapse)
+    );
+  }
+
+
   updateNeuronMeshColor = (color, neuron) => {
     let neuronObj = this.scene.getObjectByName(this.state.colorPickerNeuron);
 
@@ -443,6 +472,21 @@ export default class StlViewer extends React.Component {
   };
 
   debouncedUpdateNeuronMeshColor = debounce(this.updateNeuronMeshColor, 200);
+
+
+  updateSynapseMeshColor = (color, synapseType) => {
+    this.scene.getObjectByName('currentNeurons').children.forEach(c => {
+      if (c.userData.type === synapseType) {
+        c.material.color.set(color.hex);
+      }
+    });
+
+    this.composer.render();
+  };
+
+  debouncedUpdateSynapseMeshColor = debounce(this.updateSynapseMeshColor, 200);
+
+
 
   handleColorPickerChange(color) {
     const nextNeuronState = Object.assign(
@@ -536,21 +580,26 @@ export default class StlViewer extends React.Component {
           const { position, pre, post, catmaidId, volumeSize } = syn;
           const [x, y, z] = position;
           const translatedVolume = volumeSize / 10000000;
-          let color = synapseColorMap['synapse'];
+          let color = this.state.synapseColors['synapse'];
+          let type = 'synapse';
   
           if(onlyOneNeuron){
             if(pre === firstNeuron) {
-              color = synapseColorMap['pre'];
+              color = this.state.synapseColors['pre'];
+              type = 'pre';
             } else {
-              color = synapseColorMap['post'];
+              color = this.state.synapseColors['post'];
+              type = 'post';
             }
           }
   
           if(onlyOneNeuronClass){
             if(selectedNeurons.includes(pre)){
-              color = synapseColorMap['pre'];
+              color = this.state.synapseColors['pre'];
+              type = 'pre';
             } else {
-              color = synapseColorMap['post'];
+              color = this.state.synapseColors['post'];
+              type = 'post';
             }
           }
   
@@ -559,7 +608,7 @@ export default class StlViewer extends React.Component {
             `${pre} ➝ ${post.split(',').join(', ')}`,
             color,
             Math.min(Math.max(0.05, translatedVolume), 0.5),
-            syn
+            Object.assign(syn, { type })
           );
         });  
       }
@@ -886,6 +935,29 @@ export default class StlViewer extends React.Component {
             }),
           ])
         : null,
+        this.state.showColorPickerSynapse
+        ? h('div', {id: 'syapsecolorpicker', className: styles.colorPickerWidget }, [
+            h(Group, [
+              h(CloseButton, {
+                onClick: (e) => this.setState({
+                  colorPickerSynapse: '',
+                  showColorPickerSynapse: false,
+                })
+              }),
+              h(
+                'div',
+                { className: 'justify-self-center' },
+                `Color Picker - ${this.state.colorPickerSynapse}`
+              ),
+            ]),
+            h(SketchPicker, {
+              className: styles.colorPicker,
+              color: this.state.synapseColors[this.state.colorPickerSynapse],
+              onChange: (color, e) => this.handleSynapseColorPickerChange(color, e),
+            }),
+          ])
+        : null,
+
       h('div', { id: 'legend', className: styles.legendContainer }, [
         Array.from(selectedNeurons).length > 0
         ? h('div', { className: styles.selectedNeuronLegend }, [
@@ -914,8 +986,12 @@ export default class StlViewer extends React.Component {
             (onlyOneNeuron || onlyOneNeuronClass ?  ['pre', 'post'] : ['synapse']).map(n => 
               h(NeuronListItem, {
                 neuronName: n,
-                color: synapseColorMap[n],
+                color: this.state.synapseColors[n],
                 selected: true,
+                colorOnClick: (e) => {
+                  e.stopPropagation();
+                  this.handleSynapseColorClick(n)
+                },
               }))
           ),
         ])
@@ -1150,7 +1226,7 @@ export default class StlViewer extends React.Component {
         },
         {
           selector: '#legend',
-          content: <p>Click on the colored circle of any neuron to open the color picker.</p>
+          content: <p>Click on the colored circle of any neuron or synapse to open the color picker.</p>
         },
         {
           selector: '#colorpicker',
