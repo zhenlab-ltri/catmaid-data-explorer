@@ -3,7 +3,7 @@ import h from 'react-hyperscript';
 import { HashRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
-import StlViewer from './components/3d-viewer';
+import StlViewer from './components/3d-viewer/index';
 import Sandbox from './components/sandbox';
 
 import neuronViewerImg from './images/3d_neuron_viewer.png';
