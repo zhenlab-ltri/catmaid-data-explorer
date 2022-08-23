@@ -1187,7 +1187,7 @@ export default class StlViewer extends React.Component {
         ])
       ])
     ]) : null,
-    h('div', { className: 'absolute bottom-2 w-40 inset-x-1/2'}, '(2021 Witvliet et al.)'),
+    h('div', { className: 'absolute bottom-2 w-60 inset-x-1/2'}, 'SEM Adult (2021 Witvliet et al.)'),
     h('div', { id: 'directionindicator', ref: r => this.directionMount = r, className: 'absolute bottom-2 right-2 h-[250] w-[250] '},),
     h(Tour, {
       steps: [
